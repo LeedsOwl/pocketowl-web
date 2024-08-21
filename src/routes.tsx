@@ -1,8 +1,8 @@
-import App from "./App";
+import Home from "./routes/home";
 
 export const ROUTES = [
   {
     path: "/",
-    element: <App />,
+    element: <Home />,
   },
 ];
