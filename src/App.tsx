@@ -1,4 +1,4 @@
-import { Button } from "flowbite-react/components/Button";
+import { Button } from "@/components/ui/button"
 
 function App() {
   return (
@@ -6,7 +6,7 @@ function App() {
       <h1 className="text-3xl font-bold underline text-red-300">
         My React and TypeScript App!
       </h1>
-      <Button>Click me</Button>
+      <Button variant="destructive">Click me!</Button>
     </div>
   );
 }
