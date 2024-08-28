@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button"
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ROUTES } from "./routes";
+
+const router = createBrowserRouter(ROUTES);
 
 function App() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline text-red-300">
-        My React and TypeScript Appp!
-      </h1>
-      <Button variant="destructive">Click me!</Button>
-    </div>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 }
 
