@@ -5,9 +5,10 @@ interface BalanceProps {
   accountBalance: number;
   income: number;
   expenses: number;
+  currency: string; 
 }
 
-const Balance: React.FC<BalanceProps> = ({ accountBalance, income, expenses }) => {
+const Balance: React.FC<BalanceProps> = ({ accountBalance, income, expenses, currency  }) => {
   return (
     <div
       className="text-white p-6 rounded-lg shadow-md"
@@ -19,7 +20,7 @@ const Balance: React.FC<BalanceProps> = ({ accountBalance, income, expenses }) =
     >
       <div className="text-center mb-6">
         <p className="text-lg">Account Balance</p>
-        <p className="text-4xl font-semibold">£{accountBalance}</p>
+        <p className="text-4xl font-semibold">{currency}{accountBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
       </div>
       <div className="flex justify-around">
         <div className="bg-gray-700 p-4 rounded-3xl flex items-center w-2/5">
@@ -28,16 +29,16 @@ const Balance: React.FC<BalanceProps> = ({ accountBalance, income, expenses }) =
           </div>
           <div>
             <p className="text-sm">Income</p>
-            <p className="text-xl font-medium">£{income}</p>
+            <p className="text-xl font-medium">{currency}{income.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
           </div>
         </div>
-        <div className="bg-indigo-700 p-4 rounded-3xl flex items-center w-2/5">
-          <div className="bg-indigo-500 p-2 rounded-full mr-3">
+        <div className="bg-sky-700 p-4 rounded-3xl flex items-center w-2/5">
+          <div className="bg-sky-600 p-2 rounded-full mr-3">
             <LuArrowUpSquare />
           </div>
           <div>
             <p className="text-sm">Expenses</p>
-            <p className="text-xl font-medium">£{expenses}</p>
+            <p className="text-xl font-medium">{currency}{expenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
           </div>
         </div>
       </div>
