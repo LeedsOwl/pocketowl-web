@@ -24,7 +24,7 @@ const Transaction = (props: TransactionProps) => {
   };
 
   return (
-    <div className="w-screen px-3 py-2">
+    <div className="px-3 py-2">
       <div className="mt-1 space-y-4">
         {/* Transaction */}
         <div className="rounded-lg bg-card border border-gray-500 shadow p-4">
