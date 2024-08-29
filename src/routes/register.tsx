@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useTheme } from "@/theme-provider";
 
 const formSchema = z.object({
   fullName: z.string().min(1, "Full Name is required"),
@@ -56,14 +54,14 @@ function Register() {
     }
 
     const formData = new FormData();
-    formData.append("fullName", values.fullName);
+    formData.append("name", values.fullName);
     formData.append("email", values.email);
     formData.append("password", values.password);
     formData.append("flow", "signUp");
 
     signIn("password", formData)
       .then(() => {
-        navigate("/login");
+        navigate("/");
       })
       .catch((error) => {
         toast({

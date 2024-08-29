@@ -14,7 +14,7 @@ const passwordWithValidation = Password({
     if (error) {
       throw new ConvexError(error.format());
     }
-    return { email: data.email };
+    return { email: data.email as string, name: data.name as string };
   },
 });
 
