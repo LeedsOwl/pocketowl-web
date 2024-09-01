@@ -30,10 +30,12 @@ const ScrollButton = () => {
       onClick={() => navigate("/add-expense")}
     >
       <div className="flex items-center">
-        <PlusIcon className="h-9 w-9 text-white" />
+        <PlusIcon className="h-6 w-6 text-white" />
         <span
           className={`text-white font-semibold overflow-hidden transition-all duration-300 ease-in-out ${
-            showText ? "max-w-full opacity-100 pl-3 border-l border-gray-300 ml-3" : "max-w-0 opacity-0 pl-0 border-l-0 ml-0"
+            showText
+              ? "max-w-full opacity-100 pl-4 border-l border-gray-300 ml-3"
+              : "transition-[max-width,opacity,padding] duration-500 max-w-0 opacity-0 pl-0 border-l-0 ml-0"
           }`}
         >
           Add Expense
