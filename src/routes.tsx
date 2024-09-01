@@ -8,6 +8,7 @@ import Layout from "./components/layout";
 import Profile from "./routes/profile";
 import Groups from "./routes/groups";
 import Insights from "./routes/insights";
+import AddExpense from "./routes/add-expense";
 
 export const ROUTES = [
   {
@@ -46,6 +47,16 @@ export const ROUTES = [
       <Authenticated>
         <Layout>
           <Profile />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/add-expense",
+    element: (
+      <Authenticated>
+        <Layout>
+          <AddExpense />
         </Layout>
       </Authenticated>
     ),

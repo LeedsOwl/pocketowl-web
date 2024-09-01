@@ -8,17 +8,17 @@ interface TransactionProps {
 }
 
 const Transaction = (props: TransactionProps) => {
-  const transactionStatusList: { [key: string]: { color: string; text: string; } } = {
+  const transactionStatusList: { [key: string]: { color: string; text: string } } = {
     completed: {
-      color: "success",
+      color: "bg-green-600",
       text: "Completed",
     },
     pending: {
-      color: "primary",
+      color: "bg-blue-500",
       text: "Pending",
     },
     failed: {
-      color: "destructive",
+      color: "bg-red-600",
       text: "Failed",
     },
   };
@@ -36,7 +36,7 @@ const Transaction = (props: TransactionProps) => {
             <div className="text-right">
               <p className="text-sm font-bold">£{props.amount}</p>
               <div
-                className={`mt-1 rounded-full bg-${transactionStatusList[props.status].color} py-1 px-3 text-xs font-medium text-white`}
+                className={`mt-1 rounded-full py-1 px-3 text-xs font-medium text-white ${transactionStatusList[props.status].color}`}
               >
                 {transactionStatusList[props.status].text}
               </div>

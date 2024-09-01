@@ -1,6 +1,8 @@
 import Balance from "@/components/balance";
 import Transaction from "@/components/transaction";
 import Chart from "@/components/bar-chart";
+import { useNavigate } from "react-router-dom";
+import ScrollButton from "@/components/ui/scroll-button";
 
 function Home() {
   const MOCK_TRANSACTIONS = [
@@ -41,6 +43,8 @@ function Home() {
     },
   ];
 
+  const navigate = useNavigate();
+
   return (
     <div className="pb-16">
       {/* Sticky Balance Component */}
@@ -67,6 +71,9 @@ function Home() {
         ))}
       </div>
       <br></br>
+      <div className="fixed bottom-24 right-4 z-100">
+        <ScrollButton /> {/* Use the ScrollButton component here */}
+      </div>
     </div>
   );
 }

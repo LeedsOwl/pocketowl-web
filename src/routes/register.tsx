@@ -199,7 +199,7 @@ function Register() {
                 control={form.control}
                 name="termsAccepted"
                 render={({ field }) => (
-                  <FormItem className="flex pt-4">
+                  <FormItem className="flex pb-2">
                     <Checkbox
                       id="terms"
                       className="mr-2 h-5 w-5"
@@ -218,7 +218,7 @@ function Register() {
               />
               <Button
                 type="submit"
-                className="mt-6 rounded-lg bg-primary px-4 py-2 text-center text-base font-semibold  shadow-md outline-none ring-blue-500 ring-offset-2 transition hover:bg-blue-700 focus:ring-2 md:w-32"
+                className="mt-6 rounded-lg bg-primary px-4 py-2 text-center text-base font-semibold dark:text-white shadow-md outline-none ring-blue-500 ring-offset-2 transition hover:bg-blue-700 focus:ring-2 md:w-32"
               >
                 Sign Up
               </Button>
