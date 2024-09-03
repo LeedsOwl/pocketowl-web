@@ -1,13 +1,65 @@
 import Home from "./routes/home";
 import Login from "./routes/login";
-import { Unauthenticated } from "convex/react";
+import { Authenticated, Unauthenticated } from "convex/react";
 import Register from "./routes/register";
 import { Toaster } from "./components/ui/toaster";
+import Welcome from "./routes/welcome";
+import Layout from "./components/layout";
+import Profile from "./routes/profile";
+import Groups from "./routes/groups";
+import Insights from "./routes/insights";
+import AddExpense from "./routes/add-expense";
 
 export const ROUTES = [
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <Authenticated>
+        <Layout>
+          <Home />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/groups",
+    element: (
+      <Authenticated>
+        <Layout>
+          <Groups />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/insights",
+    element: (
+      <Authenticated>
+        <Layout>
+          <Insights />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <Authenticated>
+        <Layout>
+          <Profile />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/add-expense",
+    element: (
+      <Authenticated>
+        <Layout>
+          <AddExpense />
+        </Layout>
+      </Authenticated>
+    ),
   },
   {
     path: "/login",
@@ -25,6 +77,14 @@ export const ROUTES = [
         <Register />
         <Toaster />
       </Unauthenticated>
+    ),
+  },
+  {
+    path: "/welcome",
+    element: (
+      <Authenticated>
+        <Welcome />
+      </Authenticated>
     ),
   },
 ];
