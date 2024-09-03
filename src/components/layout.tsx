@@ -1,7 +1,7 @@
 import React from "react";
 import BottomNav from "./bottom-nav";
 
-function Layout({ children }) {
+function Layout({ children }: { children: any }) {
   return (
     <div>
       {children}

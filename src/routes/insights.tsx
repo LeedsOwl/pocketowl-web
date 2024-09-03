@@ -1,8 +1,11 @@
 import React from 'react'
+import { Donut } from '@/components/pie-chart'
 
 function Insights() {
   return (
-    <div>Insights</div>
+    <div className='p-2'>
+      <Donut />
+    </div>
   )
 }
 
