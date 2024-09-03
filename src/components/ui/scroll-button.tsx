@@ -3,7 +3,11 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const ScrollButton = () => {
+type ScrollButtonProps = {
+  onClick: () => void;
+};
+
+const ScrollButton = ({ onClick }: ScrollButtonProps) => {
   const navigate = useNavigate();
   const [showText, setShowText] = useState(false);
 
@@ -27,7 +31,7 @@ const ScrollButton = () => {
     <Button
       size="lg"
       className="p-3 rounded-full shadow-lg border border-gray-300 bg-[#7eafce21] hover:bg-blue-800 backdrop-blur-3xl transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300"
-      onClick={() => navigate("/add-expense")}
+      onClick={onClick}
     >
       <div className="flex items-center">
         <PlusIcon className="h-6 w-6 text-white" />
