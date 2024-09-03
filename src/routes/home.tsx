@@ -3,8 +3,18 @@ import Transaction from "@/components/transaction";
 import Chart from "@/components/bar-chart";
 import { useNavigate } from "react-router-dom";
 import ScrollButton from "@/components/ui/scroll-button";
+import { useState } from "react";
+import AddExpense from "@/components/add-expense";
+import { DrawerTrigger } from "@/components/ui/drawer";
 
 function Home() {
+  const [showAddExpense, setShowAddExpense] = useState(false);
+
+  const handleAddExpenseButtonClick = () => {
+    console.log("Add Expense Button Clicked");
+    setShowAddExpense(!showAddExpense);
+  };
+
   const MOCK_TRANSACTIONS = [
     {
       id: 1,
@@ -72,8 +82,10 @@ function Home() {
       </div>
       <br></br>
       <div className="fixed bottom-24 right-4 z-100">
-        <ScrollButton /> {/* Use the ScrollButton component here */}
+        <ScrollButton onClick={() => handleAddExpenseButtonClick()} />{" "}
+        {/* Use the ScrollButton component here */}
       </div>
+      <AddExpense open={showAddExpense} setOpen={setShowAddExpense} />
     </div>
   );
 }
