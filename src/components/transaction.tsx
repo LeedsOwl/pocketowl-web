@@ -8,7 +8,9 @@ interface TransactionProps {
 }
 
 const Transaction = (props: TransactionProps) => {
-  const transactionStatusList: { [key: string]: { color: string; text: string } } = {
+  const transactionStatusList: {
+    [key: string]: { color: string; text: string };
+  } = {
     completed: {
       color: "bg-green-600",
       text: "Completed",
@@ -31,7 +33,15 @@ const Transaction = (props: TransactionProps) => {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm font-bold">{props.description}</p>
-              <p className="text-sm text-gray-400">{props.date.toDateString()}</p>
+              <p className="text-sm text-gray-400">
+                {props.date.toDateString()}{" "}
+              </p>
+              <p className="text-sm text-gray-300">
+                {props.date.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
             </div>
             <div className="text-right">
               <p className="text-sm font-bold">£{props.amount}</p>

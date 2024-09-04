@@ -208,7 +208,8 @@ function Register() {
                     />
                     <FormLabel className="space-y-0">
                       I agree to the{" "}
-                      <a className="underline" href="#">
+                      {/* Add window for terms and conditions */}
+                      <a className="underline" href="#"> 
                         Terms and Conditions
                       </a>
                     </FormLabel>

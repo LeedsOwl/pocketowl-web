@@ -1,10 +1,34 @@
 import Balance from "@/components/balance";
 import Transaction from "@/components/transaction";
 import Chart from "@/components/bar-chart";
-import { useNavigate } from "react-router-dom";
 import ScrollButton from "@/components/ui/scroll-button";
+import { useState } from "react";
+import AddExpense from "@/components/add-expense";
+import { Toaster } from "@/components/ui/toaster";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Id } from "convex/_generated/dataModel";
+
+interface Transaction {
+  _creationTime: number;
+  _id: Id<"transactions">;
+  amount: number;
+  category: string;
+  dateTime: string;
+  description: string;
+  user_id: Id<"users">;
+}
 
 function Home() {
+  const [showAddExpense, setShowAddExpense] = useState(false);
+  const userTransactions = useQuery(api.transactions.getUserTransactions, {}) || [];
+  console.log(userTransactions);
+
+  const handleAddExpenseButtonClick = () => {
+    console.log("Add Expense Button Clicked");
+    setShowAddExpense(!showAddExpense);
+  };
+
   const MOCK_TRANSACTIONS = [
     {
       id: 1,
@@ -43,8 +67,6 @@ function Home() {
     },
   ];
 
-  const navigate = useNavigate();
-
   return (
     <div className="pb-16">
       {/* Sticky Balance Component */}
@@ -60,20 +82,23 @@ function Home() {
       <Chart />
       <h2 className="mt-2 text-xl font-bold p-3">Recent Transactions</h2>
       <div>
-        {MOCK_TRANSACTIONS.map((transaction) => (
+        {userTransactions.map((transaction: Transaction) => (
           <Transaction
-            key={transaction.id}
-            date={new Date(transaction.date)}
+            key={transaction._id}
+            date={new Date(transaction._creationTime)}
             description={transaction.description}
             amount={transaction.amount}
-            status={transaction.status}
+            status={"completed"}
           />
         ))}
       </div>
       <br></br>
       <div className="fixed bottom-24 right-4 z-100">
-        <ScrollButton /> {/* Use the ScrollButton component here */}
+        <ScrollButton onClick={() => handleAddExpenseButtonClick()} />{" "}
+        {/* Use the ScrollButton component here */}
       </div>
+      <AddExpense open={showAddExpense} setOpen={setShowAddExpense} />
+      <Toaster className="bottom-20" />
     </div>
   );
 }
