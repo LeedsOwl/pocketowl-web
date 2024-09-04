@@ -30,15 +30,16 @@ const ScrollButton = ({ onClick }: ScrollButtonProps) => {
   return (
     <Button
       size="lg"
-      className="p-3 rounded-full shadow-lg border border-gray-300 bg-[#7eafce21] hover:bg-blue-800 backdrop-blur-3xl transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300"
+      // Translucent button - bg-[#7eafce21]
+      className="p-3 h-full rounded-full shadow-lg border border-primary bg-[#1b1f23b2] hover:bg-blue-800 backdrop-blur-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300"
       onClick={onClick}
     >
       <div className="flex items-center">
-        <PlusIcon className="h-6 w-6 text-white" />
+        <PlusIcon className="h-6 w-6 text-primary" />
         <span
-          className={`text-white font-semibold overflow-hidden transition-all duration-300 ease-in-out ${
+          className={`text-primary font-semibold overflow-hidden transition-all duration-300 ease-in-out ${
             showText
-              ? "max-w-full opacity-100 pl-4 border-l border-gray-300 ml-3"
+              ? "max-w-full opacity-100 pl-4 border-l border-primary ml-3"
               : "transition-[max-width,opacity,padding] duration-500 max-w-0 opacity-0 pl-0 border-l-0 ml-0"
           }`}
         >

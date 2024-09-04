@@ -1,5 +1,8 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -8,44 +11,79 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@/components/ui/drawer"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { Id } from "convex/_generated/dataModel";
+import CurrencyInput from "@/components/ui/currency-input";
 
 // Dummy JSON data for categories
-const categories = [
+const dummy_categories = [
   { value: "groceries", label: "Groceries" },
   { value: "utilities", label: "Utilities" },
-  { value: "entertainment", label: "Entertainment" },
+  { value: "shopping", label: "Shopping" },
   { value: "transportation", label: "Transportation" },
   { value: "dining", label: "Dining Out" },
-]
+];
 
 interface AddExpenseProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function AddExpense({ open, setOpen }: AddExpenseProps) {
-  const [amount, setAmount] = useState("")
-  const [description, setDescription] = useState("")
-  const [category, setCategory] = useState("")
+interface Category {
+  _id: Id<"categories">;
+  _creationTime: number;
+  friendly_name: string;
+  value: string;
+}
 
-  const handleSubmit = () => {
-    console.log({ amount, description, category })
-    setOpen(false)
+export default function AddExpense({ open, setOpen }: AddExpenseProps) {
+  const { toast } = useToast();
+
+  const categories: Category[] =
+    useQuery(api.categories.getCategories, {}) || [];
+  const userInfo = useQuery(api.userQuery.getUserInfo, {});
+  const mutateTransaction = useMutation(api.transactions.setTransaction);
+
+  console.log(categories);
+
+  const [amount, setAmount] = useState(0.0);
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+
+  const handleSubmit = async () => {
+    console.log({ amount, description, category });
+
+    if (!userInfo) {
+      console.error("User info not available");
+      return;
+    }
+
+    const addedTransaction = await mutateTransaction({
+      user_id: userInfo._id,
+      dateTime: new Date().toISOString(),
+      description: description,
+      amount: amount,
+      category: category as Id<"categories">,
+    });
+    toast({
+      description: `Successfully added expense: ${description}`,
+    });
+
+    setOpen(false);
     // Reset form fields
-    setAmount("")
-    setDescription("")
-    setCategory("")
-  }
+    setAmount(0);
+    setDescription("");
+    setCategory("");
+  };
 
   return (
     <div>
@@ -53,20 +91,14 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
         <DrawerContent>
           <DrawerHeader className="sm:text-center">
             <DrawerTitle className="text-2xl">Add Expense</DrawerTitle>
-            <DrawerDescription>Enter the details of your new expense.</DrawerDescription>
+            <DrawerDescription>
+              Enter the details of your new expense.
+            </DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="amount">Amount</Label>
-                <Input
-                  id="amount"
-                  placeholder="0.00"
-                  type="number"
-                  step="0.01"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
+                <CurrencyInput onChange={(value) => setAmount(value)} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
@@ -84,11 +116,12 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </SelectItem>
-                    ))}
+                    {categories &&
+                      categories.map((cat: Category) => (
+                        <SelectItem key={cat.value} value={cat._id}>
+                          {cat.friendly_name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -103,5 +136,5 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
         </DrawerContent>
       </Drawer>
     </div>
-  )
+  );
 }
