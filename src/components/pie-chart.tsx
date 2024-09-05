@@ -90,11 +90,7 @@ const chartConfig = {
 
 export function Donut() {
   return (
-    <div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
+    <div>
       <Card className="text-white border bg-background rounded-lg shadow-md">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
