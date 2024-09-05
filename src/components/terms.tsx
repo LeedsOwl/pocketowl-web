@@ -1,19 +1,18 @@
 import * as React from "react";
-import { useState } from "react";
-import { Popover, PopoverTrigger, PopoverContent as RadixPopoverContent } from "@/components/ui/popover";
+import { useState, ReactNode } from "react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
-// Styled component or additional CSS for the close button
 const CloseButton = ({ onClick }: { onClick: () => void }) => (
   <button
     onClick={onClick}
     style={{
       position: 'absolute',
-      top: '0.5rem', // Adjust top spacing here
-      right: '0.5rem', // Adjust right spacing here
+      top: '0.5rem',
+      right: '0.5rem',
       background: 'none',
       border: 'none',
       cursor: 'pointer',
-      color: '#666', // Adjust close button color here
+      color: '#666',
       fontSize: '1.25rem',
     }}
     aria-label="Close"
@@ -22,7 +21,11 @@ const CloseButton = ({ onClick }: { onClick: () => void }) => (
   </button>
 );
 
-export const TermsModal: React.FC = () => {
+interface TermsProps {
+  children?: ReactNode; 
+}
+
+export const Terms: React.FC<TermsProps> = ({ children }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -31,26 +34,23 @@ export const TermsModal: React.FC = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button 
-          onClick={handleOpen} 
-          style={{  
-            cursor: 'pointer', 
-            textDecoration: 'underline' 
-          }}
-        >
-          Terms & Conditions 
+        <button onClick={handleOpen} className="terms-button">
+          Terms & Conditions
         </button>
       </PopoverTrigger>
       {open && (
-        <RadixPopoverContent onInteractOutside={handleClose} style={{ position: 'relative' }}>
+        <PopoverContent onInteractOutside={handleClose}  className="popover-content">
           <CloseButton onClick={handleClose} />
-          {/* Popover content here */}
+          <div className="children-content">
+            {children}
+          </div>
           <div className="terms-text">
-          <h4 className="text-lg font-semibold mb-2">Terms and Conditions</h4>
           <p className="text-sm mb-4">
-            Last Updated: [Date]
+          Last Updated: 05/09/2024
+          </p>
+          <p className="text-sm mb-4">
 
-            Welcome to PocketOwl! These Terms and Conditions ("Terms") govern your use of the PocketOwl mobile application ("App"), which is provided by [Your Company Name]. By accessing or using our App, you agree to be bound by these Terms. If you do not agree with any part of these Terms, you are prohibited from using the App.
+            Welcome to PocketOwl! These Terms and Conditions ("Terms") govern your use of the PocketOwl mobile application ("App"), which is provided by Pocket Owl. By accessing or using our App, you agree to be bound by these Terms. If you do not agree with any part of these Terms, you are prohibited from using the App.
           </p>
           <h5 className="font-medium mt-4 mb-2">1. Acceptance of Terms</h5>
           <p>
@@ -73,7 +73,7 @@ export const TermsModal: React.FC = () => {
           </p>
           <h5 className="font-medium mt-4 mb-2">4. Privacy Policy</h5>
           <p>
-            Our Privacy Policy explains how we collect, use, and share your personal information. By using PocketOwl, you agree to our data practices as described in the Privacy Policy.
+            Our Privacy Policy explains how we collect, use, and share your personal information. By using Pocket Owl, you agree to our data practices as described in the Privacy Policy.
           </p>
           <h5 className="font-medium mt-4 mb-2">5. User Conduct</h5>
           <p>
@@ -107,14 +107,14 @@ export const TermsModal: React.FC = () => {
           </p>
           <h5 className="font-medium mt-4 mb-2">11. Governing Law</h5>
           <p>
-            These Terms shall be governed by the laws of [Your Jurisdiction] without regard to its conflict of law provisions.
+            These Terms shall be governed by the laws of UK without regard to its conflict of law provisions.
           </p>
           <h5 className="font-medium mt-4 mb-2">12. Contact Us</h5>
           <p>
-            If you have any questions about these Terms, please contact us at [Your Contact Information].
+            If you have any questions about these Terms, please contact us at pocketOwl@gmail.com.
           </p>
         </div>
-        </RadixPopoverContent>
+        </PopoverContent>
       )}
     </Popover>
   );
