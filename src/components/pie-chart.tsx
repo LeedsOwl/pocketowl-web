@@ -1,11 +1,11 @@
-"use client";
-
 import * as React from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { TrendingUp } from "lucide-react";
-import { Label, Pie, PieChart } from "recharts";
+import { TrendingDown } from "lucide-react";
+import { Pie, PieChart, PieLabelRenderProps, Label, Cell } from "recharts"; // Import Cell for individual color control
 import { FaCircle } from "react-icons/fa";
-import { motion } from "framer-motion"; // Import Framer Motion
-
+import { motion } from "framer-motion"; 
 import {
   Card,
   CardContent,
@@ -15,29 +15,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-interface LabelProps {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  innerRadius: number;
-  outerRadius: number;
-  percent: number;
-}
+// Define category colors for the PieChart and icons
+const categoryColors = {
+  food: "#6C465D",
+  bills: "#A95166",
+  travel: "#EB6D3A",
+  others: "#E1A639",
+  shopping: "#386590",
+};
 
-// Expense data, representing categories and amounts
-const chartData = [
-  { category: "Shopping", value: 275, fill: "#6C465D" },
-  { category: "Home", value: 200, fill: "#A95166" },
-  { category: "Food & Drink", value: 287, fill: "#EB6D3A" },
-  { category: "Trips", value: 173, fill: "#E1A639" },
-  { category: "Transport", value: 190, fill: "#386590" },
-];
+const friendlyNameMap = {
+  food: "Food",
+  bills: "Bills",
+  travel: "Travel",
+  others: "Others",
+  shopping: "Shopping",
+};
+
+const chartConfig = {
+  food: { label: "Food" },
+  bills: { label: "Bills" },
+  travel: { label: "Travel" },
+  others: { label: "Others" },
+  shopping: { label: "Shopping" },
+};
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -47,14 +53,14 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
-}: LabelProps) => {
+}: PieLabelRenderProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
   return (
     <motion.text
-      initial={{ opacity: 0, y: 10 }} // Motion animation for chart labels
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       x={x}
@@ -68,27 +74,29 @@ const renderCustomizedLabel = ({
       {`${(percent * 100).toFixed(0)}%`}
     </motion.text>
   );
-};
+}
 
-const chartConfig = {
-  Shopping: {
-    label: "Shopping%",
-  },
-  Home: {
-    label: "Home",
-  },
-  "Food & Drink": {
-    label: "Food & Drink",
-  },
-  Trips: {
-    label: "Trips",
-  },
-  Transport: {
-    label: "Transport",
-  },
-} satisfies ChartConfig;
+interface Insights {
+  totalAmount: number;
+  categoryTotals: { [key: string]: number; };
+}
 
 export function Donut() {
+  const transactions: Insights = useQuery(api.insights.getInsights, { period: "month" }) || { totalAmount: 0, categoryTotals: {} };
+  console.log(transactions);
+
+  const categoryTotals = transactions?.categoryTotals;
+
+  const chartData = Object.keys(categoryTotals).map(category => ({
+    category,
+    value: categoryTotals[category],
+    color: categoryColors[category as keyof typeof categoryColors],
+  }));
+
+  if (transactions.totalAmount === 0) {
+    return <div>No transactions available for this period.</div>;
+  }
+
   return (
     <div>
       <Card className="text-white border bg-background rounded-lg shadow-md">
@@ -102,7 +110,7 @@ export function Donut() {
               Personal Expense Breakdown
             </CardTitle>
             <CardDescription className="text-sm text-gray-400">
-              Last 6 months of expenses categorized
+              This month
             </CardDescription>
           </CardHeader>
         </motion.div>
@@ -137,6 +145,9 @@ export function Donut() {
                   animationBegin={400}
                   animationDuration={1200}
                 >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
                   <Label
                     content={({ viewBox }) => {
                       if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -155,7 +166,7 @@ export function Donut() {
                               y={viewBox.cy}
                               className="fill-white text-2xl font-bold"
                             >
-                              £1025
+                              £{transactions.totalAmount}
                             </tspan>
                             <tspan
                               x={viewBox.cx}
@@ -183,47 +194,17 @@ export function Donut() {
         >
           <CardFooter className="flex-col gap-2 text-sm">
             <div className="grid grid-cols-2 gap-2 font-medium text-gray-200">
-            {/* <div className="grid grid-cols-2 gap-y-2 gap-x-4 font-medium text-gray-200"> */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="flex items-center gap-2"
-              >
-                <FaCircle className="h-3 w-3 text-[#6C465D]" /> Shopping
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="flex items-center gap-2"
-              >
-                <FaCircle className="h-3 w-3 text-[#A95166]" /> Home
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="flex items-center gap-2"
-              >
-                <FaCircle className="h-3 w-3 text-[#EB6D3A]" /> Food & Drink
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="flex items-center gap-2"
-              >
-                <FaCircle className="h-3 w-3 text-[#E1A639]" /> Trips
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.9 }}
-                className="flex items-center gap-2"
-              >
-                <FaCircle className="h-3 w-3 text-[#386590]" /> Transport
-              </motion.div>
+              {Object.keys(categoryTotals).map((category, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="flex items-center gap-2"
+                >
+                  <FaCircle className="h-3 w-3" style={{ color: categoryColors[category as keyof typeof categoryColors] }} /> {friendlyNameMap[category as keyof typeof friendlyNameMap] || category}
+                </motion.div>
+              ))}
             </div>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -233,14 +214,6 @@ export function Donut() {
             >
               Savings increased by 5.2% this month{" "}
               <TrendingUp className="h-5 w-5" />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.2 }}
-              className="leading-none text-gray-500"
-            >
-              Showing categorized expenses for the last 6 months
             </motion.div>
           </CardFooter>
         </motion.div>
