@@ -12,6 +12,7 @@ import Insights from "./routes/insights";
 export const ROUTES = [
   {
     path: "/",
+    title: "Home",
     element: (
       <Authenticated>
         <Layout>
@@ -22,6 +23,7 @@ export const ROUTES = [
   },
   {
     path: "/groups",
+    title: "Groups",
     element: (
       <Authenticated>
         <Layout>
@@ -32,6 +34,7 @@ export const ROUTES = [
   },
   {
     path: "/insights",
+    title: "Insights",
     element: (
       <Authenticated>
         <Layout>
@@ -42,6 +45,7 @@ export const ROUTES = [
   },
   {
     path: "/profile",
+    title: "Profile",
     element: (
       <Authenticated>
         <Layout>
@@ -52,6 +56,7 @@ export const ROUTES = [
   },
   {
     path: "/login",
+    title: "Login",
     element: (
       <Unauthenticated>
         <Login />
@@ -61,6 +66,7 @@ export const ROUTES = [
   },
   {
     path: "/register",
+    title: "Register",
     element: (
       <Unauthenticated>
         <Register />
@@ -70,6 +76,7 @@ export const ROUTES = [
   },
   {
     path: "/welcome",
+    title: "Welcome",
     element: (
       <Authenticated>
         <Welcome />

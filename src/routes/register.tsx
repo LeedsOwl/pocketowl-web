@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Terms } from "@/components/terms";
 
 const formSchema = z.object({
   fullName: z.string().min(1, "Full Name is required"),
@@ -202,16 +203,12 @@ function Register() {
                   <FormItem className="flex pb-2">
                     <Checkbox
                       id="terms"
-                      className="mr-2 h-5 w-5"
+                      className="mr-2 h-5 w-5 mt-1"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
-                    <FormLabel className="space-y-0">
-                      I agree to the{" "}
-                      {/* Add window for terms and conditions */}
-                      <a className="underline" href="#"> 
-                        Terms and Conditions
-                      </a>
+                    <FormLabel>
+                      I agree to the <Terms><a className="underline cursor-pointer">Terms and Conditions</a></Terms>
                     </FormLabel>
                     <FormMessage />
                   </FormItem>

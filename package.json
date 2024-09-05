@@ -14,10 +14,12 @@
     "@auth/core": "^0.34.2",
     "@convex-dev/auth": "^0.0.60",
     "@fontsource/inter": "^5.0.20",
+    "@headlessui/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-popover": "^1.1.1",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
@@ -26,6 +28,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "convex": "^1.14.3",
+    "date-fns": "^3.6.0",
+    "framer-motion": "^11.5.2",
     "globals": "^15.9.0",
     "headlessui": "^0.0.0",
     "lucide-react": "^0.429.0",
@@ -44,6 +48,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/date-fns": "^2.6.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "autoprefixer": "^10.4.20"
   }
