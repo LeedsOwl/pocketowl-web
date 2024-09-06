@@ -1,6 +1,8 @@
+"use client";
+
 import Balance from "@/components/balance";
 import Transaction from "@/components/transaction";
-import Chart from "@/components/bar-chart"; // Chart remains focused on UI
+import Chart from "@/components/bar-chart";
 import ScrollButton from "@/components/ui/scroll-button";
 import { useState } from "react";
 import AddExpense from "@/components/add-expense";
@@ -9,6 +11,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { subDays, format } from "date-fns";
+import { motion } from "framer-motion";
 
 interface Transaction {
   _creationTime: number;
@@ -37,16 +40,22 @@ function Home() {
   const previous7Days = getPrevious7Days();
 
   const weeklyData = last7Days.map((date) => ({
-    day: format(date, 'EEEE'),
+    day: format(date, "EEEE"),
     total: userTransactions
-      .filter((transaction: any) => format(new Date(transaction.dateTime), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd'))
+      .filter(
+        (transaction: any) =>
+          format(new Date(transaction.dateTime), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+      )
       .reduce((sum: number, transaction: any) => sum + transaction.amount, 0),
   }));
 
   const previousWeekData = previous7Days.map((date) => ({
-    day: format(date, 'EEEE'),
+    day: format(date, "EEEE"),
     total: userTransactions
-      .filter((transaction: any) => format(new Date(transaction.dateTime), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd'))
+      .filter(
+        (transaction: any) =>
+          format(new Date(transaction.dateTime), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+      )
       .reduce((sum: number, transaction: any) => sum + transaction.amount, 0),
   }));
 
@@ -61,35 +70,71 @@ function Home() {
 
   return (
     <div className="pb-16">
-      <div className="sticky top-0 z-50 bg-background shadow-md">
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="sticky top-0 z-50 bg-background shadow-md"
+      >
         <Balance accountBalance={1000} income={500} expenses={200} currency="£" />
-      </div>
+      </motion.div>
 
-      <Chart 
-        weeklyData={weeklyData}
-        totalCurrentWeek={totalCurrentWeek}
-        totalPreviousWeek={totalPreviousWeek}
-        isFirstWeek={isFirstWeek}
-        isSpendingUp={isSpendingUp}
-      />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        <Chart
+          weeklyData={weeklyData}
+          totalCurrentWeek={totalCurrentWeek}
+          totalPreviousWeek={totalPreviousWeek}
+          isFirstWeek={isFirstWeek}
+          isSpendingUp={isSpendingUp}
+        />
+      </motion.div>
 
-      <h2 className="mt-2 text-xl font-bold p-3">Recent Transactions</h2>
-      <div>
-        {userTransactions.map((transaction: Transaction) => (
-          <Transaction
+      <motion.h2
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="mt-2 text-xl font-bold p-3"
+      >
+        Recent Transactions
+      </motion.h2>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+      >
+        {userTransactions.map((transaction: Transaction, index) => (
+          <motion.div
             key={transaction._id}
-            date={new Date(transaction._creationTime)}
-            description={transaction.description}
-            amount={transaction.amount}
-            status={"completed"}
-          />
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <Transaction
+              date={new Date(transaction._creationTime)}
+              description={transaction.description}
+              amount={transaction.amount}
+              status={"completed"}
+            />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
-      <div className="fixed bottom-24 right-4 z-100">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
+        className="fixed bottom-24 right-4 z-100"
+      >
         <ScrollButton onClick={handleAddExpenseButtonClick} />
-      </div>
+      </motion.div>
+
       <AddExpense open={showAddExpense} setOpen={setShowAddExpense} />
+
       <Toaster className="bottom-20" />
     </div>
   );
