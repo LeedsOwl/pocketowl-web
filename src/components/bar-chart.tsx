@@ -1,12 +1,8 @@
-"use client"
+"use client";
 
 import * as React from "react";
-import { useQuery } from "convex/react"; // Assuming your API is set up to fetch recent transactions
-import { api } from "../../convex/_generated/api";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
-import { subDays, format } from "date-fns"; // Import subDays and format
-
 import {
   Card,
   CardContent,
@@ -21,17 +17,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-// Helper function to get the last 7 days
-const getLast7Days = () => {
-  return Array.from({ length: 7 }, (_, i) => format(subDays(new Date(), i), 'EEEE')).reverse(); // Reverse to get Monday-Sunday order
-};
-
-// Helper function to get the previous 7 days
-const getPreviousWeek = () => {
-  const lastWeekStart = subDays(new Date(), 7);
-  return Array.from({ length: 7 }, (_, i) => format(subDays(lastWeekStart, i), 'EEEE')).reverse();
-};
-
 const chartConfig = {
   expenses: {
     label: "Expenses",
@@ -39,43 +24,26 @@ const chartConfig = {
   },
 };
 
-const Chart = () => {
-  // Fetch recent transactions for the current user
-  const transactions = useQuery(api.transactions.getUserTransactions) || [];
+interface WeeklyData {
+  day: string;
+  total: number;
+}
 
-  // Group transactions by day for the last 7 days
-  const last7Days = getLast7Days();
-  const previousWeek = getPreviousWeek();
+interface ChartProps {
+  weeklyData: WeeklyData[];
+  totalCurrentWeek: number;
+  totalPreviousWeek: number;
+  isFirstWeek: boolean;
+  isSpendingUp: boolean;
+}
 
-  const weeklyData = last7Days.map((day) => ({
-    day,
-    total: transactions
-      .filter((transaction: any) => format(new Date(transaction.dateTime), 'EEEE') === day)
-      .reduce((sum: number, transaction: any) => sum + transaction.amount, 0),
-  }));
 
-  const previousWeekData = previousWeek.map((day) => ({
-    day,
-    total: transactions
-      .filter((transaction: any) => format(new Date(transaction.dateTime), 'EEEE') === day)
-      .reduce((sum: number, transaction: any) => sum + transaction.amount, 0),
-  }));
-
-  // Calculate total spending for the last 7 days and previous 7 days
-  const totalCurrentWeek = weeklyData.reduce((sum, data) => sum + data.total, 0);
-  const totalPreviousWeek = previousWeekData.reduce((sum, data) => sum + data.total, 0);
-
-  // If previous week's total is 0, always show spending "up" by the total amount this week
-  const showComparison = totalPreviousWeek > 0;
-  const isSpendingUp = totalCurrentWeek > totalPreviousWeek;
-
-  // Determine the class for the text and icon based on the comparison
-  const trendClass = isSpendingUp ? "text-green-500" : "text-red-500";
+const Chart: React.FC<ChartProps> = ({ weeklyData, totalCurrentWeek, totalPreviousWeek, isFirstWeek, isSpendingUp }) => {
+  const trendClass = isSpendingUp ? "text-red-500" : "text-green-500";
   const Icon = isSpendingUp ? TrendingUp : TrendingDown;
 
-  // Prepare data for the chart
   const chartData = weeklyData.map(({ day, total }) => ({
-    day: day.slice(0, 3), // Shorten day names to 3 letters (Mon, Tue, etc.)
+    day: day.slice(0, 3),
     expenses: total,
   }));
 
@@ -91,9 +59,7 @@ const Chart = () => {
             <BarChart
               accessibilityLayer
               data={chartData}
-              margin={{
-                top: 20,
-              }}
+              margin={{ top: 20 }}
             >
               <CartesianGrid vertical={false} />
               <XAxis
@@ -102,36 +68,25 @@ const Chart = () => {
                 tickMargin={10}
                 axisLine={false}
               />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
               <Bar dataKey="expenses" fill="var(--primary)" radius={8}>
-                <LabelList
-                  position="top"
-                  offset={12}
-                  className="fill-foreground"
-                  fontSize={12}
-                />
+                <LabelList position="top" offset={12} className="fill-foreground" fontSize={12} />
               </Bar>
             </BarChart>
           </ChartContainer>
         </CardContent>
         <CardFooter className="flex-col items-start gap-2 text-sm">
-          {!showComparison ? (
-            // No previous week data, so show total spending this week
-            <div className="flex gap-2 font-medium leading-none text-green-500">
-              Spending up by £{totalCurrentWeek} this week
-              <TrendingUp className="h-4 w-4" />
+          {isFirstWeek ? (
+            <div className="flex gap-2 font-medium leading-none text-primary">
+              Total expenditure this week: £{totalCurrentWeek}
             </div>
           ) : (
-            // Compare with the previous week's spending
             <div className={`flex gap-2 font-medium leading-none ${trendClass}`}>
-              Spending {isSpendingUp ? "up" : "down"} by £{Math.abs(totalCurrentWeek - totalPreviousWeek)} this week
+              Expenditure {isSpendingUp ? "up" : "down"} by £{Math.abs(totalCurrentWeek - totalPreviousWeek)} this week
               <Icon className="h-4 w-4" />
             </div>
           )}
-          <div className="leading-none text-muted-foreground">
+          <div className="leading-none text-gray-400">
             Showing total Expenses for the last 7 days.
           </div>
         </CardFooter>
