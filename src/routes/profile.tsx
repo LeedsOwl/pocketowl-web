@@ -14,7 +14,7 @@ function Profile() {
     });
   };
 
-  const userInfo = useQuery(api.userQuery.getUserInfo, {});
+  const userInfo = useQuery(api.users.getUserInfo, {});
 
   return (
     <div>

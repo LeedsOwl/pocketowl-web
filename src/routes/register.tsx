@@ -47,6 +47,7 @@ function Register() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
     if (values.password !== values.confirmPassword) {
       toast({
         description: "Passwords do not match!",
@@ -59,7 +60,7 @@ function Register() {
     formData.append("email", values.email);
     formData.append("password", values.password);
     formData.append("flow", "signUp");
-
+    
     signIn("password", formData)
       .then(() => {
         navigate("/");

@@ -19,6 +19,21 @@ const schema = defineSchema({
     value: v.string(),
     friendly_name: v.string(),
   }),
+  groups: defineTable({
+    name: v.string(),
+    created_by: v.id("users"),
+    description: v.string(),
+    default_split_type: v.string(),
+    default_split_percentages: v.object({
+      group_member_id: v.id("group_members"),
+      percentage: v.number(),
+    }),
+  }),
+  group_members: defineTable({
+    group_id: v.id("groups"),
+    user_id: v.id("users"),
+    invite_accepted: v.boolean(),
+  }),
 });
  
 export default schema;

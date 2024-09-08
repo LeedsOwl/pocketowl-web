@@ -50,7 +50,7 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
 
   const categories: Category[] =
     useQuery(api.categories.getCategories, {}) || [];
-  const userInfo = useQuery(api.userQuery.getUserInfo, {});
+  const userInfo = useQuery(api.users.getUserInfo, {});
   const mutateTransaction = useMutation(api.transactions.setTransaction);
 
   console.log(categories);
