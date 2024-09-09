@@ -4,6 +4,7 @@ import ScrollButton from "@/components/ui/scroll-button";
 import { Toaster } from "@/components/ui/toaster";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { MdChevronRight } from "react-icons/md";
 import AddGroup from "@/components/add-group";
 
 function Groups() {
@@ -62,19 +63,29 @@ function Groups() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 p-3">
             {groups.map((group, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
-                 <CardHeader className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-lg font-bold text-gray-800">{group.title}</CardTitle>
-                    <CardDescription className="text-sm text-gray-500">{group.description}</CardDescription>
-                  </div>                  <button className="ml-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                    View
-                  </button>
-                </CardHeader>
-                
-              </Card>
+              <div key={index} className="px-3 py-2">
+                <div className="mt-1 space-y-4">
+                  <div className="rounded-lg bg-card border border-gray-500 shadow p-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-bold">{group.title}</p>
+                        <p className="text-sm text-gray-400">{group.description}</p>
+                      </div>
+
+                      <div className="text-right">
+                        <button
+                            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary flex justify-center items-center"
+                            title="View Group"
+                          >
+                          <MdChevronRight className="text-xl" /> 
+                      </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </motion.div>

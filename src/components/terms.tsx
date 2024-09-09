@@ -6,16 +6,16 @@ const CloseButton = ({ onClick }: { onClick: () => void }) => (
   <button
     onClick={onClick}
     style={{
-      width: '80%',             // Make the button smaller
-      margin: '1rem auto 0 auto', // Center the button horizontally
-      padding: '0.5rem 1rem',   // Padding for a more compact appearance
-      background: '#333',       // Darker background
-      color: '#fff',            // White text color
-      border: 'none',           // No border
-      borderRadius: '0.25rem',  // Rounded corners
+      width: '80%',            
+      margin: '1rem auto 0 auto', 
+      padding: '0.5rem 1rem',   
+      background: '#333',       
+      color: '#fff',            
+      border: 'none',           
+      borderRadius: '0.25rem',  
       cursor: 'pointer',
       fontSize: '1rem',
-      display: 'block',         // Block to make centering effective
+      display: 'block',         
     }}
     aria-label="Close"
   >
