@@ -209,7 +209,7 @@ function Register() {
                       onCheckedChange={field.onChange}
                     />
                     <FormLabel>
-                      I agree to the <Terms><a className="underline cursor-pointer">Terms and Conditions</a></Terms>
+                      I agree to the <Terms/>
                     </FormLabel>
                     <FormMessage />
                   </FormItem>

@@ -6,18 +6,20 @@ const CloseButton = ({ onClick }: { onClick: () => void }) => (
   <button
     onClick={onClick}
     style={{
-      position: 'absolute',
-      top: '0.5rem',
-      right: '0.5rem',
-      background: 'none',
-      border: 'none',
+      width: '80%',             // Make the button smaller
+      margin: '1rem auto 0 auto', // Center the button horizontally
+      padding: '0.5rem 1rem',   // Padding for a more compact appearance
+      background: '#333',       // Darker background
+      color: '#fff',            // White text color
+      border: 'none',           // No border
+      borderRadius: '0.25rem',  // Rounded corners
       cursor: 'pointer',
-      color: '#666',
-      fontSize: '1.25rem',
+      fontSize: '1rem',
+      display: 'block',         // Block to make centering effective
     }}
     aria-label="Close"
   >
-    X
+    Close
   </button>
 );
 
@@ -40,7 +42,7 @@ export const Terms: React.FC<TermsProps> = ({ children }) => {
       </PopoverTrigger>
       {open && (
         <PopoverContent onInteractOutside={handleClose}  className="popover-content">
-          <CloseButton onClick={handleClose} />
+          <h2 className="text-lg text-primary font-semibold mb-4 text-center">Terms and Conditions</h2>
           <div className="children-content">
             {children}
           </div>
@@ -114,6 +116,7 @@ export const Terms: React.FC<TermsProps> = ({ children }) => {
             If you have any questions about these Terms, please contact us at pocketOwl@gmail.com.
           </p>
         </div>
+        <CloseButton onClick={handleClose} />
         </PopoverContent>
       )}
     </Popover>
