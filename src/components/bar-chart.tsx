@@ -77,7 +77,7 @@ const Chart: React.FC<ChartProps> = ({ weeklyData, totalCurrentWeek, totalPrevio
         </CardContent>
         <CardFooter className="flex-col items-start gap-2 text-sm">
           {isFirstWeek ? (
-            <div className="flex gap-2 font-medium leading-none text-primary">
+            <div className="flex gap-2 font-medium leading-none text-slate-900 dark:text-primary">
               Total expenditure this week: £{totalCurrentWeek}
             </div>
           ) : (
@@ -86,7 +86,7 @@ const Chart: React.FC<ChartProps> = ({ weeklyData, totalCurrentWeek, totalPrevio
               <Icon className="h-4 w-4" />
             </div>
           )}
-          <div className="leading-none text-gray-400">
+          <div className="leading-none text-gray-500 dark:text-gray-400">
             Showing total Expenses for the last 7 days.
           </div>
         </CardFooter>

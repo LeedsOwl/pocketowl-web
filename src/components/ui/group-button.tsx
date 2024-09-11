@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-type ScrollButtonProps = {
+type GroupButtonProps = {
   onClick: () => void;
 };
 
-const ScrollButton = ({ onClick }: ScrollButtonProps) => {
+const GroupButton = ({ onClick }: GroupButtonProps) => {
   const navigate = useNavigate();
   const [showText, setShowText] = useState(false);
 
@@ -37,17 +37,12 @@ const ScrollButton = ({ onClick }: ScrollButtonProps) => {
       <div className="flex items-center">
         <PlusIcon className="h-6 w-6 text-primary" />
         <span
-          className={`text-primary font-semibold overflow-hidden transition-all duration-300 ease-in-out ${
-            showText
-              ? "max-w-full opacity-100 pl-4 border-l border-primary ml-3"
-              : "transition-[max-width,opacity,padding] duration-500 max-w-0 opacity-0 pl-0 border-l-0 ml-0"
-          }`}
-        >
-          Add Expense
+          className="max-w-full text-primary opacity-100 pl-4 border-l border-primary ml-3 duration-500">
+          Add Group
         </span>
       </div>
     </Button>
   );
 };
 
-export default ScrollButton;
+export default GroupButton;

@@ -43,6 +43,8 @@ const renderCustomizedLabel = ({
   outerRadius,
   percent = 0,
 }: PieLabelRenderProps) => {
+  if (percent === 0) return null; 
+  
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
@@ -64,6 +66,7 @@ const renderCustomizedLabel = ({
     </motion.text>
   );
 };
+
 
 interface DonutProps {
   chartData: Array<{ category: string; value: number }>;
@@ -89,10 +92,10 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
           transition={{ duration: 0.6 }}
         >
           <CardHeader className="pb-1">
-            <CardTitle className="text-xl font-bold tracking-wide">
+            <CardTitle className="text-xl text-black dark:text-white font-bold tracking-wide">
               Personal Expense Breakdown
             </CardTitle>
-            <CardDescription className="text-sm text-gray-400">
+            <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
               This month
             </CardDescription>
           </CardHeader>
@@ -135,7 +138,7 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
                         fill={categoryColors[entry.category.toLowerCase()] || defaultColor}
                       />
                     ))}
-                    <Label
+                    <Label className="text-center"
                       content={({ viewBox }) => {
                         if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                           return (
@@ -151,7 +154,7 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
                               <tspan
                                 x={viewBox.cx}
                                 y={viewBox.cy}
-                                className="fill-white text-2xl font-bold"
+                                className="text-black dark:fill-white text-2xl text-center font-bold"
                               >
                                 £{totalAmount}
                               </tspan>
@@ -181,7 +184,7 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <CardFooter className="flex-col gap-2 text-sm">
-            <div className="grid grid-cols-2 gap-2 font-medium text-gray-200">
+            <div className="grid grid-cols-2 gap-2 font-medium text-gray-800 dark:text-gray-200 ">
               {Object.keys(categoryTotals || {}).map((category, index) => (
                 <motion.div
                   key={index}

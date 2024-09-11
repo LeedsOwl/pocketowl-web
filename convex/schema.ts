@@ -24,10 +24,10 @@ const schema = defineSchema({
     created_by: v.id("users"),
     description: v.string(),
     default_split_type: v.string(),
-    default_split_percentages: v.object({
+    default_split_percentages: v.optional(v.object({
       group_member_id: v.id("group_members"),
-      percentage: v.number(),
-    }),
+      percentage: v.float64(),
+    })),
   }),
   group_members: defineTable({
     group_id: v.id("groups"),

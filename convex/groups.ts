@@ -7,24 +7,27 @@ export const setGroup = mutation({
     name: v.string(),
     created_by: v.id("users"),
     description: v.string(),
-    default_split_type: v.optional(v.string()),
-    default_split_percentages: v.object({
-      // group_member_id: v.id("group_members"),
+    default_split_type: v.string(),
+    default_split_percentages: v.optional(v.object({
       group_member_id: v.optional(v.id("group_members")),
-      // percentage: v.number(),
-      percentage: v.optional(v.number()),
-    }),
+      percentage: v.optional(v.float64()),
+    })),
   },
   handler: async (ctx, args) => {
     const { name, created_by, description, default_split_type, default_split_percentages } = args;
 
-    const groupId = await ctx.db.insert("groups", {
+    const groupData: any = {
       name,
       created_by,
       description,
       default_split_type,
-      default_split_percentages: default_split_percentages || {},
-    });
+    };
+
+    if (default_split_percentages && default_split_percentages.group_member_id) {
+      groupData.default_split_percentages = default_split_percentages;
+    }
+
+    const groupId = await ctx.db.insert("groups", groupData);
 
     return groupId;
   },

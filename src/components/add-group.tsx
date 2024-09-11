@@ -28,13 +28,6 @@ interface AddGroupProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface Category {
-  _id: Id<"categories">;
-  _creationTime: number;
-  friendly_name: string;
-  value: string;
-}
-
 interface GroupMember {
   _id: Id<"group_members">;
   user_id: Id<"users">;
@@ -44,7 +37,6 @@ interface GroupMember {
 export default function AddGroup({ open, setOpen }: AddGroupProps) {
   const { toast } = useToast();
 
-  const categories: Category[] = useQuery(api.categories.getCategories, {}) || [];
   const groupMembers: GroupMember[] = useQuery(api.groups.getGroupMembers, {}) || [];
   const userInfo = useQuery(api.users.getUserInfo, {});
 
@@ -52,7 +44,6 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
 
   const [groupName, setGroupName] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState<string | undefined>(undefined);
   const [selectedGroupMember, setSelectedGroupMember] = useState<Id<"group_members"> | undefined>(undefined);
   const [splitType, setSplitType] = useState("");
   const [splitPercentage, setSplitPercentage] = useState<number>(0);
@@ -63,7 +54,7 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
       return;
     }
   
-    if (!groupName || !description || !category || !splitType) {
+    if (!groupName || !description || !splitType) {
       toast({
         description: "Please fill in all required fields.",
       });
@@ -79,7 +70,7 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
         default_split_percentages: selectedGroupMember ? {
           group_member_id: selectedGroupMember,
           percentage: splitPercentage || 0,
-        } : undefined, // Only send if selectedGroupMember exists
+        } : undefined,
       });
   
       toast({
@@ -89,7 +80,6 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
       setOpen(false);
       setGroupName("");
       setDescription("");
-      setCategory(undefined);
       setSelectedGroupMember(undefined);
       setSplitType("");
       setSplitPercentage(0);
@@ -136,22 +126,6 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-              </div>
-              <div className="grid gap-2">
-                <Label>Category</Label>
-                <Select onValueChange={(value) => setCategory(value as string)} value={category}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories &&
-                      categories.map((cat: Category) => (
-                        <SelectItem key={cat._id.toString()} value={cat._id.toString()}>
-                          {cat.friendly_name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
               </div>
               <div className="grid gap-2">
                 <Label>Select Group Member</Label>

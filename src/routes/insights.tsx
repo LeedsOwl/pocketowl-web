@@ -43,7 +43,7 @@ const Insights = () => {
   const categories = useQuery(api.categories.getCategories, {}) || [];
   const transactions: Categories = useQuery(api.insights.getInsights, { period: "month" }) || { totalAmount: 0, categoryTotals: {} };
   
-  const [startAnimation, setStartAnimation] = useState(false); // Control animation start
+  const [startAnimation, setStartAnimation] = useState(false);
   const categoryTotals = transactions?.categoryTotals;
 
   const chartData = Object.keys(categoryTotals).map(category => ({

@@ -33,10 +33,10 @@ const Transaction = (props: TransactionProps) => {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm font-bold">{props.description}</p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm dark:text-gray-400">
                 {props.date.toDateString()}{" "}
               </p>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm dark:text-gray-300">
                 {props.date.toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",

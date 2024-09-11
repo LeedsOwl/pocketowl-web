@@ -35,8 +35,8 @@ const Balance: React.FC<BalanceProps> = ({
           </p>
         </div>
         <div className="flex justify-around">
-          <div className="bg-background border border-gray-400 p-4 rounded-3xl flex items-center lg:w-1/6 sm:w-2/5">
-            <div className="bg-background border border-gray-200 p-2 rounded-full mr-3">
+          <div className="bg-slate-900 dark:bg-background border border-gray-400 p-4 rounded-3xl flex items-center lg:w-1/6 sm:w-2/5">
+            <div className="bg-slate-900 dark:bg-background border border-gray-200 p-2 rounded-full mr-3">
               <LuArrowDownSquare />
             </div>
             <div>

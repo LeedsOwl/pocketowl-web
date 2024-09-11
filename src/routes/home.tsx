@@ -69,7 +69,7 @@ function Home() {
   };
 
   return (
-    <div className="pb-16">
+    <div className="pb-24">
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
