@@ -35,19 +35,25 @@ interface Category {
   value: string;
 }
 
+interface GroupMember {
+  _id: Id<"group_members">;
+  user_id: Id<"users">;
+  invite_accepted: boolean;
+}
+
 export default function AddGroup({ open, setOpen }: AddGroupProps) {
   const { toast } = useToast();
 
-  // Query the categories and user info
   const categories: Category[] = useQuery(api.categories.getCategories, {}) || [];
+  const groupMembers: GroupMember[] = useQuery(api.groups.getGroupMembers, {}) || [];
   const userInfo = useQuery(api.users.getUserInfo, {});
-  
-  // Mutation to add a group
+
   const mutateGroup = useMutation(api.groups.setGroup);
 
   const [groupName, setGroupName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
+  const [selectedGroupMember, setSelectedGroupMember] = useState<Id<"group_members"> | undefined>(undefined);
   const [splitType, setSplitType] = useState("");
   const [splitPercentage, setSplitPercentage] = useState<number>(0);
 
@@ -56,27 +62,35 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
       console.error("User info not available");
       return;
     }
-
+  
+    if (!groupName || !description || !category || !splitType) {
+      toast({
+        description: "Please fill in all required fields.",
+      });
+      return;
+    }
+  
     try {
       const addedGroup = await mutateGroup({
         name: groupName,
         created_by: userInfo._id,
         description,
         default_split_type: splitType,
-        default_split_percentages: {
-          group_member_id: "some-group-member-id", // You can fetch group members and assign this
-          percentage: splitPercentage,
-        },
+        default_split_percentages: selectedGroupMember ? {
+          group_member_id: selectedGroupMember,
+          percentage: splitPercentage || 0,
+        } : undefined, // Only send if selectedGroupMember exists
       });
-
+  
       toast({
         description: `Successfully added Group: ${groupName}`,
       });
-
+  
       setOpen(false);
       setGroupName("");
       setDescription("");
       setCategory(undefined);
+      setSelectedGroupMember(undefined);
       setSplitType("");
       setSplitPercentage(0);
     } catch (error: unknown) {
@@ -91,6 +105,7 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
       }
     }
   };
+  
 
   return (
     <div>
@@ -124,15 +139,31 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
               </div>
               <div className="grid gap-2">
                 <Label>Category</Label>
-                <Select onValueChange={setCategory} value={category}>
+                <Select onValueChange={(value) => setCategory(value as string)} value={category}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories &&
                       categories.map((cat: Category) => (
-                        <SelectItem key={cat.value} value={cat._id.toString()}>
+                        <SelectItem key={cat._id.toString()} value={cat._id.toString()}>
                           {cat.friendly_name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label>Select Group Member</Label>
+                <Select onValueChange={(value) => setSelectedGroupMember(value as Id<"group_members">)} value={selectedGroupMember?.toString()}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select group member" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {groupMembers &&
+                      groupMembers.map((member: GroupMember) => (
+                        <SelectItem key={member._id.toString()} value={member._id.toString()}>
+                          {member.user_id.toString()}
                         </SelectItem>
                       ))}
                   </SelectContent>
@@ -158,6 +189,7 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
                   placeholder="Enter percentage"
                   value={splitPercentage}
                   onChange={(e) => setSplitPercentage(parseFloat(e.target.value))}
+                  disabled={splitType !== "percentage"}
                 />
               </div>
             </div>

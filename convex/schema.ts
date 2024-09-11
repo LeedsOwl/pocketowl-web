@@ -35,5 +35,5 @@ const schema = defineSchema({
     invite_accepted: v.boolean(),
   }),
 });
- 
+
 export default schema;
