@@ -8,6 +8,7 @@ import Layout from "./components/layout";
 import Profile from "./routes/profile";
 import Groups from "./routes/groups";
 import Insights from "./routes/insights";
+import GroupDetails from "./routes/groupDetails";
 
 export const ROUTES = [
   {
@@ -17,6 +18,17 @@ export const ROUTES = [
       <Authenticated>
         <Layout>
           <Home />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/groups/:id",
+    title: "Group",
+    element: (
+      <Authenticated>
+        <Layout>
+          <GroupDetails />
         </Layout>
       </Authenticated>
     ),
