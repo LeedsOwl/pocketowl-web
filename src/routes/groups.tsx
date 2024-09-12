@@ -21,12 +21,7 @@ function Groups() {
   return (
     <div className="p-1 overflow-y-auto max-h-screen">
       <div className="pb-16">
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="sticky top-0 z-50 bg-background shadow-md"
-        >
+        <div className="sticky top-0 z-50 bg-background shadow-md">
           <div
             className="text-white p-14 bg-background rounded-lg shadow-md"
             style={{
@@ -40,7 +35,7 @@ function Groups() {
               <p className="text-lg font-bold text-gray-400">Divide bills seamlessly!</p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         <div className="p-2">
           <div className="rounded-lg pb-2 border shadow-md mt-4">

@@ -2,7 +2,7 @@ import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { Input  } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 // import { CurrencyPreferenceSwitch } from "@/components/ui/currency-preference-switch";
@@ -98,6 +98,7 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-background">
+      {/* Static container for profile header */}
       <div className="p-1 overflow-y-auto max-h-screen">
         <div
           className="text-white p-14 bg-background rounded-lg shadow-md"
@@ -114,17 +115,20 @@ function Profile() {
         </div>
       </div>
 
-      <motion.div className="p-3">
-        <motion.div
-          className="flex flex-col items-center pt-2 px-2 border rounded-lg shadow-md"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          <motion.div className="w-full max-w-4xl p-6 dark:bg-background rounded-xl shadow-lg space-y-4">
-            <motion.div className="border-b pb-4 mb-4">
-              <motion.h1 className="text-xl font-semibold" variants={itemVariants}>Account Settings</motion.h1>
+      <div className="p-3">
+        {/* Static container for account settings with border and shadow */}
+        <div className="flex flex-col items-center pt-2 px-2 border rounded-lg shadow-md">
+          {/* Animating only the inner content */}
+          <motion.div
+            className="w-full max-w-4xl p-6 dark:bg-background rounded-xl shadow-lg space-y-4"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            {/* Account Settings Section */}
+            <motion.div className="border-b pb-4 mb-4" variants={itemVariants}>
+              <motion.h1 className="text-xl font-semibold">Account Settings</motion.h1>
               <div className="space-y-4">
                 <motion.label className="flex items-center space-x-2" variants={itemVariants}>
                   <FaEnvelope className="w-7 h-7 p-1 bg-secondary rounded-full border border-white" />
@@ -142,6 +146,7 @@ function Profile() {
                   <Input type="password" placeholder="Enter new password" />
                 </motion.label>
                 <motion.div className="flex items-center justify-between" variants={itemVariants}>
+                  {/* Currency preference select dropdown */}
                   {/* <FaMoneyBillAlt className="w-7 h-7 p-1 bg-secondary rounded-full border border-white" />
                   <Select value={currency} onChange={handleCurrencyChange}>
                     <option value="USD">USD - US Dollar</option>
@@ -208,10 +213,10 @@ function Profile() {
               </motion.button>
             </motion.div>
           </motion.div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default Profile
+export default Profile;
