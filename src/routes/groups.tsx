@@ -1,17 +1,15 @@
-"use client";
-
+import { useState } from "react";
+import { useQuery } from "convex/react";
+import { Link } from "react-router-dom";
+import { api } from "../../convex/_generated/api";
 import GroupButton from "@/components/ui/group-button";
 import { Toaster } from "@/components/ui/toaster";
 import { motion } from "framer-motion";
 import { MdChevronRight } from "react-icons/md";
 import AddGroup from "@/components/add-group";
-import { useState } from "react";
-import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
 
 function Groups() {
   const [showAddGroup, setShowAddGroup] = useState(false);
-
   const userGroups = useQuery(api.groups.getUserGroups, {}) || [];
 
   const handleAddGroupButtonClick = () => {
@@ -63,14 +61,15 @@ function Groups() {
                             <p className="text-sm font-bold">{group.name}</p>
                             <p className="text-sm text-gray-400">{group.description}</p>
                           </div>
-
                           <div className="text-right">
-                            <button
-                              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary flex justify-center items-center"
-                              title="View Group"
-                            >
-                              <MdChevronRight className="text-xl" />
-                            </button>
+                            <Link to={`/groups/${group._id}`}>
+                              <button
+                                className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary flex justify-center items-center"
+                                title="View Group"
+                              >
+                                <MdChevronRight className="text-xl" />
+                              </button>
+                            </Link>
                           </div>
                         </div>
                       </div>
