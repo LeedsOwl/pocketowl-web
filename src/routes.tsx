@@ -9,6 +9,7 @@ import Profile from "./routes/profile";
 import Groups from "./routes/groups";
 import Insights from "./routes/insights";
 import GroupDetails from "./routes/groupDetails";
+import GroupInvite from "./routes/groupInvite";
 
 export const ROUTES = [
   {
@@ -21,6 +22,11 @@ export const ROUTES = [
         </Layout>
       </Authenticated>
     ),
+  },
+  {
+    path: "/groups/invite/:id",
+    title: "Group Invite",
+    element: <GroupInvite />,
   },
   {
     path: "/groups/:id",

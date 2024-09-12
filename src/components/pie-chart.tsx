@@ -161,7 +161,7 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
                               <tspan
                                 x={viewBox.cx}
                                 y={(viewBox.cy || 0) + 20}
-                                className="fill-gray-400 text-md"
+                                className="dark:fill-gray-400 text-md"
                               >
                                 Total Expenses
                               </tspan>

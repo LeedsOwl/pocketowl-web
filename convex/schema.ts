@@ -34,6 +34,13 @@ const schema = defineSchema({
     user_id: v.id("users"),
     invite_accepted: v.boolean(),
   }),
+  group_invites: defineTable({
+    group_id: v.id("groups"),
+    invited_by: v.id("users"), 
+    invite_token: v.string(),  
+    expiry_date: v.string(),
+    created_at: v.string(),
+  }),
 });
 
 export default schema;

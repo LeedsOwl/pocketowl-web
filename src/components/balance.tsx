@@ -1,5 +1,6 @@
 import React from "react";
 import { LuArrowDownSquare, LuArrowUpSquare } from "react-icons/lu";
+import { useTheme } from "../theme-provider";
 
 interface BalanceProps {
   accountBalance: number;
@@ -14,12 +15,16 @@ const Balance: React.FC<BalanceProps> = ({
   expenses,
   currency,
 }) => {
+  const { theme } = useTheme(); // Get current theme
+
+  const backgroundImage = theme === "dark" ? "/stacked-waves.svg" : "/register.svg"; // Conditionally choose the background image
+
   return (
     <div className="p-1">
       <div
         className="text-white p-6 px-2 rounded-lg shadow-md"
         style={{
-          backgroundImage: "url('/stacked-waves.svg')",
+          backgroundImage: `url(${backgroundImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

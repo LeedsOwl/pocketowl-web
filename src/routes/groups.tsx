@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { motion } from "framer-motion";
 import { MdChevronRight } from "react-icons/md";
 import AddGroup from "@/components/add-group";
+import { useTheme } from "../theme-provider";
 
 function Groups() {
   const [showAddGroup, setShowAddGroup] = useState(false);
@@ -16,6 +17,10 @@ function Groups() {
     setShowAddGroup(!showAddGroup);
   };
 
+  const { theme } = useTheme();
+  const backgroundImage =
+    theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
+
   return (
     <div className="p-1 overflow-y-auto max-h-screen">
       <div className="pb-16">
@@ -23,14 +28,16 @@ function Groups() {
           <div
             className="text-white p-14 bg-background rounded-lg shadow-md"
             style={{
-              backgroundImage: "url('/stacked-waves.svg')",
+              backgroundImage: `url(${backgroundImage})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
           >
             <div className="items-center text-center">
               <p className="text-2xl font-semibold">Group Split</p>
-              <p className="text-lg font-bold text-gray-400">Divide bills seamlessly!</p>
+              <p className="text-lg font-bold text-gray-300 dark:text-gray-400">
+                Divide bills seamlessly!
+              </p>
             </div>
           </div>
         </div>
@@ -59,7 +66,9 @@ function Groups() {
                         <div className="flex justify-between items-center">
                           <div>
                             <p className="text-sm font-bold">{group.name}</p>
-                            <p className="text-sm text-gray-400">{group.description}</p>
+                            <p className="text-sm text-gray-400">
+                              {group.description}
+                            </p>
                           </div>
                           <div className="text-right">
                             <Link to={`/groups/${group._id}`}>

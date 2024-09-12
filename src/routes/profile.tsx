@@ -3,14 +3,27 @@ import { useEffect, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectItem,
+  SelectContent,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-// import { CurrencyPreferenceSwitch } from "@/components/ui/currency-preference-switch";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../theme-provider";
-import { FaEnvelope, FaPhone, FaKey, FaBell, FaSms, FaPowerOff, FaMoneyBillAlt } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import {
+  FaEnvelope,
+  FaPhone,
+  FaKey,
+  FaBell,
+  FaSms,
+  FaPowerOff,
+  FaMoneyBillAlt,
+} from "react-icons/fa";
+import { motion } from "framer-motion";
 
 function Profile() {
   const navigate = useNavigate();
@@ -19,32 +32,35 @@ function Profile() {
   const [userHasPreference, setUserHasPreference] = useState<boolean>(false);
   const { setTheme } = useTheme();
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
+  const { theme } = useTheme();
+  const backgroundImage =
+    theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     if (!userHasPreference) {
       setDarkMode(mediaQuery.matches);
-      setTheme(mediaQuery.matches ? 'dark' : 'light');
+      setTheme(mediaQuery.matches ? "dark" : "light");
     }
 
     const handleSystemThemeChange = (e: MediaQueryListEvent) => {
       if (!userHasPreference) {
-        const newTheme = e.matches ? 'dark' : 'light';
+        const newTheme = e.matches ? "dark" : "light";
         setDarkMode(e.matches);
         setTheme(newTheme);
       }
     };
 
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
 
     return () => {
-      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
     };
   }, [setTheme, userHasPreference]);
 
   const handleThemeToggle = () => {
-    const newTheme = darkMode ? 'light' : 'dark';
+    const newTheme = darkMode ? "light" : "dark";
     setDarkMode(!darkMode);
     setTheme(newTheme);
     setUserHasPreference(true);
@@ -62,9 +78,11 @@ function Profile() {
 
   const userInfo = useQuery(api.users.getUserInfo, {});
 
-  const [currency, setCurrency] = useState<string>('GBP');
+  const [currency, setCurrency] = useState<string>("GBP");
 
-  const handleCurrencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleCurrencyChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setCurrency(event.target.value);
   };
 
@@ -76,13 +94,13 @@ function Profile() {
       scale: 1,
       y: 0,
       transition: {
-        type: 'spring',
+        type: "spring",
         stiffness: 80,
         staggerChildren: 0.1,
         when: "beforeChildren",
       },
     },
-    exit: { opacity: 0, y: 30, transition: { duration: 0.5 } }
+    exit: { opacity: 0, y: 30, transition: { duration: 0.5 } },
   };
 
   const buttonVariants = {
@@ -92,8 +110,12 @@ function Profile() {
 
   const itemVariants = {
     hidden: { opacity: 0, x: -50 },
-    visible: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 100 } },
-    exit: { opacity: 0, x: 50, transition: { duration: 0.3 } }
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { type: "spring", stiffness: 100 },
+    },
+    exit: { opacity: 0, x: 50, transition: { duration: 0.3 } },
   };
 
   return (
@@ -103,14 +125,14 @@ function Profile() {
         <div
           className="text-white p-14 bg-background rounded-lg shadow-md"
           style={{
-            backgroundImage: "url('/stacked-waves.svg')",
+            backgroundImage: `url(${backgroundImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
           <div className="items-center text-center">
             <p className="text-2xl font-semibold">{userInfo?.name}</p>
-            <p className="text-lg font-bold text-gray-400">{userInfo?.email}</p>
+            <p className="text-lg font-bold dark:text-gray-400">{userInfo?.email}</p>
           </div>
         </div>
       </div>
@@ -128,39 +150,57 @@ function Profile() {
           >
             {/* Account Settings Section */}
             <motion.div className="border-b pb-4 mb-4" variants={itemVariants}>
-              <motion.h1 className="text-xl font-semibold">Account Settings</motion.h1>
+              <motion.h1 className="text-xl font-semibold">
+                Account Settings
+              </motion.h1>
               <div className="space-y-4">
-                <motion.label className="flex items-center space-x-2" variants={itemVariants}>
+                <motion.label
+                  className="flex items-center space-x-2"
+                  variants={itemVariants}
+                >
                   <FaEnvelope className="w-7 h-7 p-1 bg-secondary rounded-full border border-white" />
                   <span className="mb-2">Change Email</span>
                   <Input type="email" placeholder="Enter new email" />
                 </motion.label>
-                <motion.label className="flex items-center space-x-2" variants={itemVariants}>
+                <motion.label
+                  className="flex items-center space-x-2"
+                  variants={itemVariants}
+                >
                   <FaPhone className="w-7 h-7 p-1 bg-secondary rounded-full border border-white" />
                   <span className="mb-2">Change Phone Number</span>
                   <Input type="tel" placeholder="Enter new phone number" />
                 </motion.label>
-                <motion.label className="flex items-center space-x-2" variants={itemVariants}>
+                <motion.label
+                  className="flex items-center space-x-2"
+                  variants={itemVariants}
+                >
                   <FaKey className="w-7 h-7 p-1 bg-secondary rounded-full border border-white" />
                   <span className="mb-2">Change Password</span>
                   <Input type="password" placeholder="Enter new password" />
                 </motion.label>
-                <motion.div className="flex items-center justify-between" variants={itemVariants}>
-                  {/* Currency preference select dropdown */}
-                  {/* <FaMoneyBillAlt className="w-7 h-7 p-1 bg-secondary rounded-full border border-white" />
-                  <Select value={currency} onChange={handleCurrencyChange}>
-                    <option value="USD">USD - US Dollar</option>
-                    <option value="EUR">EUR - Euro</option>
-                    <option value="GBP">GBP - British Pound</option>
-                  </Select> */}
-                  {/* <CurrencyPreferenceSwitch /> */}
+                <motion.div
+                  className="flex items-center justify-between"
+                  variants={itemVariants}
+                >
+                  <Select onValueChange={setCurrency} defaultValue={currency}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                      <SelectItem value="USD">USD - US Dollar</SelectItem>
+                      <SelectItem value="EUR">EUR - Euro</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </motion.div>
               </div>
             </motion.div>
 
             {/* Appearance Settings */}
             <motion.div className="border-b pb-4 mb-4" variants={itemVariants}>
-              <motion.h1 className="text-xl font-semibold">Appearance</motion.h1>
+              <motion.h1 className="text-xl font-semibold">
+                Appearance
+              </motion.h1>
               <motion.div className="flex items-center justify-between">
                 <span>Dark Mode</span>
                 <Switch
@@ -173,23 +213,34 @@ function Profile() {
 
             {/* Notifications Settings */}
             <motion.div className="border-b pb-4 mb-4" variants={itemVariants}>
-              <motion.h1 className="text-xl font-semibold">Notifications</motion.h1>
+              <motion.h1 className="text-xl font-semibold">
+                Notifications
+              </motion.h1>
               <div className="space-y-4">
-                <motion.label className="flex items-center justify-between space-x-2" variants={itemVariants}>
+                <motion.label
+                  className="flex items-center justify-between space-x-2"
+                  variants={itemVariants}
+                >
                   <div className="flex items-center space-x-2">
                     <FaBell />
                     <span>Email Notifications</span>
                   </div>
                   <Switch />
                 </motion.label>
-                <motion.label className="flex items-center justify-between space-x-2" variants={itemVariants}>
+                <motion.label
+                  className="flex items-center justify-between space-x-2"
+                  variants={itemVariants}
+                >
                   <div className="flex items-center space-x-2">
                     <FaSms />
                     <span>SMS Notifications</span>
                   </div>
                   <Switch />
                 </motion.label>
-                <motion.label className="flex items-center justify-between space-x-2" variants={itemVariants}>
+                <motion.label
+                  className="flex items-center justify-between space-x-2"
+                  variants={itemVariants}
+                >
                   <div className="flex items-center space-x-2">
                     <FaBell />
                     <span>Push Notifications</span>
@@ -200,7 +251,10 @@ function Profile() {
             </motion.div>
 
             {/* Sign Out Button */}
-            <motion.div className="mt-6 flex justify-center pb-24" variants={itemVariants}>
+            <motion.div
+              className="mt-6 flex justify-center pb-24"
+              variants={itemVariants}
+            >
               <motion.button
                 className="bg-primary hover:bg-secondary text-white py-2 px-4 rounded flex items-center space-x-2"
                 onClick={handleSignOut}

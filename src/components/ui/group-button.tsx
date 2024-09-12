@@ -38,7 +38,7 @@ const GroupButton = ({ onClick }: GroupButtonProps) => {
         <PlusIcon className="h-6 w-6 text-primary" />
         <span
           className="max-w-full text-primary opacity-100 pl-4 border-l border-primary ml-3 duration-500">
-          Add Group
+          Create Group
         </span>
       </div>
     </Button>

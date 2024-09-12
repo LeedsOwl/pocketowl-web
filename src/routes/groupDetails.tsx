@@ -1,29 +1,63 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { MdChevronLeft } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { MdChevronLeft } from "react-icons/md";
+import { FaPlus } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
+import { Id } from "convex/_generated/dataModel";
+import { useTheme } from "@/theme-provider";
 
 function GroupDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { theme } = useTheme();
+  const backgroundImage =
+    theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
 
-  // Mock data for group details
-  const groupDetails = {
-    name: 'Manans Date',
-    description: 'Library Date.',
-    default_split_type: 'Equal',
-    default_split_percentages: [
-      { group_member_id: '1', percentage: 50 },
-      { group_member_id: '2', percentage: 50 },
-    ],
+  const groupDetails =
+    useQuery(api.groups.getGroupDetails, { groupId: id }) || [];
+
+  const groupMembers =
+    useQuery(api.groups.getGroupMembersWithDetails, { groupId: id }) || [];
+
+  const creatorDetails =
+    useQuery(api.groups.getGroupCreatorDetails, {
+      userId: groupDetails?.created_by as Id<"users">,
+    }) || [];
+
+  const groupTransactions =
+    useQuery(api.groups.getGroupTransactions, { groupId: id }) || [];
+
+  if (groupDetails === undefined || creatorDetails === undefined) {
+    return <div>Loading...</div>;
+  }
+
+  const createInvite = useMutation(api.group_invites.getInvite);
+
+  const handleInvite = async () => {
+    const invite = await createInvite({
+      group_id: groupDetails._id as Id<"groups">,
+    });
+    console.log(invite);
+    console.log("Invite created", `/groups/invite/${invite?.invite_token}`);
   };
 
-  // Mock data for group members
-  const groupMembers = [
-    { id: '1', name: 'Manan', email: 'manan@example.com' },
-    { id: '2', name: 'Vismaya', email: 'vis@example.com' },
-    // Add more mock members as needed
-  ];
+  if (!groupDetails) {
+    return (
+      <div className="p-4">
+        <p className="text-red-500">Group not found.</p>
+        <button
+          onClick={() => navigate("/groups")}
+          className="mt-2 text-blue-500 underline"
+        >
+          Go back to Groups
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="p-1 overflow-y-auto max-h-screen">
@@ -33,9 +67,9 @@ function GroupDetails() {
           <div
             className="text-white p-14 bg-background rounded-lg shadow-md"
             style={{
-              backgroundImage: "url('/stacked-waves.svg')",
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
             }}
           >
             <div className="flex items-center justify-between">
@@ -49,15 +83,16 @@ function GroupDetails() {
               </Link>
               <div className="text-center flex-grow">
                 <p className="text-2xl font-semibold">{groupDetails.name}</p>
-                <p className="text-lg font-bold text-gray-400">{groupDetails.description}</p>
+                <p className="text-lg font-bold text-gray-300 dark:text-gray-400">
+                  {groupDetails.description}
+                </p>
               </div>
-              <div className="w-10"></div> {/* Placeholder for alignment */}
+              <div className="w-10"></div>
             </div>
           </div>
         </div>
 
         <div className="p-2">
-          {/* Group Information Section */}
           <div className="rounded-lg pb-2 border shadow-md mt-4">
             <motion.h2
               initial={{ opacity: 0 }}
@@ -72,15 +107,40 @@ function GroupDetails() {
               <div className="mt-1 space-y-4">
                 <div className="rounded-lg bg-card border border-gray-500 shadow p-4">
                   <p>
-                    <strong>Default Split Type:</strong> {groupDetails.default_split_type}
+                    <strong>Created By:</strong>{" "}
+                    {creatorDetails?.name || "Unknown User"}
                   </p>
-                  {/* Add more fields from groupDetails as needed */}
+                  <p>
+                    <strong>Default Split Type:</strong>{" "}
+                    {groupDetails.default_split_type}
+                  </p>
+                  {/* Display Default Split Percentages if applicable */}
+                  {groupDetails.default_split_type === "Percentage" &&
+                    groupDetails.default_split_percentages && (
+                      <div className="mt-2">
+                        <strong>Default Split Percentages:</strong>
+                        <ul className="list-disc list-inside">
+                          {groupDetails.default_split_percentages.map(
+                            (split, index) => {
+                              const member = groupMembers.find(
+                                (member) => member._id === split.group_member_id
+                              );
+                              return (
+                                <li key={index}>
+                                  {member?.user?.name || "Unknown Member"}:{" "}
+                                  {split.percentage}%
+                                </li>
+                              );
+                            }
+                          )}
+                        </ul>
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Group Members Section */}
           <div className="rounded-lg pb-2 border shadow-md mt-4">
             <motion.h2
               initial={{ opacity: 0 }}
@@ -103,10 +163,13 @@ function GroupDetails() {
                       <div className="rounded-lg bg-card border border-gray-500 shadow p-4">
                         <div className="flex justify-between items-center">
                           <div>
-                            <p className="text-sm font-bold">{member.name}</p>
-                            <p className="text-sm text-gray-400">{member.email}</p>
+                            <p className="text-sm font-bold">
+                              {member.user?.name || "Unknown User"}
+                            </p>
+                            <p className="text-sm text-gray-400">
+                              {member.user?.email}
+                            </p>
                           </div>
-                          {/* Add action buttons or links if needed */}
                         </div>
                       </div>
                     </div>
@@ -114,42 +177,51 @@ function GroupDetails() {
                 ))}
               </div>
             </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="p-3"
+            >
+              <Button color="primary" className="mt-4" onClick={handleInvite}>
+                <FaPlus /> Add
+              </Button>
+            </motion.div>
           </div>
 
-          {/* Default Split Percentages Section */}
-          {groupDetails.default_split_type === 'Percentage' && (
-            <div className="rounded-lg pb-2 border shadow-md mt-4">
-              <motion.h2
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-xl font-bold p-3 pb-1"
-              >
-                Default Split Percentages
-              </motion.h2>
+          <div className="rounded-lg pb-2 border shadow-md mt-4">
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-xl font-bold p-3 pb-1"
+            >
+              Transactions
+            </motion.h2>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <div className="px-3 py-2">
-                  <div className="mt-1 space-y-4">
-                    {groupDetails.default_split_percentages.map((split, index) => (
-                      <div key={index} className="rounded-lg bg-card border border-gray-500 shadow p-4">
-                        <p>
-                          <strong>Member ID:</strong> {split.group_member_id}
-                        </p>
-                        <p>
-                          <strong>Percentage:</strong> {split.percentage}%
-                        </p>
-                      </div>
-                    ))}
+            <div className="px-3 py-2">
+              {groupTransactions.length === 0 ? (
+                <p>No transactions available for this group.</p>
+              ) : (
+                groupTransactions.map((transaction, index) => (
+                  <div
+                    key={index}
+                    className="rounded-lg bg-card border border-gray-500 shadow p-4 mb-2"
+                  >
+                    <p>
+                      <strong>Description:</strong> {transaction.description}
+                    </p>
+                    <p>
+                      <strong>Amount:</strong> ${transaction.amount.toFixed(2)}
+                    </p>
+                    <p>
+                      <strong>Date:</strong> {transaction.dateTime}
+                    </p>
                   </div>
-                </div>
-              </motion.div>
+                ))
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

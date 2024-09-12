@@ -1,7 +1,14 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Donut } from "@/components/pie-chart";
-import { FaUtensils, FaMoneyBill, FaPlane, FaShoppingCart, FaEllipsisH } from "react-icons/fa"; 
+import { useTheme } from "../theme-provider";
+import {
+  FaUtensils,
+  FaMoneyBill,
+  FaPlane,
+  FaShoppingCart,
+  FaEllipsisH,
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -14,11 +21,11 @@ const categoryColors = {
 };
 
 const categoryIcons = {
-  Food: <FaUtensils />,
-  Bills: <FaMoneyBill />,
-  Travel: <FaPlane />,
-  Others: <FaEllipsisH />,
-  Shopping: <FaShoppingCart />,
+  Food: <FaUtensils className="text-white"/>,
+  Bills: <FaMoneyBill className="text-white"/>,
+  Travel: <FaPlane className="text-white"/>,
+  Others: <FaEllipsisH className="text-white"/>,
+  Shopping: <FaShoppingCart className="text-white"/>,
 };
 
 interface Categories {
@@ -32,7 +39,7 @@ const containerVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.2, 
+      delay: i * 0.2,
       type: "spring",
       stiffness: 100,
     },
@@ -40,13 +47,19 @@ const containerVariants = {
 };
 
 const Insights = () => {
+  const { theme } = useTheme();
+  const backgroundImage =
+    theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
+
   const categories = useQuery(api.categories.getCategories, {}) || [];
-  const transactions: Categories = useQuery(api.insights.getInsights, { period: "month" }) || { totalAmount: 0, categoryTotals: {} };
-  
+  const transactions: Categories = useQuery(api.insights.getInsights, {
+    period: "month",
+  }) || { totalAmount: 0, categoryTotals: {} };
+
   const [startAnimation, setStartAnimation] = useState(false);
   const categoryTotals = transactions?.categoryTotals;
 
-  const chartData = Object.keys(categoryTotals).map(category => ({
+  const chartData = Object.keys(categoryTotals).map((category) => ({
     category,
     value: categoryTotals[category],
     color: categoryColors[category as keyof typeof categoryColors],
@@ -64,51 +77,64 @@ const Insights = () => {
       <div
         className="text-white p-14 bg-background rounded-lg shadow-md"
         style={{
-          backgroundImage: "url('/stacked-waves.svg')",
+          backgroundImage: `url(${backgroundImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         <div className="items-center text-center">
           <p className="text-2xl font-semibold">Category Summary</p>
-          <p className="text-lg font-bold text-gray-400">
+          <p className="text-lg font-bold text-gray-300 dark:text-gray-400">
             January - September 2024
           </p>
         </div>
       </div>
 
       <div className="p-2 pb-24 pt-4">
-        <Donut chartData={chartData} totalAmount={transactions.totalAmount} categoryTotals={categoryTotals} />
+        <Donut
+          chartData={chartData}
+          totalAmount={transactions.totalAmount}
+          categoryTotals={categoryTotals}
+        />
 
-        {startAnimation && categories.map((category, index) => {
-          const categoryTotal = transactions.categoryTotals[category.value] || 0;
+        {startAnimation &&
+          categories.map((category, index) => {
+            const categoryTotal =
+              transactions.categoryTotals[category.value] || 0;
 
-          return (
-            <motion.div
-              key={index}
-              className="rounded-lg border border-gray-500 shadow p-4 mt-4 flex items-center"
-              style={{
-                backgroundColor: categoryColors[category.friendly_name as keyof typeof categoryColors] || "#333",
-              }}
-              initial="hidden"
-              animate="visible"
-              custom={index}
-              variants={containerVariants}
-            >
-              <div className="mr-4 text-2xl">
-                {categoryIcons[category.friendly_name as keyof typeof categoryIcons] || <FaEllipsisH />}
-              </div>
-              <div className="flex justify-between w-full">
-                <div>
-                  <p className="text-sm font-bold">{category.friendly_name}</p>
+            return (
+              <motion.div
+                key={index}
+                className="rounded-lg border border-gray-500 shadow p-4 mt-4 flex items-center"
+                style={{
+                  backgroundColor:
+                    categoryColors[
+                      category.friendly_name as keyof typeof categoryColors
+                    ] || "#333",
+                }}
+                initial="hidden"
+                animate="visible"
+                custom={index}
+                variants={containerVariants}
+              >
+                <div className="mr-4 text-2xl">
+                  {categoryIcons[
+                    category.friendly_name as keyof typeof categoryIcons
+                  ] || <FaEllipsisH />}
                 </div>
-                <div className="text-right">
-                  <p className="text-md font-bold">£{categoryTotal}</p>
+                <div className="flex text-white justify-between w-full">
+                  <div>
+                    <p className="text-sm font-bold">
+                      {category.friendly_name}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-md font-bold">£{categoryTotal}</p>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          );
-        })}
+              </motion.div>
+            );
+          })}
       </div>
     </div>
   );
