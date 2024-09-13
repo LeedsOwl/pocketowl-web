@@ -122,7 +122,8 @@ function Home() {
     setShowAddExpense(!showAddExpense);
   };
 
-  // Calculate total income and expenses
+  // Calculate total income and expenses 
+  // Just a placeholder logic for Balance component
   const totalIncome = userTransactions
     .filter((transaction) => transaction.category === "Income")
     .reduce((sum, transaction) => sum + transaction.amount, 0);
@@ -131,10 +132,8 @@ function Home() {
     .filter((transaction) => transaction.category !== "Income")
     .reduce((sum, transaction) => sum + transaction.amount, 0);
 
-  // Calculate account balance
   const accountBalance = totalIncome - totalExpenses;
 
-  // Ensure expenses are positive numbers for display purposes
   const displayExpenses = Math.abs(totalExpenses);
 
   return (
@@ -218,11 +217,3 @@ function Home() {
 }
 
 export default Home; 
-function filterTransactions(transactions: Transaction[], date: Date, startDate: Date) {
-  return transactions
-    .filter((transaction) =>
-      new Date(transaction.dateTime) >= startDate &&
-      new Date(transaction.dateTime) < startOfMonth(subMonths(startDate, -1))
-    )
-    .reduce((sum: number, transaction) => sum + transaction.amount, 0);
-}

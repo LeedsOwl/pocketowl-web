@@ -28,42 +28,14 @@ import { motion } from "framer-motion";
 function Profile() {
   const navigate = useNavigate();
   const { signOut } = useAuthActions();
-  const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [userHasPreference, setUserHasPreference] = useState<boolean>(false);
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
-  const { theme } = useTheme();
   const backgroundImage =
     theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    if (!userHasPreference) {
-      setDarkMode(mediaQuery.matches);
-      setTheme(mediaQuery.matches ? "dark" : "light");
-    }
-
-    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
-      if (!userHasPreference) {
-        const newTheme = e.matches ? "dark" : "light";
-        setDarkMode(e.matches);
-        setTheme(newTheme);
-      }
-    };
-
-    mediaQuery.addEventListener("change", handleSystemThemeChange);
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleSystemThemeChange);
-    };
-  }, [setTheme, userHasPreference]);
-
   const handleThemeToggle = () => {
-    const newTheme = darkMode ? "light" : "dark";
-    setDarkMode(!darkMode);
+    const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
-    setUserHasPreference(true);
   };
 
   const handleMailToggle = () => {
@@ -86,7 +58,7 @@ function Profile() {
     setCurrency(event.target.value);
   };
 
-  // Animation Variants
+  // Animation Variants (no changes needed here)
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.95, y: 30 },
     visible: {
@@ -132,7 +104,9 @@ function Profile() {
         >
           <div className="items-center text-center">
             <p className="text-2xl font-semibold">{userInfo?.name}</p>
-            <p className="text-lg font-bold dark:text-gray-400">{userInfo?.email}</p>
+            <p className="text-lg font-bold dark:text-gray-400">
+              {userInfo?.email}
+            </p>
           </div>
         </div>
       </div>
@@ -149,7 +123,10 @@ function Profile() {
             exit="exit"
           >
             {/* Account Settings Section */}
-            <motion.div className="border-b pb-4 mb-4" variants={itemVariants}>
+            <motion.div
+              className="border-b pb-4 mb-4"
+              variants={itemVariants}
+            >
               <motion.h1 className="text-xl font-semibold">
                 Account Settings
               </motion.h1>
@@ -179,17 +156,22 @@ function Profile() {
                   <Input type="password" placeholder="Enter new password" />
                 </motion.label>
                 <motion.div
-                  className="flex items-center justify-between"
+                  className="flex items-center space-x-2"
                   variants={itemVariants}
                 >
-                  <Select onValueChange={setCurrency} defaultValue={currency}>
+                  <FaMoneyBillAlt className="w-7 h-7 p-1 bg-secondary rounded-full border border-white" />
+                  <span className="mb-2"> Currency Preference </span>
+                  <Select
+                    onValueChange={setCurrency}
+                    defaultValue={currency}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select currency" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="GBP">GBP - British Pound</SelectItem>
-                      <SelectItem value="USD">USD - US Dollar</SelectItem>
-                      <SelectItem value="EUR">EUR - Euro</SelectItem>
+                      <SelectItem value="GBP">£ - British Pound</SelectItem>
+                      <SelectItem value="USD">$ - US Dollar</SelectItem>
+                      <SelectItem value="EUR">€ - Euro</SelectItem>
                     </SelectContent>
                   </Select>
                 </motion.div>
@@ -197,22 +179,26 @@ function Profile() {
             </motion.div>
 
             {/* Appearance Settings */}
-            <motion.div className="border-b pb-4 mb-4" variants={itemVariants}>
-              <motion.h1 className="text-xl font-semibold">
-                Appearance
-              </motion.h1>
+            <motion.div
+              className="border-b pb-4 mb-4"
+              variants={itemVariants}
+            >
+              <motion.h1 className="text-xl font-semibold">Appearance</motion.h1>
               <motion.div className="flex items-center justify-between">
                 <span>Dark Mode</span>
                 <Switch
                   id="dark-mode-toggle"
-                  checked={darkMode}
+                  checked={theme === "dark"}
                   onCheckedChange={handleThemeToggle}
                 />
               </motion.div>
             </motion.div>
 
             {/* Notifications Settings */}
-            <motion.div className="border-b pb-4 mb-4" variants={itemVariants}>
+            <motion.div
+              className="border-b pb-4 mb-4"
+              variants={itemVariants}
+            >
               <motion.h1 className="text-xl font-semibold">
                 Notifications
               </motion.h1>
