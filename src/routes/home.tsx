@@ -28,13 +28,6 @@ const getLast7Days = () => {
   return Array.from({ length: 7 }, (_, i) => subDays(new Date(), i)).reverse();
 };
 
-const getPrevious7Days = () => {
-  const lastWeekStart = subDays(new Date(), 7);
-  return Array.from({ length: 7 }, (_, i) =>
-    subDays(lastWeekStart, i)
-  ).reverse();
-};
-
 const getLast12Months = () => {
   return Array.from({ length: 12 }, (_, i) => subMonths(new Date(), i)).reverse();
 };
@@ -45,9 +38,7 @@ const getLast5Years = () => {
 
 function Home() {
   const [showAddExpense, setShowAddExpense] = useState(false);
-  const userTransactions =
-    useQuery(api.transactions.getUserTransactions, {}) || [];
-
+  const userTransactions = useQuery(api.transactions.getUserTransactions, {}) || [];
   const [activeTimeframe, setActiveTimeframe] = useState("week");
 
   const getTimeframeData = () => {
@@ -131,6 +122,21 @@ function Home() {
     setShowAddExpense(!showAddExpense);
   };
 
+  // Calculate total income and expenses
+  const totalIncome = userTransactions
+    .filter((transaction) => transaction.category === "Income")
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+  const totalExpenses = userTransactions
+    .filter((transaction) => transaction.category !== "Income")
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+  // Calculate account balance
+  const accountBalance = totalIncome - totalExpenses;
+
+  // Ensure expenses are positive numbers for display purposes
+  const displayExpenses = Math.abs(totalExpenses);
+
   return (
     <div className="pb-24">
       {" "}
@@ -144,7 +150,7 @@ function Home() {
         <Balance
           accountBalance={1000}
           income={500}
-          expenses={200}
+          expenses={displayExpenses}
           currency="£"
         />{" "}
       </motion.div>
