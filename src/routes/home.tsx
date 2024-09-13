@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
-import { subDays, subMonths, subYears, format, startOfMonth, startOfYear, eachMonthOfInterval, eachYearOfInterval } from "date-fns";
+import { subDays, subMonths, subYears, format, startOfMonth, isSameDay, isSameMonth, isSameYear } from "date-fns";
 import { motion } from "framer-motion";
 import { TimeframeTabs } from "@/components/ui/timeframe-tabs";
 
@@ -48,56 +48,84 @@ function Home() {
   const userTransactions =
     useQuery(api.transactions.getUserTransactions, {}) || [];
 
-  const last7Days = getLast7Days();
-  const previous7Days = getPrevious7Days();
-  const last12Months = getLast12Months();
-  const last5Years = getLast5Years();
+  const [activeTimeframe, setActiveTimeframe] = useState("week");
 
-  // const processData = (dates: Date[], format: string) => {
-  //   return dates.map((date) => ({
-  //     label: format(date, format), --- format
-  //     total: userTransactions
-  //       .filter(
-  //         (transaction: any) =>
-  //           new Date(transaction.dateTime) >= startOfMonth(date) &&
-  //           new Date(transaction.dateTime) < (format === "yyyy" ? startOfYear(subYears(date, -1)) : startOfMonth(subMonths(date, -1)))
-  //       )
-  //       .reduce((sum: number, transaction: any) => sum + transaction.amount, 0),
-  //   }));
-  // };
+  const getTimeframeData = () => {
+    switch (activeTimeframe) {
+      case "week":
+        return getLast7Days().map((date) => ({
+          label: format(date, "EEEE"),
+          total: userTransactions
+            .filter((transaction) =>
+              isSameDay(new Date(transaction._creationTime), date)
+            )
+            .reduce((sum, transaction) => sum + transaction.amount, 0),
+        }));
+      case "month":
+        return getLast12Months().map((date) => ({
+          label: format(date, "MMM"),
+          total: userTransactions
+            .filter((transaction) =>
+              isSameMonth(new Date(transaction._creationTime), date)
+            )
+            .reduce((sum, transaction) => sum + transaction.amount, 0),
+        }));
+      case "year":
+        return getLast5Years().map((date) => ({
+          label: format(date, "yyyy"),
+          total: userTransactions
+            .filter((transaction) =>
+              isSameYear(new Date(transaction._creationTime), date)
+            )
+            .reduce((sum, transaction) => sum + transaction.amount, 0),
+        }));
+      default:
+        return [];
+    }
+  };
 
-  const weeklyData = last7Days.map((date) => ({
-    day: format(date, "EEEE"),
-    total: userTransactions
-      .filter(
-        (transaction: any) =>
-          format(new Date(transaction.dateTime), "yyyy-MM-dd") ===
-          format(date, "yyyy-MM-dd")
-      )
-      .reduce((sum: number, transaction: any) => sum + transaction.amount, 0),
-  }));
+  const timeframeData = getTimeframeData();
+  const totalCurrent = timeframeData.reduce((sum, data) => sum + data.total, 0);
 
-  const previousWeekData = previous7Days.map((date) => ({
-    day: format(date, "EEEE"),
-    total: userTransactions
-      .filter(
-        (transaction: any) =>
-          format(new Date(transaction.dateTime), "yyyy-MM-dd") ===
-          format(date, "yyyy-MM-dd")
-      )
-      .reduce((sum: number, transaction: any) => sum + transaction.amount, 0),
-  }));
+  const getPreviousTimeframeData = () => {
+    switch (activeTimeframe) {
+      case "week":
+        return getLast7Days().map((date) => ({
+          label: format(subDays(date, 7), "EEEE"),
+          total: userTransactions
+            .filter((transaction) =>
+              isSameDay(new Date(transaction._creationTime), subDays(date, 7))
+            )
+            .reduce((sum, transaction) => sum + transaction.amount, 0),
+        }));
+      case "month":
+        return getLast12Months().map((date) => ({
+          label: format(subMonths(date, 1), "MMM"),
+          total: userTransactions
+            .filter((transaction) =>
+              isSameMonth(new Date(transaction._creationTime), subMonths(date, 1))
+            )
+            .reduce((sum, transaction) => sum + transaction.amount, 0),
+        }));
+      case "year":
+        return getLast5Years().map((date) => ({
+          label: format(subYears(date, 1), "yyyy"),
+          total: userTransactions
+            .filter((transaction) =>
+              isSameYear(new Date(transaction._creationTime), subYears(date, 1))
+            )
+            .reduce((sum, transaction) => sum + transaction.amount, 0),
+        }));
+      default:
+        return [];
+    }
+  };
 
-  const totalCurrentWeek = weeklyData.reduce(
-    (sum, data) => sum + data.total,
-    0
-  );
-  const totalPreviousWeek = previousWeekData.reduce(
-    (sum, data) => sum + data.total,
-    0
-  );
-  const isFirstWeek = totalPreviousWeek === 0;
-  const isSpendingUp = totalCurrentWeek > totalPreviousWeek;
+  const previousTimeframeData = getPreviousTimeframeData();
+  const totalPrevious = previousTimeframeData.reduce((sum, data) => sum + data.total, 0);
+
+  const isFirstPeriod = totalPrevious === 0;
+  const isSpendingUp = totalCurrent > totalPrevious;
 
   const handleAddExpenseButtonClick = () => {
     setShowAddExpense(!showAddExpense);
@@ -127,29 +155,18 @@ function Home() {
         transition={{ duration: 0.8, delay: 0.2 }}
       >
         <Chart
-          weeklyData={weeklyData}
-          totalCurrentWeek={totalCurrentWeek}
-          totalPreviousWeek={totalPreviousWeek}
-          isFirstWeek={isFirstWeek}
+          timeframeData={timeframeData}
+          totalCurrent={totalCurrent}
+          totalPrevious={totalPrevious}
+          isFirstPeriod={isFirstPeriod}
           isSpendingUp={isSpendingUp}
+          activeTimeframe={activeTimeframe}
+        />
+        <TimeframeTabs
+          activeTimeframe={activeTimeframe}
+          onTimeframeChange={setActiveTimeframe}
         />
       </motion.div>
-
-      {/* <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        <TimeframeTabs
-          weeklyData={weeklyData}
-          monthlyData={monthlyData}
-          yearlyData={yearlyData}
-          // weeklyTotals={weeklyTotals}
-          // monthlyTotals={monthlyTotals}
-          // yearlyTotals={yearlyTotals}
-          // onTimeframeChange={handleTimeframeChange}
-        />
-      </motion.div> */}
 
       <motion.h2
         initial={{ x: -100, opacity: 0 }}
@@ -195,3 +212,11 @@ function Home() {
 }
 
 export default Home; 
+function filterTransactions(transactions: Transaction[], date: Date, startDate: Date) {
+  return transactions
+    .filter((transaction) =>
+      new Date(transaction.dateTime) >= startDate &&
+      new Date(transaction.dateTime) < startOfMonth(subMonths(startDate, -1))
+    )
+    .reduce((sum: number, transaction) => sum + transaction.amount, 0);
+}
