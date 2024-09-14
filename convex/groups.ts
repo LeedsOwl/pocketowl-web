@@ -157,7 +157,7 @@ export const getGroupTransactions = query({
 
 export const addUserToGroup = mutation({
   args: {
-    group_id: v.id("groups"), // Ensure correct type for group_id
+    group_id: v.id("groups"),
   },
   handler: async (ctx, { group_id }) => {
     const user = await ctx.auth.getUserIdentity();
@@ -165,9 +165,8 @@ export const addUserToGroup = mutation({
       throw new Error("Not authenticated");
     }
 
-    const userId = user.subject.split("|")[0]; // Extracting user ID
+    const userId = user.subject.split("|")[0];
 
-    // Check if the user is already a member of the group
     const existingMember = await ctx.db
       .query("group_members")
       .filter((q) => q.eq(q.field("group_id"), group_id))
@@ -178,11 +177,10 @@ export const addUserToGroup = mutation({
       throw new Error("User is already a member of this group.");
     }
 
-    // Add the user to the group without joined_at
     await ctx.db.insert("group_members", {
       group_id,
       user_id: userId,
-      invite_accepted: true, // Set invite_accepted as true
+      invite_accepted: true,
     });
 
     return { success: true };

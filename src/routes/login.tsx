@@ -22,7 +22,7 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn } = useAuthActions();
-  const [errorMessage, setErrorMessage] = useState(""); // Error state
+  const [errorMessage, setErrorMessage] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -32,7 +32,6 @@ function Login() {
     },
   });
 
-  // Extract redirect path from URL params
   const redirectPath = new URLSearchParams(location.search).get("redirect");
 
   function onSubmit(values: z.infer<typeof formSchema>) {

@@ -45,13 +45,11 @@ export const getInsights = query({
         throw new Error("Invalid period");
     }
 
-    // get total amount spent in period
     const totalAmount = filteredTransactions.reduce(
       (acc, t) => acc + t.amount,
       0
     );
 
-    // get total amount spent per category
     const categories = await ctx.db.query("categories").collect();
     const categoryTotals = categories.reduce(
       (acc: { [key: string]: number }, category) => {
