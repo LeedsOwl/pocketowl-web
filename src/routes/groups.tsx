@@ -62,18 +62,18 @@ function Groups() {
                 {userGroups.map((group: any, index: any) => (
                   <div key={index} className="px-3 py-2">
                     <div className="mt-1 space-y-4">
-                      <div className="rounded-lg bg-card border border-gray-500 shadow p-4">
+                      <div className="rounded-lg bg-card border border-gray-400 dark:border-gray-500 shadow p-4">
                         <div className="flex justify-between items-center">
                           <div>
-                            <p className="text-sm font-bold">{group.name}</p>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm font-bold text-white">{group.name}</p>
+                            <p className="text-sm text-gray-200 dark:text-white">
                               {group.description}
                             </p>
                           </div>
                           <div className="text-right">
                             <Link to={`/groups/${group._id}`}>
                               <button
-                                className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary flex justify-center items-center"
+                                className="bg-secondary text-black dark:text-white px-4 py-2 rounded-lg hover:bg-secondary flex justify-center items-center"
                                 title="View Group"
                               >
                                 <MdChevronRight className="text-xl" />
