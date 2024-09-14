@@ -9,7 +9,27 @@ import Profile from "./routes/profile";
 import Groups from "./routes/groups";
 import Insights from "./routes/insights";
 import GroupDetails from "./routes/groupDetails";
-import GroupInvite from "./routes/groupInvite";
+import InviteHandler from "./routes/inviteHandler";
+import { useQuery } from "convex/react";
+import { api } from "../convex/_generated/api"; 
+
+function ConditionalHome() {
+  const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
+
+  if (userFinancialData === undefined) {
+    return <div>Loading...</div>;
+  }
+
+  if (!userFinancialData || userFinancialData.account_balance === undefined || userFinancialData.income === undefined) {
+    return <Welcome />;
+  }
+
+  return (
+    <Layout>
+      <Home />
+    </Layout>
+  );
+}
 
 export const ROUTES = [
   {
@@ -17,16 +37,16 @@ export const ROUTES = [
     title: "Home",
     element: (
       <Authenticated>
-        <Layout>
-          <Home />
-        </Layout>
+        <ConditionalHome />
       </Authenticated>
     ),
   },
   {
-    path: "/groups/invite/:id",
+    path: "/invite/:invite_token",
     title: "Group Invite",
-    element: <GroupInvite />,
+    element: (
+      <InviteHandler />
+    ),
   },
   {
     path: "/groups/:id",

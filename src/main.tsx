@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ConvexAuthProvider client={convex}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <AuthLoading>TEST</AuthLoading>
+        <AuthLoading>Loading...</AuthLoading>
         <App />
       </ThemeProvider>
     </ConvexAuthProvider>
