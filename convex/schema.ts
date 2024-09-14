@@ -41,6 +41,12 @@ const schema = defineSchema({
     expiry_date: v.string(),
     created_at: v.string(),
   }),
+  user_financial_data: defineTable({
+    user_id: v.id("users"),
+    account_balance: v.number(),
+    income: v.number(),
+    income_type: v.optional(v.string()),
+  }),
 });
 
 export default schema;
