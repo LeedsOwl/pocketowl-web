@@ -12,7 +12,7 @@
     
     --background: #ffffff; /* HSL(0 0% 100%) */
     --foreground: #1b1f23; /* HSL(224 71.4% 4.1%) */
-    --card: #ffffff; /* HSL(0 0% 100%) */
+    --card: #6a8fa8; /* HSL(0 0% 100%) */
     --card-foreground: #1b1f23; /* HSL(224 71.4% 4.1%) */
     --popover: #ffffff; /* HSL(0 0% 100%) */
     --popover-foreground: #1b1f23; /* HSL(224 71.4% 4.1%) */
@@ -141,3 +141,17 @@
   font-size: 1.2em; 
   margin-bottom: 8px;
 }
+
+@layer components {
+  .bg-glossy {
+    background: linear-gradient(
+      135deg,
+      #6a8fa8 0%,
+      #6a8fa8 70%,
+      #a3c1d4 100%
+    );
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius);
+  }
+}
+
