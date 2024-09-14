@@ -33,25 +33,27 @@ function Login() {
   });
 
   // Extract redirect path from URL params
-  const redirectPath = new URLSearchParams(location.search).get('redirect');
+  const redirectPath = new URLSearchParams(location.search).get("redirect");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
     formData.append("email", values.email);
     formData.append("password", values.password);
+    formData.append("flow", "signIn");
+
+    console.log("FormData:", values);
 
     signIn("password", formData)
       .then(() => {
-        // Redirect to the invite path or home page after login
         if (redirectPath) {
-          navigate(redirectPath); 
+          navigate(redirectPath);
         } else {
-          navigate("/"); 
+          navigate("/");
         }
       })
       .catch((error) => {
         console.error("Login failed:", error);
-        setErrorMessage("Invalid email or password. Please try again."); // Set error message
+        setErrorMessage("Invalid email or password. Please try again.");
       });
   }
 
@@ -130,7 +132,39 @@ function Login() {
           </div>
         </div>
       </div>
+      <div
+        className="relative hidden h-screen select-none bg-primary bg-gradient-to-br md:block md:w-1/2"
+        style={{
+          backgroundImage: "url('/register.svg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="py-16 px-8 text-white xl:w-[40rem]">
+          <span className="bg-white rounded-full px-3 py-1 font-medium text-primary">
+            Welcome to PocketOwl
+          </span>
+          <p className="my-6 text-3xl font-semibold leading-10">
+            Manage your finances with{" "}
+            <span className="awhitespace-nowrap py-2 text-cyan-300">
+              ease and confidence
+            </span>
+            .
+          </p>
+          <p className="mb-4">
+            PocketOwl helps you track your spending, budget your income, and
+            achieve your financial goals with powerful, easy-to-use tools.
+          </p>
+          <a
+            href="#"
+            className="font-semibold tracking-wide text-white underline underline-offset-4"
+          >
+            Learn More
+          </a>
+        </div>
+      </div>
     </div>
+
   );
 }
 
