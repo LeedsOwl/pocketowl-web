@@ -59,7 +59,7 @@ const Chart: React.FC<ChartProps> = ({
       case 'week':
         return 'Last 7 Days';
       case 'month':
-        return 'Last 12 Months';
+        return 'Last 6 Months';
       case 'year':
         return 'Last 5 Years';
       default:

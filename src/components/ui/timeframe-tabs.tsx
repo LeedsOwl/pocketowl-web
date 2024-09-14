@@ -8,7 +8,7 @@ type TimeframeTabsProps = {
 
 export function TimeframeTabs({ activeTimeframe, onTimeframeChange }: TimeframeTabsProps) {
   return (
-    <Tabs value={activeTimeframe} onValueChange={onTimeframeChange} className="w-full mb-4 p-2">
+    <Tabs value={activeTimeframe} onValueChange={onTimeframeChange} className="w-full mb-4 px-3">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="week">Week</TabsTrigger>
         <TabsTrigger value="month">Month</TabsTrigger>
