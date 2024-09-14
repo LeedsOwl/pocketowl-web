@@ -102,7 +102,7 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent>
           <DrawerHeader className="sm:text-center">
-            <DrawerTitle className="text-2xl">Add Group</DrawerTitle>
+            <DrawerTitle className="text-2xl">Create Group</DrawerTitle>
             <DrawerDescription>
               Enter the details of your new Group.
             </DrawerDescription>
@@ -128,22 +128,6 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Select Group Member</Label>
-                <Select onValueChange={(value) => setSelectedGroupMember(value as Id<"group_members">)} value={selectedGroupMember?.toString()}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select group member" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {groupMembers &&
-                      groupMembers.map((member: GroupMember) => (
-                        <SelectItem key={member._id.toString()} value={member._id.toString()}>
-                          {member.user_id.toString()}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
                 <Label>Split Type</Label>
                 <Select onValueChange={setSplitType} value={splitType}>
                   <SelectTrigger>
@@ -155,16 +139,6 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
                     <SelectItem value="custom">Custom</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label>Split Percentage (if applicable)</Label>
-                <Input
-                  type="number"
-                  placeholder="Enter percentage"
-                  value={splitPercentage}
-                  onChange={(e) => setSplitPercentage(parseFloat(e.target.value))}
-                  disabled={splitType !== "percentage"}
-                />
               </div>
             </div>
           </div>

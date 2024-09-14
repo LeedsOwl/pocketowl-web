@@ -14,66 +14,55 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Id } from "convex/_generated/dataModel";
 import CurrencyInput from "@/components/ui/currency-input";
 
-interface AddExpenseProps {
+interface AddGroupExpenseProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  groupId: Id<"groups">;
+  onAddTransaction: (transaction: any) => void; // New prop for updating the transaction log
 }
 
-interface Category {
-  _id: Id<"categories">;
-  _creationTime: number;
-  friendly_name: string;
-  value: string;
-}
-
-export default function AddExpense({ open, setOpen }: AddExpenseProps) {
+export default function AddGroupExpense({
+  open,
+  setOpen,
+  groupId,
+  onAddTransaction,
+}: AddGroupExpenseProps) {
   const { toast } = useToast();
 
-  const categories: Category[] =
-    useQuery(api.categories.getCategories, {}) || [];
+  const groupMembers = useQuery(api.groups.getGroupMembers, { groupId }) || [];
   const userInfo = useQuery(api.users.getUserInfo, {});
-  const mutateTransaction = useMutation(api.transactions.setTransaction);
-
-  console.log(categories);
+  const mutateGroupTransaction = useMutation(api.group_transactions.addGroupTransaction);
 
   const [amount, setAmount] = useState(0.0);
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
 
   const handleSubmit = async () => {
-    console.log({ amount, description, category });
-
     if (!userInfo) {
       console.error("User info not available");
       return;
     }
 
-    const addedTransaction = await mutateTransaction({
-      user_id: userInfo._id,
-      dateTime: new Date().toISOString(),
+    const newTransaction = await mutateGroupTransaction({
+      group_id: groupId,
       description: description,
       amount: amount,
-      category: category as Id<"categories">,
-    });
-    toast({
-      description: `Successfully added expense: ${description}`,
+      dateTime: new Date().toISOString(),
     });
 
+    // Show success toast
+    toast({
+      description: `Successfully added group expense: ${description}`,
+    });
+
+    // Update the parent component with the new transaction
+    onAddTransaction(newTransaction);
+
+    // Reset form and close drawer
     setOpen(false);
-    // Reset form fields
     setAmount(0);
     setDescription("");
-    setCategory("");
   };
 
   return (
@@ -81,10 +70,8 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent>
           <DrawerHeader className="sm:text-center">
-            <DrawerTitle className="text-2xl">Add Expense</DrawerTitle>
-            <DrawerDescription>
-              Enter the details of your new expense.
-            </DrawerDescription>
+            <DrawerTitle className="text-2xl">Add Group Expense</DrawerTitle>
+            <DrawerDescription>Enter the details of the group expense.</DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="grid gap-4">
@@ -99,22 +86,6 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-              </div>
-              <div className="grid gap-2">
-                <Label>Category</Label>
-                <Select onValueChange={setCategory} value={category}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories &&
-                      categories.map((cat: Category) => (
-                        <SelectItem key={cat.value} value={cat._id}>
-                          {cat.friendly_name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
               </div>
             </div>
           </div>

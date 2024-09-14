@@ -141,7 +141,7 @@ function Welcome() {
                 {/* Submit Button */}
                 <motion.button
                   onClick={handleSubmit}
-                  className="w-full rounded bg-background text-white px-6 py-3 text-xs font-medium uppercase leading-normal shadow-md transition duration-150 ease-in-out hover:bg-white hover:text-background focus:bg-white focus:text-background focus:outline-none focus:ring-2 focus:ring-white active:bg-background active:text-white"
+                  className="w-full rounded bg-background text-[#3f7ea6] dark:text-white px-6 py-3 text-xs font-medium uppercase leading-normal shadow-md transition duration-150 ease-in-out hover:bg-white hover:text-background focus:bg-white focus:text-background focus:outline-none focus:ring-2 focus:ring-white active:bg-background active:text-white"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >

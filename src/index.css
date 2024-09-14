@@ -9,7 +9,7 @@
 @layer base {
   :root {
     font-family: Inter;
-    
+
     --background: #ffffff; /* HSL(0 0% 100%) */
     --foreground: #1b1f23; /* HSL(224 71.4% 4.1%) */
     --card: #6a8fa8; /* HSL(0 0% 100%) */
@@ -37,34 +37,35 @@
     --chart-3: #184b5a; /* HSL(197 37% 24%) */
     --chart-4: #ffb340; /* HSL(43 74% 66%) */
     --chart-5: #ff914d; /* HSL(27 87% 67%) */
+    --glossy: linear-gradient(135deg, #6a8fa8 0%, #6a8fa8 70%, #a3c1d4 100%);
   }
+}
 
-  .dark {
-    --background: #1b1f23; /* HSL(224 71.4% 4.1%) */
-    --foreground: #f2f4f7; /*HSL(210 20% 98%) */
-    --card: #384048; /* HSL(224 71.4% 4.1%) */
-    --card-foreground: #f2f4f7; /* HSL(210 20% 98%) */
-    --popover: #1b1f23; /* HSL(224 71.4% 4.1%) */
-    --popover-foreground: #f2f4f7; /* HSL(210 20% 98%) */
-    --primary: #3f7ea6; /* HSL(235 86% 65%) */
-    --primary-foreground: #1c2933; /* HSL(220.9 39.3% 11%) */
-    --secondary: #2b3c45; /* HSL(215 27.9% 16.9%) */
-    --secondary-foreground: #f2f4f7; /* HSL(210 20% 98%) */
-    --muted: #2b3c45; /* HSL(215 27.9% 16.9%) */
-    --muted-foreground: #6a8fa8; /* HSL(217.9 10.6% 64.9%) */
-    --accent: #2b3c45; /* HSL(215 27.9% 16.9%) */
-    --accent-foreground: #f2f4f7; /* HSL(210 20% 98%) */
-    --destructive: #8b2e2e; /* HSL(0 62.8% 30.6%) */
-    --destructive-foreground: #f2f4f7; /* HSL(210 20% 98%) */
-    --border: #2b3c45; /* HSL(215 27.9% 16.9%) */
-    --input: #2b3c45; /* HSL(215 27.9% 16.9%) */
-    --ring: #cbd1d1; /* HSL(216 12.2% 83.9%) */
-    --chart-1: #3393e0; /* HSL(220 70% 50%) */
-    --chart-2: #3f9c6b; /* HSL(160 60% 45%) */
-    --chart-3: #cc8635; /* HSL(30 80% 55%) */
-    --chart-4: #be6bb5; /* HSL(280 65% 60%) */
-    --chart-5: #d13b6f; /* HSL(340 75% 55%) */
-  }
+.dark {
+  --background: #1b1f23; /* HSL(224 71.4% 4.1%) */
+  --foreground: #f2f4f7; /*HSL(210 20% 98%) */
+  --card: #384048; /* HSL(224 71.4% 4.1%) */
+  --card-foreground: #f2f4f7; /* HSL(210 20% 98%) */
+  --popover: #1b1f23; /* HSL(224 71.4% 4.1%) */
+  --popover-foreground: #f2f4f7; /* HSL(210 20% 98%) */
+  --primary: #3f7ea6; /* HSL(235 86% 65%) */
+  --primary-foreground: #1c2933; /* HSL(220.9 39.3% 11%) */
+  --secondary: #2b3c45; /* HSL(215 27.9% 16.9%) */
+  --secondary-foreground: #f2f4f7; /* HSL(210 20% 98%) */
+  --muted: #2b3c45; /* HSL(215 27.9% 16.9%) */
+  --muted-foreground: #6a8fa8; /* HSL(217.9 10.6% 64.9%) */
+  --accent: #2b3c45; /* HSL(215 27.9% 16.9%) */
+  --accent-foreground: #f2f4f7; /* HSL(210 20% 98%) */
+  --destructive: #8b2e2e; /* HSL(0 62.8% 30.6%) */
+  --destructive-foreground: #f2f4f7; /* HSL(210 20% 98%) */
+  --border: #2b3c45; /* HSL(215 27.9% 16.9%) */
+  --input: #2b3c45; /* HSL(215 27.9% 16.9%) */
+  --ring: #cbd1d1; /* HSL(216 12.2% 83.9%) */
+  --chart-1: #3393e0; /* HSL(220 70% 50%) */
+  --chart-2: #3f9c6b; /* HSL(160 60% 45%) */
+  --chart-3: #cc8635; /* HSL(30 80% 55%) */
+  --chart-4: #be6bb5; /* HSL(280 65% 60%) */
+  --chart-5: #d13b6f; /* HSL(340 75% 55%) */
 }
 
 @layer base {
@@ -82,28 +83,27 @@
 
 #modal-container {
   display: flex;
-  align-items: center; 
-  justify-content: center; 
+  align-items: center;
+  justify-content: center;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5); 
-  z-index: 1000; 
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
   overflow-y: auto;
 }
 
 .popover-content {
-  width: 15%; 
-  max-width: 600px; 
-  padding: 20px; 
+  width: 15%;
+  max-width: 600px;
+  padding: 20px;
   background: var(--background);
-  border-radius: 8px; 
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-  overflow-y: auto; 
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
   position: relative;
-  
 }
 
 @media (max-width: 480px), (max-width: 360px) {
@@ -114,7 +114,8 @@
   }
 }
 
-.popover-content h4, .popover-content h5 {
+.popover-content h4,
+.popover-content h5 {
   color: var(--primary);
   padding-bottom: 0.25rem;
   margin-top: 1rem;
@@ -126,7 +127,8 @@
   padding-left: 1rem;
 }
 
-.terms-text p, .terms-text ul {
+.terms-text p,
+.terms-text ul {
   margin-bottom: 1rem;
 }
 
@@ -137,8 +139,8 @@
 }
 
 .children-content {
-  color: var(--primary); 
-  font-size: 1.2em; 
+  color: var(--primary);
+  font-size: 1.2em;
   margin-bottom: 8px;
 }
 
@@ -154,4 +156,3 @@
     border-radius: var(--radius);
   }
 }
-

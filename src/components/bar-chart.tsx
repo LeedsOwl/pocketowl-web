@@ -50,20 +50,20 @@ const Chart: React.FC<ChartProps> = ({
   const Icon = isSpendingUp ? TrendingUp : TrendingDown;
 
   const chartData = timeframeData.map(({ label, total }) => ({
-    label: activeTimeframe === 'week' ? label.slice(0, 3) : label,
+    label: activeTimeframe === "week" ? label.slice(0, 3) : label,
     expenses: total,
   }));
 
   const getTimeframeTitle = () => {
     switch (activeTimeframe) {
-      case 'week':
-        return 'Last 7 Days';
-      case 'month':
-        return 'Last 6 Months';
-      case 'year':
-        return 'Last 5 Years';
+      case "week":
+        return "Last 7 Days";
+      case "month":
+        return "Last 6 Months";
+      case "year":
+        return "Last 5 Years";
       default:
-        return '';
+        return "";
     }
   };
 
@@ -71,7 +71,14 @@ const Chart: React.FC<ChartProps> = ({
     <div className="p-3">
       <Card className="bg-background">
         <CardHeader>
-          <CardTitle>Expenses - Bar Chart</CardTitle>
+          <div className="flex items-center">
+            <CardTitle>Expenses</CardTitle>
+            <img
+              src="/credit-card.gif"
+              alt="Stats Gif"
+              className="ml-2 w-6 h-6"
+            />
+          </div>
           <CardDescription>{getTimeframeTitle()}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,8 +99,15 @@ const Chart: React.FC<ChartProps> = ({
                 tick={{ fontSize: 12 }}
                 height={50}
               />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-              <Bar dataKey="expenses" fill="var(--primary)" radius={[4, 4, 0, 0]}>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Bar
+                dataKey="expenses"
+                fill="var(--primary)"
+                radius={[4, 4, 0, 0]}
+              >
                 <LabelList
                   dataKey="expenses"
                   position="top"
@@ -113,7 +127,8 @@ const Chart: React.FC<ChartProps> = ({
             </div>
           ) : (
             <div className={`flex gap-2 font-medium leading-none ${trendClass}`}>
-              Expenditure {isSpendingUp ? "up" : "down"} by £{Math.abs(totalCurrent - totalPrevious)} this {activeTimeframe}
+              Expenditure {isSpendingUp ? "up" : "down"} by £
+              {Math.abs(totalCurrent - totalPrevious)} this {activeTimeframe}
               <Icon className="h-4 w-4" />
             </div>
           )}

@@ -41,6 +41,17 @@ const schema = defineSchema({
     expiry_date: v.string(),
     created_at: v.string(),
   }),
+  group_transactions: defineTable({
+    group_id: v.id("groups"), // Reference to the `groups` table
+    description: v.string(),
+    amount: v.number(), // Amount for the transaction
+    dateTime: v.string(), // DateTime as ISO string
+    user_name: v.string(), // The user who added the transaction
+  }),
+  users: defineTable({
+    name: v.string(),
+    email: v.string(),
+  }),
   user_financial_data: defineTable({
     user_id: v.id("users"),
     account_balance: v.number(),

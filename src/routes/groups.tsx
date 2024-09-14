@@ -20,6 +20,7 @@ function Groups() {
   const { theme } = useTheme();
   const backgroundImage =
     theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
+  const isDarkMode = theme === "dark";
 
   return (
     <div className="p-1 overflow-y-auto max-h-screen">
@@ -62,10 +63,14 @@ function Groups() {
                 {userGroups.map((group: any, index: any) => (
                   <div key={index} className="px-3 py-2">
                     <div className="mt-1 space-y-4">
-                      <div className="rounded-lg bg-card border border-gray-400 dark:border-gray-500 shadow p-4">
+                      <div
+                        className={`rounded-lg border shadow p-4 ${isDarkMode ? "bg-card border-gray-500" : "bg-glossy border-gray-400"}`}
+                      >
                         <div className="flex justify-between items-center">
                           <div>
-                            <p className="text-sm font-bold text-white">{group.name}</p>
+                            <p className="text-sm font-bold text-white">
+                              {group.name}
+                            </p>
                             <p className="text-sm text-gray-200 dark:text-white">
                               {group.description}
                             </p>
@@ -73,7 +78,7 @@ function Groups() {
                           <div className="text-right">
                             <Link to={`/groups/${group._id}`}>
                               <button
-                                className="bg-secondary text-black dark:text-white px-4 py-2 rounded-lg hover:bg-secondary flex justify-center items-center"
+                                className="bg-secondary dark:bg-primary text-black dark:text-white px-4 py-2 rounded-lg hover:bg-secondary flex justify-center items-center"
                                 title="View Group"
                               >
                                 <MdChevronRight className="text-xl" />

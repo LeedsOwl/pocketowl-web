@@ -40,8 +40,7 @@ export const setGroup = mutation({
     }
 
     const groupId = await ctx.db.insert("groups", groupData);
-    
-    // add creator as member
+
     await ctx.db.insert("group_members", {
       group_id: groupId,
       user_id: created_by,
@@ -103,8 +102,13 @@ export const getGroupDetails = query({
   handler: async (ctx, args) => {
     const { groupId } = args;
 
+    // Fetch the group details
     const group = await ctx.db.get(groupId);
-    
+
+    // Fetch creator's details
+    const creator = await ctx.db.get(group.created_by);
+
+    // Fetch group members
     const members = await ctx.db
       .query("group_members")
       .filter((q) => q.eq(q.field("group_id"), groupId))
@@ -113,6 +117,7 @@ export const getGroupDetails = query({
     return {
       ...group,
       members,
+      creator, // Include the creator's details
     };
   },
 });
@@ -166,7 +171,6 @@ export const addUserToGroup = mutation({
     }
 
     const userId = user.subject.split("|")[0];
-
     const existingMember = await ctx.db
       .query("group_members")
       .filter((q) => q.eq(q.field("group_id"), group_id))
