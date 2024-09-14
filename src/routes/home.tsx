@@ -10,7 +10,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
-import { subDays, subMonths, subYears, format, startOfMonth, isSameDay, isSameMonth, isSameYear } from "date-fns";
+import {
+  subDays,
+  subMonths,
+  subYears,
+  format,
+  isSameDay,
+  isSameMonth,
+  isSameYear,
+} from "date-fns";
 import { motion } from "framer-motion";
 import { TimeframeTabs } from "@/components/ui/timeframe-tabs";
 
@@ -28,8 +36,8 @@ const getLast7Days = () => {
   return Array.from({ length: 7 }, (_, i) => subDays(new Date(), i)).reverse();
 };
 
-const getLast12Months = () => {
-  return Array.from({ length: 12 }, (_, i) => subMonths(new Date(), i)).reverse();
+const getLast6Months = () => {
+  return Array.from({ length: 6 }, (_, i) => subMonths(new Date(), i)).reverse();
 };
 
 const getLast5Years = () => {
@@ -39,6 +47,8 @@ const getLast5Years = () => {
 function Home() {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const userTransactions = useQuery(api.transactions.getUserTransactions, {}) || [];
+  const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
+
   const [activeTimeframe, setActiveTimeframe] = useState("week");
 
   const getTimeframeData = () => {
@@ -53,7 +63,7 @@ function Home() {
             .reduce((sum, transaction) => sum + transaction.amount, 0),
         }));
       case "month":
-        return getLast12Months().map((date) => ({
+        return getLast6Months().map((date) => ({
           label: format(date, "MMM"),
           total: userTransactions
             .filter((transaction) =>
@@ -90,7 +100,7 @@ function Home() {
             .reduce((sum, transaction) => sum + transaction.amount, 0),
         }));
       case "month":
-        return getLast12Months().map((date) => ({
+        return getLast6Months().map((date) => ({
           label: format(subMonths(date, 1), "MMM"),
           total: userTransactions
             .filter((transaction) =>
@@ -122,17 +132,14 @@ function Home() {
     setShowAddExpense(!showAddExpense);
   };
 
-  // Calculate total income and expenses 
-  // Just a placeholder logic for Balance component
-  const totalIncome = userTransactions
-    .filter((transaction) => transaction.category === "Income")
-    .reduce((sum, transaction) => sum + transaction.amount, 0);
+  // Fetch financial data for Balance component
+  const accountBalance = userFinancialData?.account_balance || 0;
+  const income = userFinancialData?.income || 0;
 
+  // Calculate total expenses
   const totalExpenses = userTransactions
     .filter((transaction) => transaction.category !== "Income")
     .reduce((sum, transaction) => sum + transaction.amount, 0);
-
-  const accountBalance = totalIncome - totalExpenses;
 
   const displayExpenses = Math.abs(totalExpenses);
 
@@ -147,8 +154,8 @@ function Home() {
       >
         {" "}
         <Balance
-          accountBalance={1000}
-          income={500}
+          accountBalance={accountBalance}
+          income={income}
           expenses={displayExpenses}
           currency="£"
         />{" "}
@@ -216,4 +223,4 @@ function Home() {
   );
 }
 
-export default Home; 
+export default Home;
