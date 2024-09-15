@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -11,7 +11,13 @@ import { Id } from "convex/_generated/dataModel";
 import { useTheme } from "@/theme-provider";
 import GroupExpenseButton from "@/components/ui/group-expense-button";
 import AddGroupExpense from "@/components/add-group-expense";
-import GroupTransaction from "@/components/group-transactions"; 
+import GroupTransaction from "@/components/group-transactions";
+import EqualSplit from "@/components/EqualSplit";
+import PercentageSplit from "@/components/PercentageSplit";
+import CustomSplit from "@/components/CustomSplit";
+import { Progress } from "@/components/ui/progress";
+import SetGroupBudget from "@/components/set-group-budget";
+import { FaPencilAlt } from "react-icons/fa";
 
 function GroupDetails() {
   const { id } = useParams(); // Group ID from URL params
@@ -28,14 +34,37 @@ function GroupDetails() {
   // Query group details, members, and transactions
   const groupDetails = useQuery(api.groups.getGroupDetails, { groupId: id }) || [];
   const groupMembers = useQuery(api.groups.getGroupMembersWithDetails, { groupId: id }) || [];
-  const initialGroupTransactions = useQuery(api.groups.getGroupTransactions, { groupId: id }) || [];
-
-  // State to store transactions
-  const [groupTransactions, setGroupTransactions] = useState(initialGroupTransactions || []);
+  const groupTransactions = useQuery(
+    api.group_transactions.getGroupTransactions,
+    { groupId: id }  // Fetch transactions for the specific group
+  ) || [];
 
   if (!groupDetails || !groupMembers || !groupTransactions) {
     return <div>Loading...</div>;
   }
+
+  // State to manage the budget drawer
+  const [showSetBudget, setShowSetBudget] = useState(false);
+
+  // Function to handle budget update
+  const handleBudgetUpdate = async (newBudget: number) => {
+    try {
+      await api.budget.setGroupBudget({ groupId: id, budget: newBudget });
+      // Optionally refresh the group details or set a local state
+    } catch (error) {
+      console.error("Error updating budget:", error);
+    }
+  };
+
+  const [showAddGroupExpense, setShowAddGroupExpense] = useState(false);
+
+  // Calculate the total amount of transactions
+  const totalAmount = useMemo(() => {
+    return groupTransactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+  }, [groupTransactions]);
+
+  const groupBudget = groupDetails.budget || 0;
+  const progressPercentage = groupBudget > 0 ? (totalAmount / groupBudget) * 100 : 0;
 
   const [inviteLink, setInviteLink] = useState("");
 
@@ -53,8 +82,6 @@ function GroupDetails() {
       console.error("Error creating invite:", error);
     }
   };
-
-  const [showAddGroupExpense, setShowAddGroupExpense] = useState(false);
 
   const handleAddGroupExpenseButtonClick = () => {
     setShowAddGroupExpense(!showAddGroupExpense);
@@ -94,56 +121,8 @@ function GroupDetails() {
         </div>
 
         <div className="p-2">
-          {/* Group Information Section */}
-          <div className="rounded-lg pb-2 border shadow-md mt-4">
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl font-bold p-3 pb-1"
-            >
-              Group Information
-            </motion.h2>
-            <div className="px-3 py-2">
-              <div className="mt-1 space-y-4">
-                <div className="rounded-lg bg-card border border-gray-500 shadow p-4">
-                  <p>
-                    <strong>Created By:</strong>{" "}
-                    {groupDetails.creator?.name || "Unknown User"}
-                  </p>
-                  <p>
-                    <strong>Default Split Type:</strong>{" "}
-                    {groupDetails.default_split_type}
-                  </p>
 
-                  {/* Display Default Split Percentages if applicable */}
-                  {groupDetails.default_split_type === "Percentage" &&
-                    groupDetails.default_split_percentages && (
-                      <div className="mt-2">
-                        <strong>Default Split Percentages:</strong>
-                        <ul className="list-disc list-inside">
-                          {groupDetails.default_split_percentages.map(
-                            (split, index) => {
-                              const member = groupMembers.find(
-                                (member) => member._id === split.group_member_id
-                              );
-                              return (
-                                <li key={index}>
-                                  {member?.user?.name || "Unknown Member"}:{" "}
-                                  {split.percentage}%
-                                </li>
-                              );
-                            }
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Group Members Section */}
+          {/* Group Members Section (in list format) */}
           <div className="rounded-lg pb-2 border shadow-md mt-4">
             <motion.h2
               initial={{ opacity: 0 }}
@@ -153,51 +132,126 @@ function GroupDetails() {
             >
               Group Members
             </motion.h2>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
-                {groupMembers.map((member, index) => (
-                  <div key={index} className="px-3 py-2">
-                    <div className="mt-1 space-y-4">
-                      <div className="rounded-lg bg-card border border-gray-500 shadow p-4">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="text-sm font-bold">
-                              {member.user?.name || "Unknown User"}
-                            </p>
-                            <p className="text-sm text-gray-400">
-                              {member.user?.email}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+            <div className="px-3 py-2">
+              <ul className="list-none space-y-2"> {/* Removed list-disc and added space between members */}
+                {groupMembers.map((member) => (
+                  <li key={member._id} className="flex items-center space-x-2">
+                    {/* Profile Picture Circle */}
+                    <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-500 text-white font-bold">
+                      {member.user?.name ? member.user.name[0] : "?"} {/* Display initial */}
                     </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
 
-            {/* Generate Invite Link */}
-            <motion.div
+                    {/* Member Name */}
+                    <span className="text-lg">
+                      {member.user?.name || "Unknown User"}
+                    </span>
+
+                    {/* Crown Icon for Creator */}
+                    {member.user_id === groupDetails.created_by && (
+                      <img
+                        src="/crown.gif"
+                        alt="Creator"
+                        className="w-6 h-6 ml-2 rounded-full border border-primary"
+                      />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Invite Section */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="p-3 flex flex-col items-center"  // Center the content
+          >
+            <Button
+              variant="primary"
+              className="mt-4 rounded-lg bg-primary text-white px-6 py-3"  // Rounded, bg-primary, larger button
+              onClick={handleInvite}
+            >
+              <FaPlus className="mr-2" /> Invite friends/family
+            </Button>
+
+            {inviteLink && (
+              <div className="mt-4 flex flex-col items-center">
+                <p className="text-gray-500 mb-2">Invite link:</p>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    value={inviteLink}
+                    readOnly
+                    className="border px-2 py-1 rounded-lg w-64 text-background"
+                  />
+                  <Button
+                    variant="outline"
+                    className="ml-2"
+                    onClick={() => navigator.clipboard.writeText(inviteLink)}  // Copy to clipboard functionality
+                  >
+                    Copy link
+                  </Button>
+                </div>
+              </div>
+            )}
+          </motion.div>
+
+          {/* Total Amount Section with Progress Bar */}
+          <div className="rounded-lg pb-2 border shadow-md mt-4">
+            <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="p-3"
+              className="text-xl font-bold p-3 pb-1 flex items-center justify-between"
             >
-              <Button color="primary" className="mt-4" onClick={handleInvite}>
-                <FaPlus /> Generate Invite Link
+              Total Group Expenses
+              {/* Set Budget Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowSetBudget(true)}
+                className="ml-2"
+              >
+                <FaPencilAlt className="mr-1" /> Set Budget
               </Button>
-              {inviteLink && (
-                <div className="mt-4">
-                  <p>Invite link:</p>
-                  <a href={inviteLink}>{inviteLink}</a>
-                </div>
+            </motion.h2>
+            <div className="px-3 py-2">
+              <p className="text-lg font-bold">
+                Total: £{totalAmount.toFixed(2)}{" "}
+                {groupBudget > 0 && (
+                  <>
+                    / £{groupBudget.toFixed(2)}
+                  </>
+                )}
+              </p>
+              {/* Progress Bar */}
+              {groupBudget > 0 ? (
+                <Progress value={progressPercentage} className="w-full" />
+              ) : (
+                <p className="text-sm text-gray-500">
+                  No budget set. Click "Set Budget" to add one.
+                </p>
               )}
-            </motion.div>
+            </div>
+            {/* Split Type Display */}
+            {groupDetails.default_split_type === "equal" && (
+              <EqualSplit totalAmount={totalAmount} groupMembers={groupMembers} />
+            )}
+            {groupDetails.default_split_type === "percentage" && (
+              <PercentageSplit
+                totalAmount={totalAmount}
+                groupMembers={groupMembers}
+                splitPercentages={groupDetails.default_split_percentages}
+              />
+            )}
+            {groupDetails.default_split_type === "custom" && (
+              <CustomSplit
+                totalAmount={totalAmount}
+                groupMembers={groupMembers}
+                customSplitData={{}}
+              />
+            )}
           </div>
 
           {/* Group Transactions Section */}
@@ -213,7 +267,7 @@ function GroupDetails() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="text-xl font-bold p-3 pb-1"
             >
-              Group Transactions
+              Transactions
             </motion.h2>
             <motion.div
               initial={{ opacity: 0 }}
@@ -222,7 +276,7 @@ function GroupDetails() {
             >
               {groupTransactions.map((transaction, index) => (
                 <GroupTransaction
-                  key={index}
+                  key={transaction._id}
                   groupId={transaction.group_id}
                   description={transaction.description}
                   amount={transaction.amount}
@@ -248,7 +302,16 @@ function GroupDetails() {
             open={showAddGroupExpense}
             setOpen={setShowAddGroupExpense}
             groupId={id}
-            onAddTransaction={handleAddTransaction} // Pass the function to update transactions
+            onAddTransaction={handleAddTransaction}
+          />
+
+          {/* Set Group Budget Drawer */}
+          <SetGroupBudget
+            open={showSetBudget}
+            setOpen={setShowSetBudget}
+            groupId={id}
+            currentBudget={groupDetails.budget || 0}
+            onBudgetUpdate={handleBudgetUpdate}
           />
         </div>
       </div>

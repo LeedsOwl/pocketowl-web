@@ -28,6 +28,7 @@ const schema = defineSchema({
       group_member_id: v.id("group_members"),
       percentage: v.float64(),
     })),
+    budget: v.optional(v.number()),
   }),
   group_members: defineTable({
     group_id: v.id("groups"),
@@ -42,16 +43,12 @@ const schema = defineSchema({
     created_at: v.string(),
   }),
   group_transactions: defineTable({
-    group_id: v.id("groups"), // Reference to the `groups` table
+    group_id: v.id("groups"),
     description: v.string(),
-    amount: v.number(), // Amount for the transaction
-    dateTime: v.string(), // DateTime as ISO string
-    user_name: v.string(), // The user who added the transaction
-  }),
-  users: defineTable({
-    name: v.string(),
-    email: v.string(),
-  }),
+    amount: v.number(),
+    dateTime: v.string(),
+    user_name: v.string(),
+  }).index("by_group_id", ["group_id"]),
   user_financial_data: defineTable({
     user_id: v.id("users"),
     account_balance: v.number(),

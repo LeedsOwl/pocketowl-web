@@ -133,7 +133,7 @@ const Chart: React.FC<ChartProps> = ({
             </div>
           )}
           <div className="leading-none text-gray-500 dark:text-gray-400">
-            Showing total Expenses for the {getTimeframeTitle().toLowerCase()}.
+            Showing total Expenditures for the {getTimeframeTitle().toLowerCase()}.
           </div>
         </CardFooter>
       </Card>

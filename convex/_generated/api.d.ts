@@ -15,11 +15,12 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
+import type * as budget from "../budget.js";
 import type * as categories from "../categories.js";
 import type * as finance from "../finance.js";
+import type * as groups from "../groups.js";
 import type * as group_invites from "../group_invites.js";
 import type * as group_transactions from "../group_transactions.js";
-import type * as groups from "../groups.js";
 import type * as http from "../http.js";
 import type * as insights from "../insights.js";
 import type * as transactions from "../transactions.js";
@@ -35,11 +36,12 @@ import type * as users from "../users.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  budget: typeof budget;
   categories: typeof categories;
   finance: typeof finance;
+  groups: typeof groups;
   group_invites: typeof group_invites;
   group_transactions: typeof group_transactions;
-  groups: typeof groups;
   http: typeof http;
   insights: typeof insights;
   transactions: typeof transactions;
