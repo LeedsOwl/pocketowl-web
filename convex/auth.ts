@@ -7,6 +7,7 @@ import { z } from "zod";
 const signInSchema = z.object({
   email: z.string().email(),
   password: z.string().min(2).max(50),
+  name: z.string().min(2).max(50),
 });
 
 const passwordWithValidation = Password({
@@ -15,7 +16,7 @@ const passwordWithValidation = Password({
     if (error) {
       throw new ConvexError(error.format());
     }
-    return { email: data.email as string };
+    return { email: data.email as string, name: data.name as string };
   },
 });
 

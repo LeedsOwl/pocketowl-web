@@ -74,7 +74,6 @@ export default function AddGroupExpense({
         <div className="p-4 pb-0">
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="amount">Amount</Label>
               <CurrencyInput
                 id="amount"
                 value={amount}

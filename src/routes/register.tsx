@@ -94,7 +94,7 @@ function Register() {
           </p>
           <p className="mb-4">
             PocketOwl provides you with the tools to effortlessly manage your
-            budget, track expenses, and achieve your financial goals; all in one
+            budget, track expenses, and achieve your financial goals - all in one
             place.
           </p>
           <a
