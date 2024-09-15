@@ -194,48 +194,6 @@ function Profile() {
               </motion.div>
             </motion.div>
 
-            {/* Notifications Settings */}
-            <motion.div
-              className="border-b pb-4 mb-4"
-              variants={itemVariants}
-            >
-              <motion.h1 className="text-xl font-semibold">
-                Notifications
-              </motion.h1>
-              <div className="space-y-4">
-                <motion.label
-                  className="flex items-center justify-between space-x-2"
-                  variants={itemVariants}
-                >
-                  <div className="flex items-center space-x-2">
-                    <FaBell />
-                    <span>Email Notifications</span>
-                  </div>
-                  <Switch />
-                </motion.label>
-                <motion.label
-                  className="flex items-center justify-between space-x-2"
-                  variants={itemVariants}
-                >
-                  <div className="flex items-center space-x-2">
-                    <FaSms />
-                    <span>SMS Notifications</span>
-                  </div>
-                  <Switch />
-                </motion.label>
-                <motion.label
-                  className="flex items-center justify-between space-x-2"
-                  variants={itemVariants}
-                >
-                  <div className="flex items-center space-x-2">
-                    <FaBell />
-                    <span>Push Notifications</span>
-                  </div>
-                  <Switch />
-                </motion.label>
-              </div>
-            </motion.div>
-
             {/* Sign Out Button */}
             <motion.div
               className="mt-6 flex justify-center pb-24"

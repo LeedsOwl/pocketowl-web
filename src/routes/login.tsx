@@ -121,12 +121,12 @@ function Login() {
           <div className="py-12 text-center">
             <p className="text-gray-600 dark:text-white">
               Don't have an account?{" "}
-              <a
-                href="/register"
-                className="font-semibold text-primary underline"
+              <div
+                onClick={() => navigate("/register")}
+                className="font-semibold text-rimary underline cursor-pointer"
               >
                 Sign up for free.
-              </a>
+              </div>
             </p>
           </div>
         </div>

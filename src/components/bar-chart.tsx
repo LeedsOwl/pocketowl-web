@@ -72,7 +72,7 @@ const Chart: React.FC<ChartProps> = ({
       <Card className="bg-background">
         <CardHeader>
           <div className="flex items-center">
-            <CardTitle>Expenses</CardTitle>
+            <CardTitle>Expenditures</CardTitle>
             <img
               src="/credit-card.gif"
               alt="Stats Gif"
@@ -127,7 +127,7 @@ const Chart: React.FC<ChartProps> = ({
             </div>
           ) : (
             <div className={`flex gap-2 font-medium leading-none ${trendClass}`}>
-              Expenditure {isSpendingUp ? "up" : "down"} by £
+              Spending {isSpendingUp ? "increased" : "decreased"} by £
               {Math.abs(totalCurrent - totalPrevious)} this {activeTimeframe}
               <Icon className="h-4 w-4" />
             </div>

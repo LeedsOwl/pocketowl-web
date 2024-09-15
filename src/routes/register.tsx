@@ -32,8 +32,6 @@ function Register() {
   const navigate = useNavigate();
   const { signIn } = useAuthActions();
   const { toast } = useToast();
-//   const { setTheme } = useTheme();
-//   setTheme("dark");
     
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -118,12 +116,12 @@ function Register() {
           </p>
           <p className="mt-6 text-center font-medium md:text-left dark:">
             Already using PocketOwl?{" "}
-            <a
-              href="/login"
-              className="whitespace-nowrap font-semibold text-primary underline"
+            <div
+              onClick={() => navigate("/login")}
+              className="whitespace-nowrap font-semibold text-primary underline cursor-pointer"
             >
               Login here
-            </a>
+            </div>
           </p>
           <Form {...form}>
             <form

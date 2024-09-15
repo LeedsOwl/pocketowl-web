@@ -12,6 +12,8 @@ import GroupDetails from "./routes/groupDetails";
 import InviteHandler from "./routes/inviteHandler";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api"; 
+import { redirect, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function ConditionalHome() {
   const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
@@ -31,14 +33,39 @@ function ConditionalHome() {
   );
 }
 
+function RedirectToLogin() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/login");
+  }, [navigate]);
+
+  return null;
+}
+
+function RedirectToHome() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/");
+  }, [navigate]);
+
+  return null;
+}
+
 export const ROUTES = [
   {
     path: "/",
     title: "Home",
     element: (
+      <>
       <Authenticated>
         <ConditionalHome />
       </Authenticated>
+      <Unauthenticated>
+        <RedirectToLogin />
+      </Unauthenticated>
+      </>
     ),
   },
   {
@@ -96,10 +123,15 @@ export const ROUTES = [
     path: "/login",
     title: "Login",
     element: (
+      <>
       <Unauthenticated>
         <Login />
         <Toaster />
       </Unauthenticated>
+      <Authenticated>
+        <RedirectToHome />
+      </Authenticated>
+      </>
     ),
   },
   {
