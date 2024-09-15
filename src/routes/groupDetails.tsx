@@ -104,22 +104,14 @@ function GroupDetails() {
               backgroundPosition: "center",
             }}
           >
-            <div className="flex items-center justify-between">
-              <Link to="/groups">
-                <button className="bg-transparent text-white px-2 py-2 rounded-lg hover:bg-secondary flex items-center">
-                  <MdChevronLeft className="text-2xl" />
-                </button>
-              </Link>
-              <div className="text-center flex-grow">
-                <p className="text-2xl font-semibold">{groupDetails.name}</p>
-                <p className="text-lg font-bold text-gray-300 dark:text-gray-400">
-                  {groupDetails.description}
-                </p>
-              </div>
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <p className="text-2xl font-semibold">{groupDetails.name}</p>
+              <p className="text-lg font-bold text-gray-300 dark:text-gray-400">
+                {groupDetails.description}
+              </p>
             </div>
           </div>
         </div>
-
         <div className="p-2">
 
           {/* Group Members Section (in list format) */}
@@ -205,7 +197,7 @@ function GroupDetails() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="text-xl font-bold p-3 pb-1 flex items-center justify-between"
             >
-              Total Group Expenses
+              Total Expenses
               {/* Set Budget Button */}
               <Button
                 variant="outline"
@@ -296,6 +288,18 @@ function GroupDetails() {
           >
             <GroupExpenseButton onClick={handleAddGroupExpenseButtonClick} />
           </motion.div>
+
+          <Link to="/groups">
+              <button
+                className="p-2 rounded-full shadow-lg border border-primary bg-[rgba(255,255,255,0.87)] dark:bg-[#1b1f23b2] hover:bg-blue-800 backdrop-blur-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 absolute bottom-24 left-8"
+              >
+                <img
+                  src="/arrow.gif"
+                  alt="Back"
+                  className="h-8 w-8 object-contain rounded-full"
+                />
+              </button>
+            </Link>
 
           {/* Add Group Expense Drawer */}
           <AddGroupExpense
