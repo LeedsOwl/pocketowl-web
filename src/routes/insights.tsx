@@ -65,6 +65,13 @@ const Insights = () => {
     color: categoryColors[category as keyof typeof categoryColors],
   }));
 
+  // Sort the categories based on total amount in descending order
+  const sortedCategories = [...categories].sort((a, b) => {
+    const totalA = categoryTotals[a.value] || 0;
+    const totalB = categoryTotals[b.value] || 0;
+    return totalB - totalA;
+  });
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setStartAnimation(true);
@@ -98,7 +105,7 @@ const Insights = () => {
         />
 
         {startAnimation &&
-          categories.map((category, index) => {
+          sortedCategories.map((category, index) => {
             const categoryTotal =
               transactions.categoryTotals[category.value] || 0;
 

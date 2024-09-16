@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
+import { useMutation } from "convex/react";
 import {
   startOfWeek,
   subDays,
@@ -56,6 +57,17 @@ function Home() {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const userTransactions = useQuery(api.transactions.getUserTransactions, {}) || [];
   const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
+
+  const deleteTransaction = useMutation(api.transactions.deleteTransaction);
+  const updateTransaction = useMutation(api.transactions.updateTransaction);
+
+  const handleDeleteTransaction = (id: string) => {
+    deleteTransaction({ id }); // Call the mutation
+  };
+
+  const handleEditTransaction = (id: string, updatedData: { description: string; amount: number }) => {
+    updateTransaction({ id, ...updatedData }); // Call the mutation
+  };
 
   const [activeTimeframe, setActiveTimeframe] = useState("week");
 
@@ -207,10 +219,13 @@ function Home() {
             transition={{ duration: 0.5, delay: index * 0.1 }}
           >
             <Transaction
+              id={transaction._id}
               date={new Date(transaction._creationTime)}
               description={transaction.description}
               amount={transaction.amount}
               status={"completed"}
+              onEdit={handleEditTransaction}
+              onDelete={handleDeleteTransaction}
             />
           </motion.div>
         ))}

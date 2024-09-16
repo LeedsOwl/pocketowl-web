@@ -28,3 +28,26 @@ export const getUserTransactions = query({
       .collect();
   },
 });
+
+export const updateTransaction = mutation({
+  args: {
+    id: v.id("transactions"),
+    description: v.string(),
+    amount: v.number(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, {
+      description: args.description,
+      amount: args.amount,
+    });
+  },
+});
+
+export const deleteTransaction = mutation({
+  args: {
+    id: v.id("transactions"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+  },
+});
