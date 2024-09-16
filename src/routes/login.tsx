@@ -40,8 +40,6 @@ function Login() {
     formData.append("password", values.password);
     formData.append("flow", "signIn");
 
-    console.log("FormData:", values);
-
     signIn("password", formData)
       .then(() => {
         if (redirectPath) {
@@ -59,8 +57,13 @@ function Login() {
   return (
     <div className="flex w-screen flex-wrap">
       <div className="flex w-full flex-col md:w-1/2">
+        <div className="flex justify-center pt-12 md:justify-start md:pl-12">
+          <a href="#" className="text-2xl font-bold text-primary">
+            PocketOwl .
+          </a>
+        </div>
         <div className="my-auto mx-auto flex flex-col justify-center px-6 pt-8 md:justify-start lg:w-[28rem]">
-          <p className="dark:text-white text-center text-3xl font-bold md:leading-tight md:text-left md:text-5xl">
+          <p className=" dark:text-white text-center text-3xl font-bold md:leading-tight md:text-left md:text-5xl">
             Welcome to <br />
             <span className="text-primary">PocketOwl</span>
           </p>
@@ -85,12 +88,14 @@ function Login() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col pt-4">
-                    <Input
-                      type="email"
-                      className="w-full border-gray-300 py-2 px-4"
-                      placeholder="Email"
-                      {...field}
-                    />
+                    <div className="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-primary">
+                      <Input
+                        type="email"
+                        className="w-full flex-shrink appearance-none border-gray-300 py-2 px-4 text-base placeholder-gray-400 focus:outline-none"
+                        placeholder="Email"
+                        {...field}
+                      />
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -100,19 +105,27 @@ function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="mb-4 flex flex-col pt-4">
-                    <Input
-                      type="password"
-                      className="w-full border-gray-300 py-2 px-4"
-                      placeholder="Password"
-                      {...field}
-                    />
+                    <div className="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-primary">
+                      <Input
+                        type="password"
+                        className="w-full flex-shrink appearance-none border-gray-300 py-2 px-4 text-base  placeholder-gray-400 focus:outline-none"
+                        placeholder="Password"
+                        {...field}
+                      />
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <a
+                href="#"
+                className="dark:text-white mb-6 text-center text-sm font-medium text-gray-600 md:text-left"
+              >
+                Forgot password?
+              </a>
               <Button
                 type="submit"
-                className="rounded-lg bg-primary px-4 py-2 text-center text-base font-semibold text-white shadow-md"
+                className="rounded-lg bg-primary px-4 py-2 text-center text-base font-semibold text-white shadow-md outline-none ring-blue-500 ring-offset-2 transition hover:bg-blue-700 focus:ring-2 md:w-32"
               >
                 Sign in
               </Button>
@@ -121,12 +134,12 @@ function Login() {
           <div className="py-12 text-center">
             <p className="text-gray-600 dark:text-white">
               Don't have an account?{" "}
-              <div
-                onClick={() => navigate("/register")}
-                className="font-semibold text-rimary underline cursor-pointer"
+              <a
+                href="/register"
+                className="whitespace-nowrap font-semibold text-primary underline underline-offset-4"
               >
                 Sign up for free.
-              </div>
+              </a>
             </p>
           </div>
         </div>
@@ -145,7 +158,7 @@ function Login() {
           </span>
           <p className="my-6 text-3xl font-semibold leading-10">
             Manage your finances with{" "}
-            <span className="awhitespace-nowrap py-2 text-cyan-300">
+            <span className="whitespace-nowrap py-2 text-cyan-300">
               ease and confidence
             </span>
             .
@@ -163,7 +176,6 @@ function Login() {
         </div>
       </div>
     </div>
-
   );
 }
 

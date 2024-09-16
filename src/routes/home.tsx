@@ -11,7 +11,9 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import {
+  startOfWeek,
   subDays,
+  subWeeks,
   subMonths,
   subYears,
   format,
@@ -32,8 +34,14 @@ interface Transaction {
   user_id: Id<"users">;
 }
 
-const getLast7Days = () => {
-  return Array.from({ length: 7 }, (_, i) => subDays(new Date(), i)).reverse();
+const getThisWeek = () => {
+  const startOfThisWeek = startOfWeek(new Date(), { weekStartsOn: 0 }); // Sunday
+  return Array.from({ length: 7 }, (_, i) => subDays(startOfThisWeek, -i)).reverse();
+};
+
+const getLastWeek = () => {
+  const startOfLastWeek = startOfWeek(subWeeks(new Date(), 1), { weekStartsOn: 0 }); // Last week's Sunday
+  return Array.from({ length: 7 }, (_, i) => subDays(startOfLastWeek, -i)).reverse();
 };
 
 const getLast6Months = () => {
@@ -54,7 +62,7 @@ function Home() {
   const getTimeframeData = () => {
     switch (activeTimeframe) {
       case "week":
-        return getLast7Days().map((date) => ({
+        return getThisWeek().map((date) => ({
           label: format(date, "EEEE"),
           total: userTransactions
             .filter((transaction) =>
@@ -91,7 +99,7 @@ function Home() {
   const getPreviousTimeframeData = () => {
     switch (activeTimeframe) {
       case "week":
-        return getLast7Days().map((date) => ({
+        return getLastWeek().map((date) => ({
           label: format(subDays(date, 7), "EEEE"),
           total: userTransactions
             .filter((transaction) =>
@@ -145,20 +153,18 @@ function Home() {
 
   return (
     <div className="pb-24">
-      {" "}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
         className="sticky top-0 z-50 bg-background shadow-md"
       >
-        {" "}
         <Balance
           accountBalance={accountBalance}
           income={income}
           expenses={displayExpenses}
           currency="£"
-        />{" "}
+        />
       </motion.div>
 
       <motion.div

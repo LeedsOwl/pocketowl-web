@@ -156,3 +156,20 @@
     border-radius: var(--radius);
   }
 }
+
+.loading-animation {
+  display: inline-block;
+  animation: rotate 2s linear infinite;
+}
+
+.loading-animation img {
+  width: 50px; 
+  height: 50px;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+

@@ -3,7 +3,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { motion } from "framer-motion";
 
-function Welcome() {
+function Welcome({onClose}: {onClose: () => void}) {
   const [accountBalance, setAccountBalance] = useState<number | null>(null);
   const [income, setIncome] = useState<number | null>(null);
   const [incomeType, setIncomeType] = useState<string>("gross");
@@ -25,6 +25,21 @@ function Welcome() {
     }
   };
 
+  const handleSubmitNew = async (e) => {
+    e.preventDefault();
+    console.log("Submitting new data");
+    console.log({ accountBalance, income, incomeType });
+    if (accountBalance !== null && income !== null) {
+      await saveUserFinancialData({
+        account_balance: accountBalance,
+        income: income,
+        income_type: incomeType,
+      });
+      onClose();
+      alert("Financial data saved successfully!");
+    }
+  };
+
   const formVariant = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, duration: 0.8 } },
@@ -39,7 +54,7 @@ function Welcome() {
     <motion.section
       className="relative grid place-items-center min-h-screen bg-background text-background"
       style={{
-        backgroundImage: "url('/register.svg')",
+        backgroundImage: "url('/welcome.svg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -78,6 +93,7 @@ function Welcome() {
                 initial="hidden"
                 animate="visible"
                 variants={formVariant} // Form animation variant
+                onSubmit={handleSubmitNew}
               >
                 {/* Account Balance Input */}
                 <div className="relative">
@@ -140,7 +156,7 @@ function Welcome() {
 
                 {/* Submit Button */}
                 <motion.button
-                  onClick={handleSubmit}
+                  type="submit"
                   className="w-full rounded bg-background text-[#3f7ea6] dark:text-white px-6 py-3 text-xs font-medium uppercase leading-normal shadow-md transition duration-150 ease-in-out hover:bg-white hover:text-background focus:bg-white focus:text-background focus:outline-none focus:ring-2 focus:ring-white active:bg-background active:text-white"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

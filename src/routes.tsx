@@ -11,21 +11,28 @@ import Insights from "./routes/insights";
 import GroupDetails from "./routes/groupDetails";
 import InviteHandler from "./routes/inviteHandler";
 import { useQuery } from "convex/react";
-import { api } from "../convex/_generated/api"; 
-import { redirect, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { api } from "../convex/_generated/api";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function ConditionalHome() {
   const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
 
-  if (userFinancialData === undefined) {
-    return <div>Loading...</div>;
-  }
+  // if (userFinancialData === undefined) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (!userFinancialData || userFinancialData.account_balance === undefined || userFinancialData.income === undefined) {
-    return <Welcome />;
-  }
+  const [showWelcome, setShowWelcome] = useState(false);
 
+  useEffect(() => {
+    const shouldShow = !userFinancialData || userFinancialData === undefined || userFinancialData.account_balance === undefined || userFinancialData.income === undefined;
+    setShowWelcome(shouldShow);
+  }, [userFinancialData]);
+
+
+  if (showWelcome) {
+    return <Welcome onClose={() => setShowWelcome(false)} />;
+  }
   return (
     <Layout>
       <Home />
@@ -59,12 +66,12 @@ export const ROUTES = [
     title: "Home",
     element: (
       <>
-      <Authenticated>
-        <ConditionalHome />
-      </Authenticated>
-      <Unauthenticated>
-        <RedirectToLogin />
-      </Unauthenticated>
+        <Authenticated>
+          <ConditionalHome />
+        </Authenticated>
+        <Unauthenticated>
+          <RedirectToLogin />
+        </Unauthenticated>
       </>
     ),
   },
@@ -124,13 +131,13 @@ export const ROUTES = [
     title: "Login",
     element: (
       <>
-      <Unauthenticated>
-        <Login />
-        <Toaster />
-      </Unauthenticated>
-      <Authenticated>
-        <RedirectToHome />
-      </Authenticated>
+        <Unauthenticated>
+          <Login />
+          <Toaster />
+        </Unauthenticated>
+        <Authenticated>
+          <RedirectToHome />
+        </Authenticated>
       </>
     ),
   },

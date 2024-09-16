@@ -8,6 +8,7 @@ import "@fontsource/inter/400.css";
 import "@fontsource/inter/400-italic.css";
 import App from "./App";
 import { ThemeProvider } from "./theme-provider";
+import LoadingAnimation from "./components/ui/loading-animations";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
@@ -15,7 +16,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ConvexAuthProvider client={convex}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <AuthLoading>Loading...</AuthLoading>
+        <AuthLoading><LoadingAnimation/></AuthLoading>
         <App />
       </ThemeProvider>
     </ConvexAuthProvider>
