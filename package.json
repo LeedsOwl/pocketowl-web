@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
+    "@capacitor/android": "6.1.2",
+    "@capacitor/core": "^6.1.2",
     "@convex-dev/auth": "^0.0.60",
     "@fontsource/inter": "^5.0.20",
     "@headlessui/react": "^2.1.5",
@@ -51,6 +53,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
     "@types/date-fns": "^2.6.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "autoprefixer": "^10.4.20",
