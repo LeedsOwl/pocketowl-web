@@ -17,22 +17,32 @@ import { useEffect, useState } from "react";
 
 function ConditionalHome() {
   const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
-
-  // if (userFinancialData === undefined) {
-  //   return <div>Loading...</div>;
-  // }
-
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    const shouldShow = !userFinancialData || userFinancialData === undefined || userFinancialData.account_balance === undefined || userFinancialData.income === undefined;
-    setShowWelcome(shouldShow);
+    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+    if (!hasSeenWelcome) {
+      const shouldShow = !userFinancialData || userFinancialData.account_balance === undefined || userFinancialData.income === undefined;
+      if (shouldShow) {
+        localStorage.removeItem('hasSeenWelcome');
+        setShowWelcome(true);
+      }
+      else {
+        localStorage.setItem('hasSeenWelcome', 'true');
+        setShowWelcome(false);
+      }
+    }
   }, [userFinancialData]);
 
+  const handleWelcomeClose = () => {
+    localStorage.setItem('hasSeenWelcome', 'true');
+    setShowWelcome(false);
+  };
 
   if (showWelcome) {
-    return <Welcome onClose={() => setShowWelcome(false)} />;
+    return <Welcome onClose={handleWelcomeClose} />;
   }
+
   return (
     <Layout>
       <Home />
