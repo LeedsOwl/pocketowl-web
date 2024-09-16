@@ -12,7 +12,7 @@ function InviteHandler() {
   const [errorMessage, setErrorMessage] = useState("");
 
   // Check if the user is authenticated
-  const userAuth = useQuery(api.auth.getUser);
+  const userAuth = useQuery(api.users.getUserInfo, {}) || [];
 
   // Fetch the invite details based on the token
   const invite = useQuery(api.group_invites.validateInvite, { invite_token });
