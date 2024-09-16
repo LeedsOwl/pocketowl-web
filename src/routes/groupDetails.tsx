@@ -290,16 +290,16 @@ function GroupDetails() {
           </motion.div>
 
           <Link to="/groups">
-              <button
-                className="p-2 rounded-full shadow-lg border border-primary bg-[rgba(255,255,255,0.87)] dark:bg-[#1b1f23b2] hover:bg-blue-800 backdrop-blur-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 absolute bottom-24 left-8"
-              >
-                <img
-                  src="/arrow.gif"
-                  alt="Back"
-                  className="h-8 w-8 object-contain rounded-full"
-                />
-              </button>
-            </Link>
+            <button
+              className="p-2 rounded-full shadow-lg border border-primary bg-[rgba(255,255,255,0.87)] dark:bg-[#1b1f23b2] hover:bg-blue-800 backdrop-blur-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 absolute bottom-24 left-8"
+            >
+              <img
+                src="/arrow.gif"
+                alt="Back"
+                className="h-8 w-8 object-contain rounded-full"
+              />
+            </button>
+          </Link>
 
           {/* Add Group Expense Drawer */}
           <AddGroupExpense
