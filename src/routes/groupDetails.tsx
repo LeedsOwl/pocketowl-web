@@ -208,9 +208,9 @@ function GroupDetails() {
           </motion.div>
 
           {/* Voting Mechanism Section */}
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <GroupVoting groupId={id} />
-          </div>
+          </div> */}
 
           {/* Total Amount Section with Progress Bar */}
           <div className="rounded-lg pb-2 border shadow-md mt-4">

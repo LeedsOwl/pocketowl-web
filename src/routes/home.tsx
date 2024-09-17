@@ -164,7 +164,7 @@ function Home() {
   const displayExpenses = Math.abs(totalExpenses);
 
   return (
-    <div className="pb-24">
+    <div className="pb-36">
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
