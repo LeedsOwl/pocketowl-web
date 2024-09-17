@@ -1,16 +1,15 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { query } from "./_generated/server";
-import { Id } from "convex/_generated/dataModel";
+import { Id } from "./_generated/dataModel";
 
 export const addGroupTransaction = mutation(async ({ db }, { groupId, description, amount, dateTime, user_name }) => {
   if (!groupId || !description || !amount || !dateTime || !user_name) {
     throw new Error("Missing required fields");
   }
 
-  // Insert the transaction into the database
   const newTransaction = {
-    group_id: groupId,  // Ensure group_id is stored correctly
+    group_id: groupId,
     description,
     amount,
     dateTime,
