@@ -25,6 +25,8 @@ import type * as http from "../http.js";
 import type * as insights from "../insights.js";
 import type * as transactions from "../transactions.js";
 import type * as users from "../users.js";
+import type * as user_settings from "../user_settings.js";
+import type * as voting_sessions from "../voting_sessions.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -46,6 +48,8 @@ declare const fullApi: ApiFromModules<{
   insights: typeof insights;
   transactions: typeof transactions;
   users: typeof users;
+  user_settings: typeof user_settings;
+  voting_sessions: typeof voting_sessions;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

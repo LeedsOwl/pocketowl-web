@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -18,6 +18,7 @@ import CustomSplit from "@/components/CustomSplit";
 import { Progress } from "@/components/ui/progress";
 import SetGroupBudget from "@/components/set-group-budget";
 import { FaPencilAlt } from "react-icons/fa";
+import GroupVoting from "@/components/group-voting";
 
 function GroupDetails() {
   const { id } = useParams(); // Group ID from URL params
@@ -56,7 +57,12 @@ function GroupDetails() {
     }
   };
 
+  const [groupTransaction, setGroupTransactions] = useState([]);
   const [showAddGroupExpense, setShowAddGroupExpense] = useState(false);
+
+  useEffect(() => {
+    console.log("Drawer open state changed:", showAddGroupExpense);
+  }, [showAddGroupExpense]);
 
   // Calculate the total amount of transactions
   const totalAmount = useMemo(() => {
@@ -69,7 +75,15 @@ function GroupDetails() {
   const [inviteLink, setInviteLink] = useState("");
 
   // Mutation to create invite
+
   const createInvite = useMutation(api.group_invites.createInvite);
+
+  const fetchedGroupMembers = useQuery(api.groups.getGroupMembersWithDetails, { groupId: id });
+
+  // Manually refetch group members
+  const refetchGroupMembers = () => {
+    setGroupMembers(fetchedGroupMembers);
+  };
 
   const handleInvite = async () => {
     try {
@@ -78,10 +92,14 @@ function GroupDetails() {
       });
       const link = `${window.location.origin}/invite/${invite.invite_token}`;
       setInviteLink(link);
+
+      // Refetch group members after inviting
+      refetchGroupMembers();  // Update the group members state
     } catch (error) {
       console.error("Error creating invite:", error);
     }
   };
+
 
   const handleAddGroupExpenseButtonClick = () => {
     setShowAddGroupExpense(!showAddGroupExpense);
@@ -94,7 +112,7 @@ function GroupDetails() {
 
   return (
     <div className="p-1 overflow-y-auto max-h-screen">
-      <div className="pb-16">
+      <div className="pb-36">
         <div className="sticky top-0 z-50 bg-background shadow-md">
           <div
             className="text-white p-14 bg-background rounded-lg shadow-md"
@@ -188,6 +206,11 @@ function GroupDetails() {
               </div>
             )}
           </motion.div>
+
+          {/* Voting Mechanism Section */}
+          <div className="mt-4">
+            <GroupVoting groupId={id} />
+          </div>
 
           {/* Total Amount Section with Progress Bar */}
           <div className="rounded-lg pb-2 border shadow-md mt-4">
@@ -289,17 +312,19 @@ function GroupDetails() {
             <GroupExpenseButton onClick={handleAddGroupExpenseButtonClick} />
           </motion.div>
 
-          <Link to="/groups">
-            <button
-              className="p-2 rounded-full shadow-lg border border-primary bg-[rgba(255,255,255,0.87)] dark:bg-[#1b1f23b2] hover:bg-blue-800 backdrop-blur-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300 absolute bottom-24 left-8"
-            >
-              <img
-                src="/arrow.gif"
-                alt="Back"
-                className="h-8 w-8 object-contain rounded-full"
-              />
-            </button>
-          </Link>
+          <div className="fixed bottom-20 left-0 p-4">
+            <Link to="/groups">
+              <button
+                className="p-2 rounded-full shadow-lg border border-primary bg-[rgba(255,255,255,0.87)] dark:bg-[#1b1f23b2] hover:bg-blue-800 backdrop-blur-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300"
+              >
+                <img
+                  src="/arrow.gif"
+                  alt="Back"
+                  className="h-8 w-8 object-contain rounded-full"
+                />
+              </button>
+            </Link>
+          </div>
 
           {/* Add Group Expense Drawer */}
           <AddGroupExpense

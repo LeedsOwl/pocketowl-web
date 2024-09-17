@@ -4,10 +4,20 @@ import { v } from "convex/values";
 
 const schema = defineSchema({
   ...authTables,
+  // users: defineTable({
+  //   email: v.string(),
+  //   name: v.optional(v.string()),
+  //   password: v.optional(v.string()),
+  // }),
+  user_profiles: defineTable({ // Custom user information
+    email: v.string(),
+    name: v.optional(v.string()),
+    password: v.optional(v.string()),
+  }),
   user_settings: defineTable({
     user_id: v.id("users"),
     currency: v.string(),
-  }),
+  }).index("by_user_id", ["user_id"]),
   transactions: defineTable({
     user_id: v.id("users"),
     dateTime: v.string(),
@@ -24,21 +34,23 @@ const schema = defineSchema({
     created_by: v.id("users"),
     description: v.string(),
     default_split_type: v.string(),
-    default_split_percentages: v.optional(v.object({
-      group_member_id: v.id("group_members"),
-      percentage: v.float64(),
-    })),
+    default_split_percentages: v.optional(
+      v.object({
+        group_member_id: v.id("group_members"),
+        percentage: v.float64(),
+      })
+    ),
     budget: v.optional(v.number()),
   }),
   group_members: defineTable({
     group_id: v.id("groups"),
     user_id: v.id("users"),
     invite_accepted: v.boolean(),
-  }),
+  }).index("by_group_id", ["group_id"]),
   group_invites: defineTable({
     group_id: v.id("groups"),
-    invited_by: v.id("users"), 
-    invite_token: v.string(),  
+    invited_by: v.id("users"),
+    invite_token: v.string(),
     expiry_date: v.string(),
     created_at: v.string(),
   }),
