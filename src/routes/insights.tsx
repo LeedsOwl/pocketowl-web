@@ -1,7 +1,6 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Donut } from "@/components/pie-chart";
-import { useTheme } from "../theme-provider";
 import {
   FaUtensils,
   FaMoneyBill,
@@ -13,11 +12,11 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 const categoryColors = {
-  Food: "#6C465D",
-  Bills: "#A95166",
-  Travel: "#EB6D3A",
-  Others: "#E1A639",
-  Shopping: "#386590",
+  Food: "#6366F1",
+  Bills: "#8B5CF6",
+  Travel: "#3B82F6",
+  Others: "#A78BFA",
+  Shopping: "#0EA5E9",
 };
 
 const categoryIcons = {
@@ -27,11 +26,20 @@ const categoryIcons = {
   Others: <FaEllipsisH className="text-white"/>,
   Shopping: <FaShoppingCart className="text-white"/>,
 };
+const GBP = "\u00A3";
 
 interface Categories {
   totalAmount: number;
   categoryTotals: { [key: string]: number };
 }
+
+const demoCategoryTotals: { [key: string]: number } = {
+  food: 86.4,
+  bills: 132.75,
+  travel: 54.2,
+  others: 31.5,
+  shopping: 97.35,
+};
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -47,17 +55,22 @@ const containerVariants = {
 };
 
 const Insights = () => {
-  const { theme } = useTheme();
-  const backgroundImage =
-    theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
-
   const categories = useQuery(api.categories.getCategories, {}) || [];
   const transactions: Categories = useQuery(api.insights.getInsights, {
     period: "month",
   }) || { totalAmount: 0, categoryTotals: {} };
 
   const [startAnimation, setStartAnimation] = useState(false);
-  const categoryTotals = transactions?.categoryTotals;
+  const hasRealInsightsData =
+    transactions.totalAmount > 0 ||
+    Object.values(transactions.categoryTotals || {}).some((value) => value > 0);
+
+  const categoryTotals = hasRealInsightsData
+    ? transactions.categoryTotals
+    : demoCategoryTotals;
+  const totalAmount = hasRealInsightsData
+    ? transactions.totalAmount
+    : Object.values(demoCategoryTotals).reduce((sum, value) => sum + value, 0);
 
   const chartData = Object.keys(categoryTotals).map((category) => ({
     category,
@@ -80,27 +93,24 @@ const Insights = () => {
   }, []);
 
   return (
-    <div className="p-1 overflow-y-auto max-h-screen">
-      <div
-        className="text-white p-14 bg-background rounded-lg shadow-md"
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="items-center text-center">
-          <p className="text-2xl font-semibold">Category Summary</p>
-          <p className="text-lg font-bold text-gray-300 dark:text-gray-400">
-            January - September 2024
+    <div className="tab-page">
+      <div className="tab-stack">
+      <div className="surface-card relative overflow-hidden rounded-2xl p-10 shadow-2xl">
+        <div className="pointer-events-none absolute -top-20 left-[-10%] h-52 w-52 rounded-full bg-[#6366f1]/35 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 right-[-12%] h-56 w-56 rounded-full bg-[#8b5cf6]/30 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#6366f1]/10 via-transparent to-[#8b5cf6]/15 dark:from-[#6366f1]/15 dark:to-[#000000]/25" />
+        <div className="relative z-10 items-center text-center">
+          <p className="text-2xl font-semibold tracking-wide text-slate-900 dark:text-slate-100">Insights</p>
+          <p className="text-sm font-medium tracking-[0.12em] uppercase text-slate-600 dark:text-slate-300">
+            Category spending breakdown
           </p>
         </div>
       </div>
 
-      <div className="p-2 pb-24 pt-4">
+      <div className="space-y-3 pb-24">
         <Donut
           chartData={chartData}
-          totalAmount={transactions.totalAmount}
+          totalAmount={totalAmount}
           categoryTotals={categoryTotals}
         />
 
@@ -112,12 +122,18 @@ const Insights = () => {
             return (
               <motion.div
                 key={index}
-                className="rounded-lg border border-gray-500 shadow p-4 mt-4 flex items-center"
+                className="mt-4 flex items-center rounded-xl p-4 text-white shadow-xl"
                 style={{
-                  backgroundColor:
+                  background: `linear-gradient(140deg, ${
                     categoryColors[
                       category.friendly_name as keyof typeof categoryColors
-                    ] || "#333",
+                    ] || "#333"
+                  } 0%, ${
+                    categoryColors[
+                      category.friendly_name as keyof typeof categoryColors
+                    ] || "#333"
+                  }DD 100%)`,
+                  border: "1px solid rgba(255, 255, 255, 0.24)",
                 }}
                 initial="hidden"
                 animate="visible"
@@ -129,19 +145,20 @@ const Insights = () => {
                     category.friendly_name as keyof typeof categoryIcons
                   ] || <FaEllipsisH />}
                 </div>
-                <div className="flex text-white justify-between w-full">
+                <div className="flex justify-between w-full text-white">
                   <div>
                     <p className="text-sm font-bold">
                       {category.friendly_name}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-md font-bold">£{categoryTotal}</p>
+                    <p className="text-md font-bold">{GBP}{categoryTotal}</p>
                   </div>
                 </div>
               </motion.div>
             );
           })}
+      </div>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { motion } from "framer-motion";
 import { MdChevronRight } from "react-icons/md";
 import AddGroup from "@/components/add-group";
-import { useTheme } from "../theme-provider";
+import { PageTransition } from "@/components/PageTransition";
 
 function Groups() {
   const [showAddGroup, setShowAddGroup] = useState(false);
@@ -17,98 +17,116 @@ function Groups() {
     setShowAddGroup(!showAddGroup);
   };
 
-  const { theme } = useTheme();
-  const backgroundImage =
-    theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
-  const isDarkMode = theme === "dark";
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+      },
+    },
+  };
 
   return (
-    <div className="p-1 overflow-y-auto max-h-screen">
-      <div className="pb-16">
-        <div className="sticky top-0 z-50 bg-background shadow-md">
-          <div
-            className="text-white p-14 bg-background rounded-lg shadow-md"
-            style={{
-              backgroundImage: `url(${backgroundImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="items-center text-center">
-              <p className="text-2xl font-semibold">Group Split</p>
-              <p className="text-lg font-bold text-gray-300 dark:text-gray-400">
-                Divide bills seamlessly!
-              </p>
-            </div>
+    <PageTransition>
+      <div className="tab-page">
+        <div className="tab-stack">
+        <div className="surface-card relative overflow-hidden rounded-2xl p-10 shadow-2xl">
+          <div className="pointer-events-none absolute -top-20 left-[-10%] h-52 w-52 rounded-full bg-[#7dade2]/18 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-20 right-[-12%] h-56 w-56 rounded-full bg-[#8cb9dc]/16 blur-3xl" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#7dade2]/8 via-transparent to-[#8cb9dc]/10 dark:from-[#7dade2]/12 dark:to-[#000000]/20" />
+          <div className="relative z-10 items-center text-center">
+            <p className="text-2xl font-semibold tracking-wide text-slate-900 dark:text-slate-100">Group Split</p>
+            <p className="text-sm font-medium tracking-[0.12em] uppercase text-slate-600 dark:text-slate-300">
+              Divide bills seamlessly
+            </p>
           </div>
         </div>
 
-        <div className="p-2">
-          <div className="rounded-lg pb-2 border shadow-md mt-4">
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl font-bold p-3 pb-1"
-            >
-              Recent Groups
-            </motion.h2>
+        <div className="pt-1">
+          <div className="surface-card mt-2 rounded-xl border-white/25 pb-2">
+            <div className="flex justify-between items-center p-3 pb-1">
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-xl font-bold text-slate-900 dark:text-slate-100"
+              >
+                Recent Groups
+              </motion.h2>
+
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.5 }}
+              >
+                <GroupButton onClick={handleAddGroupButtonClick} />
+              </motion.div>
+            </div>
 
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-3"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
-                {userGroups.map((group: any, index: any) => (
-                  <div key={index} className="px-3 py-2">
-                    <div className="mt-1 space-y-4">
-                      <div
-                        className={`rounded-lg border shadow p-4 ${isDarkMode ? "bg-card border-gray-500" : "bg-glossy border-gray-400"}`}
-                      >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="text-sm font-bold text-white">
-                              {group.name}
-                            </p>
-                            <p className="text-sm text-gray-200 dark:text-white">
-                              {group.description}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <Link to={`/groups/${group._id}`}>
-                              <button
-                                className="bg-secondary dark:bg-primary text-black dark:text-white px-4 py-2 rounded-lg hover:bg-secondary flex justify-center items-center"
-                                title="View Group"
-                              >
-                                <MdChevronRight className="text-xl" />
-                              </button>
-                            </Link>
-                          </div>
-                        </div>
+              {userGroups.map((group: any, index: any) => (
+                <Link to={`/groups/${group._id}`} key={index}>
+                  <motion.div
+                    variants={itemVariants}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="surface-card group relative cursor-pointer overflow-hidden rounded-lg border-white/25 p-4 shadow-lg transition-shadow duration-300 hover:shadow-xl"
+                  >
+                    {/* Animated gradient overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/10 group-hover:to-primary/20 transition-all duration-300"></div>
+
+                    <div className="relative z-10 flex justify-between items-center">
+                      <div className="flex-1">
+                        <p className="mb-1 text-sm font-bold text-slate-900 dark:text-slate-100">
+                          {group.name}
+                        </p>
+                        <p className="line-clamp-2 text-sm text-slate-600 dark:text-slate-300">
+                          {group.description}
+                        </p>
                       </div>
+
+                      {/* Animated arrow button */}
+                      <motion.div
+                        whileHover={{ x: 5 }}
+                        className="ml-3 bg-gradient-to-r from-primary to-primary/80 text-white p-3 rounded-full shadow-lg group-hover:shadow-[0_0_25px_rgba(125,173,226,0.28),0_0_40px_rgba(140,185,220,0.18)]"
+                      >
+                        <MdChevronRight className="text-xl" />
+                      </motion.div>
                     </div>
-                  </div>
-                ))}
-              </div>
+
+                    {/* Subtle bottom glow */}
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </motion.div>
+                </Link>
+              ))}
             </motion.div>
-
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.5 }}
-              className="fixed bottom-24 right-4 z-100"
-            >
-              <GroupButton onClick={handleAddGroupButtonClick} />
-            </motion.div>
-
-            <AddGroup open={showAddGroup} setOpen={setShowAddGroup} />
-
-            <Toaster className="bottom-20" />
           </div>
+        </div>
+
+        <AddGroup open={showAddGroup} setOpen={setShowAddGroup} />
+        <Toaster className="bottom-20" />
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }
 

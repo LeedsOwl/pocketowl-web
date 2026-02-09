@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { LuHome, LuUsers, LuPieChart, LuUserCircle2 } from "react-icons/lu";
 
 function BottomNav() {
@@ -17,48 +17,48 @@ function BottomNav() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t">
+    <div className="tab-dock">
       <Tabs
         defaultValue="home"
         value={getTabValue(location.pathname.substring(1))}
         className="flex justify-around"
         onValueChange={(value) => navigateTo(value)}
       >
-        <TabsList className="bg-background flex justify-around w-full py-10">
+        <TabsList className="tab-dock-inner flex justify-around w-full h-auto py-1">
           <TabsTrigger
             value="home"
-            className="data-[state=active]:bg-primary text-muted-foreground data-[state=active]:text-white"
+            className="group rounded-xl px-3 py-2 text-slate-600 transition-all data-[state=active]:text-slate-900 dark:text-slate-300 dark:data-[state=active]:text-slate-100"
           >
             <div className="flex flex-col items-center gap-1">
-              <LuHome className="w-6 h-6" />
-              <span className="text-xs">Home</span>
+              <LuHome className="w-5 h-5 transition-transform group-data-[state=active]:-translate-y-0.5" />
+              <span className="text-[11px] tracking-wide">Home</span>
             </div>
           </TabsTrigger>
           <TabsTrigger
             value="groups"
-            className="data-[state=active]:bg-primary text-muted-foreground data-[state=active]:text-white"
+            className="group rounded-xl px-3 py-2 text-slate-600 transition-all data-[state=active]:text-slate-900 dark:text-slate-300 dark:data-[state=active]:text-slate-100"
           >
             <div className="flex flex-col items-center gap-1">
-              <LuUsers className="w-6 h-6" />
-              <span className="text-xs">Groups</span>
+              <LuUsers className="w-5 h-5 transition-transform group-data-[state=active]:-translate-y-0.5" />
+              <span className="text-[11px] tracking-wide">Groups</span>
             </div>
           </TabsTrigger>
           <TabsTrigger
             value="insights"
-            className="data-[state=active]:bg-primary text-muted-foreground data-[state=active]:text-white"
+            className="group rounded-xl px-3 py-2 text-slate-600 transition-all data-[state=active]:text-slate-900 dark:text-slate-300 dark:data-[state=active]:text-slate-100"
           >
             <div className="flex flex-col items-center gap-1">
-              <LuPieChart className="w-6 h-6" />
-              <span className="text-xs">Insights</span>
+              <LuPieChart className="w-5 h-5 transition-transform group-data-[state=active]:-translate-y-0.5" />
+              <span className="text-[11px] tracking-wide">Insights</span>
             </div>
           </TabsTrigger>
           <TabsTrigger
             value="profile"
-            className="data-[state=active]:bg-primary text-muted-foreground data-[state=active]:text-white"
+            className="group rounded-xl px-3 py-2 text-slate-600 transition-all data-[state=active]:text-slate-900 dark:text-slate-300 dark:data-[state=active]:text-slate-100"
           >
             <div className="flex flex-col items-center gap-1">
-              <LuUserCircle2 className="w-6 h-6" />
-              <span className="text-xs">Profile</span>
+              <LuUserCircle2 className="w-5 h-5 transition-transform group-data-[state=active]:-translate-y-0.5" />
+              <span className="text-[11px] tracking-wide">Profile</span>
             </div>
           </TabsTrigger>
         </TabsList>

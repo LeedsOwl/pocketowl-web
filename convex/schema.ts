@@ -4,11 +4,16 @@ import { v } from "convex/values";
 
 const schema = defineSchema({
   ...authTables,
-  // users: defineTable({
-  //   email: v.string(),
-  //   name: v.optional(v.string()),
-  //   password: v.optional(v.string()),
-  // }),
+  users: defineTable({
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.float64()),
+    image: v.optional(v.string()),
+    isAnonymous: v.optional(v.boolean()),
+    name: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.float64()),
+    password: v.optional(v.string()),
+  }),
   user_profiles: defineTable({ // Custom user information
     email: v.string(),
     name: v.optional(v.string()),
@@ -35,10 +40,18 @@ const schema = defineSchema({
     description: v.string(),
     default_split_type: v.string(),
     default_split_percentages: v.optional(
-      v.object({
-        group_member_id: v.id("group_members"),
-        percentage: v.float64(),
-      })
+      v.union(
+        v.object({
+          group_member_id: v.id("group_members"),
+          percentage: v.float64(),
+        }),
+        v.array(
+          v.object({
+            group_member_id: v.id("group_members"),
+            percentage: v.float64(),
+          })
+        )
+      )
     ),
     budget: v.optional(v.number()),
   }),

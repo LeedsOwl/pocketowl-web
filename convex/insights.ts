@@ -18,32 +18,26 @@ export const getInsights = query({
       .order("desc")
       .collect();
 
-    let filteredTransactions = [];
+    const now = new Date();
+    const startDate = new Date(now);
     switch (args.period) {
       case "week":
-        filteredTransactions = transactions.filter((t) => {
-          const date = new Date(t.dateTime);
-          const now = new Date();
-          return date > new Date(now.setDate(now.getDate() - 7));
-        });
+        startDate.setDate(now.getDate() - 7);
         break;
       case "month":
-        filteredTransactions = transactions.filter((t) => {
-          const date = new Date(t.dateTime);
-          const now = new Date();
-          return date.getMonth() === now.getMonth();
-        });
+        startDate.setMonth(now.getMonth() - 1);
         break;
       case "year":
-        filteredTransactions = transactions.filter((t) => {
-          const date = new Date(t.dateTime);
-          const now = new Date();
-          return date.getFullYear() === now.getFullYear();
-        });
+        startDate.setFullYear(now.getFullYear() - 1);
         break;
       default:
         throw new Error("Invalid period");
     }
+
+    const filteredTransactions = transactions.filter((t) => {
+      const date = new Date(t.dateTime);
+      return date >= startDate && date <= now;
+    });
 
     const totalAmount = filteredTransactions.reduce(
       (acc, t) => acc + t.amount,
@@ -51,24 +45,22 @@ export const getInsights = query({
     );
 
     const categories = await ctx.db.query("categories").collect();
-    const categoryTotals = categories.reduce(
-      (acc: { [key: string]: number }, category) => {
-        const categoryTransactions = filteredTransactions.filter(
-          (t) => t.category === category._id
-        );
-        const total = categoryTransactions.reduce(
-          (acc, t) => acc + t.amount,
-          0
-        );
-        acc[category.value] = total;
-        return acc;
-      },
-      {}
-    );
+    const categoryById = new Map(categories.map((category) => [category._id, category]));
+
+    const categoryTotalsByValue: Record<string, number> = {};
+    for (const category of categories) {
+      categoryTotalsByValue[category.value] = 0;
+    }
+
+    for (const transaction of filteredTransactions) {
+      const categoryDoc = categoryById.get(transaction.category);
+      const key = categoryDoc?.value ?? "others";
+      categoryTotalsByValue[key] = (categoryTotalsByValue[key] ?? 0) + transaction.amount;
+    }
 
     return {
       totalAmount,
-      categoryTotals,
+      categoryTotals: categoryTotalsByValue,
     };
   },
 });

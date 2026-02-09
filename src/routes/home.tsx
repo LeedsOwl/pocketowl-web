@@ -12,9 +12,7 @@ import { api } from "../../convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import {
-  startOfWeek,
   subDays,
-  subWeeks,
   subMonths,
   subYears,
   format,
@@ -24,6 +22,7 @@ import {
 } from "date-fns";
 import { motion } from "framer-motion";
 import { TimeframeTabs } from "@/components/ui/timeframe-tabs";
+import { PageTransition } from "@/components/PageTransition";
 
 interface Transaction {
   _creationTime: number;
@@ -36,13 +35,13 @@ interface Transaction {
 }
 
 const getThisWeek = () => {
-  const startOfThisWeek = startOfWeek(new Date(), { weekStartsOn: 0 }); // Sunday
-  return Array.from({ length: 7 }, (_, i) => subDays(startOfThisWeek, -i)).reverse();
+  const today = new Date();
+  return Array.from({ length: 7 }, (_, i) => subDays(today, 6 - i));
 };
 
 const getLastWeek = () => {
-  const startOfLastWeek = startOfWeek(subWeeks(new Date(), 1), { weekStartsOn: 0 }); // Last week's Sunday
-  return Array.from({ length: 7 }, (_, i) => subDays(startOfLastWeek, -i)).reverse();
+  const endOfLastWeek = subDays(new Date(), 7);
+  return Array.from({ length: 7 }, (_, i) => subDays(endOfLastWeek, 6 - i));
 };
 
 const getLast6Months = () => {
@@ -57,6 +56,120 @@ function Home() {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const userTransactions = useQuery(api.transactions.getUserTransactions, {}) || [];
   const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
+  const GBP = "\u00A3";
+
+  const demoTransactions: Transaction[] = [
+    {
+      _creationTime: subDays(new Date(), 6).getTime(),
+      _id: "demo-1" as Id<"transactions">,
+      amount: 24.5,
+      category: "Food",
+      dateTime: subDays(new Date(), 6).toISOString(),
+      description: "Coffee and breakfast",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subDays(new Date(), 5).getTime(),
+      _id: "demo-2" as Id<"transactions">,
+      amount: 58.2,
+      category: "Bills",
+      dateTime: subDays(new Date(), 5).toISOString(),
+      description: "Phone bill",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subDays(new Date(), 4).getTime(),
+      _id: "demo-3" as Id<"transactions">,
+      amount: 16.75,
+      category: "Food",
+      dateTime: subDays(new Date(), 4).toISOString(),
+      description: "Lunch",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subDays(new Date(), 3).getTime(),
+      _id: "demo-4" as Id<"transactions">,
+      amount: 34.1,
+      category: "Travel",
+      dateTime: subDays(new Date(), 3).toISOString(),
+      description: "Train tickets",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subDays(new Date(), 2).getTime(),
+      _id: "demo-5" as Id<"transactions">,
+      amount: 42.3,
+      category: "Shopping",
+      dateTime: subDays(new Date(), 2).toISOString(),
+      description: "Groceries",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subDays(new Date(), 1).getTime(),
+      _id: "demo-6" as Id<"transactions">,
+      amount: 19.99,
+      category: "Others",
+      dateTime: subDays(new Date(), 1).toISOString(),
+      description: "Streaming subscription",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subDays(new Date(), 14).getTime(),
+      _id: "demo-7" as Id<"transactions">,
+      amount: 73.4,
+      category: "Bills",
+      dateTime: subDays(new Date(), 14).toISOString(),
+      description: "Utilities",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subMonths(new Date(), 1).getTime(),
+      _id: "demo-8" as Id<"transactions">,
+      amount: 128.99,
+      category: "Shopping",
+      dateTime: subMonths(new Date(), 1).toISOString(),
+      description: "House supplies",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subMonths(new Date(), 2).getTime(),
+      _id: "demo-9" as Id<"transactions">,
+      amount: 46.25,
+      category: "Food",
+      dateTime: subMonths(new Date(), 2).toISOString(),
+      description: "Dinner out",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subMonths(new Date(), 3).getTime(),
+      _id: "demo-10" as Id<"transactions">,
+      amount: 92.7,
+      category: "Travel",
+      dateTime: subMonths(new Date(), 3).toISOString(),
+      description: "Weekend transport",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subMonths(new Date(), 4).getTime(),
+      _id: "demo-11" as Id<"transactions">,
+      amount: 35.5,
+      category: "Others",
+      dateTime: subMonths(new Date(), 4).toISOString(),
+      description: "Pharmacy",
+      user_id: "demo-user" as Id<"users">,
+    },
+    {
+      _creationTime: subYears(new Date(), 1).getTime(),
+      _id: "demo-12" as Id<"transactions">,
+      amount: 210,
+      category: "Bills",
+      dateTime: subYears(new Date(), 1).toISOString(),
+      description: "Annual insurance",
+      user_id: "demo-user" as Id<"users">,
+    },
+  ];
+  const usingDemoData = userTransactions.length === 0;
+  const chartTransactions = usingDemoData ? demoTransactions : userTransactions;
 
   const deleteTransaction = useMutation(api.transactions.deleteTransaction);
   const updateTransaction = useMutation(api.transactions.updateTransaction);
@@ -76,7 +189,7 @@ function Home() {
       case "week":
         return getThisWeek().map((date) => ({
           label: format(date, "EEEE"),
-          total: userTransactions
+          total: chartTransactions
             .filter((transaction) =>
               isSameDay(new Date(transaction._creationTime), date)
             )
@@ -85,7 +198,7 @@ function Home() {
       case "month":
         return getLast6Months().map((date) => ({
           label: format(date, "MMM"),
-          total: userTransactions
+          total: chartTransactions
             .filter((transaction) =>
               isSameMonth(new Date(transaction._creationTime), date)
             )
@@ -94,7 +207,7 @@ function Home() {
       case "year":
         return getLast5Years().map((date) => ({
           label: format(date, "yyyy"),
-          total: userTransactions
+          total: chartTransactions
             .filter((transaction) =>
               isSameYear(new Date(transaction._creationTime), date)
             )
@@ -112,17 +225,17 @@ function Home() {
     switch (activeTimeframe) {
       case "week":
         return getLastWeek().map((date) => ({
-          label: format(subDays(date, 7), "EEEE"),
-          total: userTransactions
+          label: format(date, "EEEE"),
+          total: chartTransactions
             .filter((transaction) =>
-              isSameDay(new Date(transaction._creationTime), subDays(date, 7))
+              isSameDay(new Date(transaction._creationTime), date)
             )
             .reduce((sum, transaction) => sum + transaction.amount, 0),
         }));
       case "month":
         return getLast6Months().map((date) => ({
           label: format(subMonths(date, 1), "MMM"),
-          total: userTransactions
+          total: chartTransactions
             .filter((transaction) =>
               isSameMonth(new Date(transaction._creationTime), subMonths(date, 1))
             )
@@ -131,7 +244,7 @@ function Home() {
       case "year":
         return getLast5Years().map((date) => ({
           label: format(subYears(date, 1), "yyyy"),
-          total: userTransactions
+          total: chartTransactions
             .filter((transaction) =>
               isSameYear(new Date(transaction._creationTime), subYears(date, 1))
             )
@@ -157,25 +270,27 @@ function Home() {
   const income = userFinancialData?.income || 0;
 
   // Calculate total expenses
-  const totalExpenses = userTransactions
+  const totalExpenses = chartTransactions
     .filter((transaction) => transaction.category !== "Income")
     .reduce((sum, transaction) => sum + transaction.amount, 0);
 
   const displayExpenses = Math.abs(totalExpenses);
 
   return (
-    <div className="pb-36">
+    <PageTransition>
+      <div className="tab-page">
+      <div className="tab-stack">
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="sticky top-0 z-50 bg-background shadow-md"
+        className="z-40"
       >
         <Balance
           accountBalance={accountBalance}
           income={income}
           expenses={displayExpenses}
-          currency="£"
+          currency={"\u00A3"}
         />
       </motion.div>
 
@@ -202,16 +317,21 @@ function Home() {
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="mt-2 text-xl font-bold p-3"
+        className="mt-2 px-0 text-lg font-bold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300"
       >
         Recent Transactions
       </motion.h2>
+      {usingDemoData && (
+        <p className="px-0 text-xs text-slate-600 dark:text-slate-300">
+          Demo data
+        </p>
+      )}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.4 }}
       >
-        {userTransactions.map((transaction: Transaction, index) => (
+        {chartTransactions.map((transaction: Transaction, index) => (
           <motion.div
             key={transaction._id}
             initial={{ opacity: 0, y: 20 }}
@@ -224,8 +344,8 @@ function Home() {
               description={transaction.description}
               amount={transaction.amount}
               status={"completed"}
-              onEdit={handleEditTransaction}
-              onDelete={handleDeleteTransaction}
+              onEdit={usingDemoData ? () => {} : handleEditTransaction}
+              onDelete={usingDemoData ? () => {} : handleDeleteTransaction}
             />
           </motion.div>
         ))}
@@ -240,7 +360,9 @@ function Home() {
       </motion.div>
       <AddExpense open={showAddExpense} setOpen={setShowAddExpense} />
       <Toaster className="bottom-20" />
-    </div>
+      </div>
+      </div>
+    </PageTransition>
   );
 }
 

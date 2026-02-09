@@ -27,7 +27,6 @@ function Profile() {
   const { signOut } = useAuthActions();
   const { theme, setTheme } = useTheme();
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
-  const backgroundImage = theme === "dark" ? "/stacked-waves.svg" : "/register.svg";
 
   const handleThemeToggle = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
@@ -168,20 +167,17 @@ function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-background">
+    <div className="tab-page">
+      <div className="tab-stack min-h-screen">
       {/* Profile Header */}
-      <div className="p-1 overflow-y-auto max-h-screen">
-        <div
-          className="text-white p-14 bg-background rounded-lg shadow-md"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="items-center text-center">
-            <p className="text-2xl font-semibold">{userInfo?.name || "User"}</p>
-            <p className="text-lg font-bold dark:text-gray-400">
+      <div>
+        <div className="surface-card relative overflow-hidden rounded-2xl p-10 shadow-2xl">
+          <div className="pointer-events-none absolute -top-20 left-[-10%] h-52 w-52 rounded-full bg-[#7dade2]/18 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-20 right-[-12%] h-56 w-56 rounded-full bg-[#8cb9dc]/16 blur-3xl" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#7dade2]/8 via-transparent to-[#8cb9dc]/10 dark:from-[#7dade2]/12 dark:to-[#000000]/20" />
+          <div className="relative z-10 items-center text-center">
+            <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{userInfo?.name || "User"}</p>
+            <p className="text-sm font-medium tracking-[0.1em] uppercase text-slate-600 dark:text-slate-300">
               {userInfo?.email || "user@example.com"}
             </p>
           </div>
@@ -189,8 +185,8 @@ function Profile() {
       </div>
 
       {/* Account Settings */}
-      <div className="p-3">
-        <div className="flex flex-col items-center pt-2 px-2 border rounded-lg shadow-md">
+      <div>
+        <div className="surface-card flex flex-col items-center rounded-xl border-white/25 px-2 pt-2 shadow-md">
           <motion.div
             className="w-full max-w-4xl p-6 dark:bg-background rounded-xl shadow-lg space-y-4"
             variants={containerVariants}
@@ -306,6 +302,7 @@ function Profile() {
             </motion.div>
           </motion.div>
         </div>
+      </div>
       </div>
     </div>
   );

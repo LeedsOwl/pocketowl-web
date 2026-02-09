@@ -136,6 +136,8 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
                   <SelectContent>
                     <SelectItem value="equal">Equal</SelectItem>
                     <SelectItem value="percentage">Percentage</SelectItem>
+                    <SelectItem value="shares">Shares / Units</SelectItem>
+                    <SelectItem value="fixed">Fixed Amount</SelectItem>
                     <SelectItem value="custom">Custom</SelectItem>
                   </SelectContent>
                 </Select>

@@ -10,10 +10,18 @@ export const setGroup = mutation({
     description: v.string(),
     default_split_type: v.string(),
     default_split_percentages: v.optional(
-      v.object({
-        group_member_id: v.optional(v.id("group_members")),
-        percentage: v.optional(v.float64()),
-      })
+      v.union(
+        v.object({
+          group_member_id: v.optional(v.id("group_members")),
+          percentage: v.optional(v.float64()),
+        }),
+        v.array(
+          v.object({
+            group_member_id: v.id("group_members"),
+            percentage: v.float64(),
+          })
+        )
+      )
     ),
   },
   handler: async (ctx, args) => {
@@ -32,8 +40,11 @@ export const setGroup = mutation({
       default_split_type,
     };
 
-    if (
+    if (Array.isArray(default_split_percentages) && default_split_percentages.length > 0) {
+      groupData.default_split_percentages = default_split_percentages;
+    } else if (
       default_split_percentages &&
+      !Array.isArray(default_split_percentages) &&
       default_split_percentages.group_member_id
     ) {
       groupData.default_split_percentages = default_split_percentages;
@@ -48,6 +59,158 @@ export const setGroup = mutation({
     });
 
     return groupId;
+  },
+});
+
+export const updateGroupSplitPercentages = mutation({
+  args: {
+    groupId: v.id("groups"),
+    splitPercentages: v.array(
+      v.object({
+        group_member_id: v.id("group_members"),
+        percentage: v.float64(),
+      })
+    ),
+  },
+  handler: async (ctx, { groupId, splitPercentages }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const group = await ctx.db.get(groupId);
+    if (!group) {
+      throw new Error("Group not found");
+    }
+
+    if (group.created_by !== userId) {
+      throw new Error("Only the group creator can update split percentages.");
+    }
+
+    if (splitPercentages.length === 0) {
+      throw new Error("At least one split percentage is required.");
+    }
+
+    const members = await ctx.db
+      .query("group_members")
+      .filter((q) => q.eq(q.field("group_id"), groupId))
+      .collect();
+
+    const memberIds = new Set(members.map((m) => m._id));
+    const providedIds = new Set<string>();
+
+    for (const split of splitPercentages) {
+      if (!memberIds.has(split.group_member_id)) {
+        throw new Error("Split percentages include a member not in this group.");
+      }
+      if (split.percentage < 0) {
+        throw new Error("Split percentages cannot be negative.");
+      }
+      if (providedIds.has(split.group_member_id)) {
+        throw new Error("Duplicate member in split percentages.");
+      }
+      providedIds.add(split.group_member_id);
+    }
+
+    if (providedIds.size !== members.length) {
+      throw new Error("Split percentages must include every group member.");
+    }
+
+    const total = splitPercentages.reduce((sum, split) => sum + split.percentage, 0);
+    if (Math.abs(total - 100) > 0.01) {
+      throw new Error("Split percentages must total 100.");
+    }
+
+    await ctx.db.patch(groupId, {
+      default_split_type: "percentage",
+      default_split_percentages: splitPercentages,
+    });
+
+    return { success: true };
+  },
+});
+
+export const updateGroupSplitConfig = mutation({
+  args: {
+    groupId: v.id("groups"),
+    splitType: v.string(),
+    splitPercentages: v.optional(
+      v.array(
+        v.object({
+          group_member_id: v.id("group_members"),
+          percentage: v.float64(),
+        })
+      )
+    ),
+  },
+  handler: async (ctx, { groupId, splitType, splitPercentages }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const allowedTypes = new Set(["equal", "percentage", "custom", "shares", "fixed"]);
+    if (!allowedTypes.has(splitType)) {
+      throw new Error("Invalid split type.");
+    }
+
+    const group = await ctx.db.get(groupId);
+    if (!group) {
+      throw new Error("Group not found");
+    }
+
+    if (group.created_by !== userId) {
+      throw new Error("Only the group creator can update split settings.");
+    }
+
+    if (splitType === "equal" || splitType === "custom") {
+      await ctx.db.patch(groupId, {
+        default_split_type: splitType,
+        default_split_percentages: undefined,
+      });
+      return { success: true };
+    }
+
+    if (!splitPercentages || splitPercentages.length === 0) {
+      throw new Error("Split percentages are required for this split type.");
+    }
+
+    const members = await ctx.db
+      .query("group_members")
+      .filter((q) => q.eq(q.field("group_id"), groupId))
+      .collect();
+
+    const memberIds = new Set(members.map((m) => m._id));
+    const providedIds = new Set<string>();
+
+    for (const split of splitPercentages) {
+      if (!memberIds.has(split.group_member_id)) {
+        throw new Error("Split percentages include a member not in this group.");
+      }
+      if (split.percentage < 0) {
+        throw new Error("Split percentages cannot be negative.");
+      }
+      if (providedIds.has(split.group_member_id)) {
+        throw new Error("Duplicate member in split percentages.");
+      }
+      providedIds.add(split.group_member_id);
+    }
+
+    if (providedIds.size !== members.length) {
+      throw new Error("Split percentages must include every group member.");
+    }
+
+    const total = splitPercentages.reduce((sum, split) => sum + split.percentage, 0);
+    if (Math.abs(total - 100) > 0.01) {
+      throw new Error("Split percentages must total 100.");
+    }
+
+    await ctx.db.patch(groupId, {
+      default_split_type: splitType,
+      default_split_percentages: splitPercentages,
+    });
+
+    return { success: true };
   },
 });
 

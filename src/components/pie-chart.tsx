@@ -17,11 +17,11 @@ import {
 } from "@/components/ui/chart";
 
 const categoryColors: Record<string, string> = {
-  food: "#6C465D",
-  bills: "#A95166",
-  travel: "#EB6D3A",
-  others: "#E1A639",
-  shopping: "#386590",
+  food: "#6366F1",
+  bills: "#8B5CF6",
+  travel: "#3B82F6",
+  others: "#A78BFA",
+  shopping: "#0EA5E9",
 };
 
 const friendlyNameMap: Record<string, string> = {

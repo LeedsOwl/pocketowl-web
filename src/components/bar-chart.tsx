@@ -24,6 +24,9 @@ const chartConfig = {
   },
 };
 
+const GBP = "\u00A3";
+const formatCurrency = (value: number) => `${GBP}${value.toFixed(2)}`;
+
 interface TimeframeData {
   label: string;
   total: number;
@@ -46,7 +49,7 @@ const Chart: React.FC<ChartProps> = ({
   isSpendingUp,
   activeTimeframe,
 }) => {
-  const trendClass = isSpendingUp ? "text-red-500" : "text-green-500";
+  const trendClass = isSpendingUp ? "text-amber-500" : "text-cyan-500";
   const Icon = isSpendingUp ? TrendingUp : TrendingDown;
 
   const chartData = timeframeData.map(({ label, total }) => ({
@@ -68,18 +71,16 @@ const Chart: React.FC<ChartProps> = ({
   };
 
   return (
-    <div className="p-3">
-      <Card className="bg-background">
+    <div className="px-0">
+      <Card className="surface-card border-white/30 bg-transparent">
         <CardHeader>
           <div className="flex items-center">
-            <CardTitle>Expenditures</CardTitle>
-            <img
-              src="/credit-card.gif"
-              alt="Stats Gif"
-              className="ml-2 w-6 h-6"
-            />
+            <CardTitle className="text-slate-900 dark:text-slate-100">Expenditures</CardTitle>
+            <img src="/credit-card.gif" alt="Stats Gif" className="ml-2 h-6 w-6" />
           </div>
-          <CardDescription>{getTimeframeTitle()}</CardDescription>
+          <CardDescription className="text-slate-600 dark:text-slate-300">
+            {getTimeframeTitle()}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig}>
@@ -96,25 +97,18 @@ const Chart: React.FC<ChartProps> = ({
                 tickMargin={10}
                 axisLine={false}
                 interval={0}
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 12, fill: "hsl(var(--chart-axis-foreground))" }}
                 height={50}
               />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Bar
-                dataKey="expenses"
-                fill="var(--primary)"
-                radius={[4, 4, 0, 0]}
-              >
+              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+              <Bar dataKey="expenses" fill="#3b82f6" radius={[10, 10, 0, 0]}>
                 <LabelList
                   dataKey="expenses"
                   position="top"
                   offset={12}
-                  className="fill-foreground"
+                  fill="hsl(var(--chart-axis-foreground))"
                   fontSize={10}
-                  formatter={(value: number) => `£${value}`}
+                  formatter={(value: number) => formatCurrency(value)}
                 />
               </Bar>
             </BarChart>
@@ -122,17 +116,17 @@ const Chart: React.FC<ChartProps> = ({
         </CardContent>
         <CardFooter className="flex-col items-start gap-2 text-sm">
           {isFirstPeriod ? (
-            <div className="flex gap-2 font-medium leading-none text-slate-900 dark:text-primary">
-              Total expenditure this {activeTimeframe}: £{totalCurrent}
+            <div className="flex gap-2 font-medium leading-none text-slate-900 dark:text-slate-100">
+              Total expenditure this {activeTimeframe}: {formatCurrency(totalCurrent)}
             </div>
           ) : (
             <div className={`flex gap-2 font-medium leading-none ${trendClass}`}>
-              Spending {isSpendingUp ? "increased" : "decreased"} by £
-              {Math.abs(totalCurrent - totalPrevious)} this {activeTimeframe}
+              Spending {isSpendingUp ? "increased" : "decreased"} by{" "}
+              {formatCurrency(Math.abs(totalCurrent - totalPrevious))} this {activeTimeframe}
               <Icon className="h-4 w-4" />
             </div>
           )}
-          <div className="leading-none text-gray-500 dark:text-gray-400">
+          <div className="leading-none text-slate-600 dark:text-slate-300">
             Showing total Expenditures for the {getTimeframeTitle().toLowerCase()}.
           </div>
         </CardFooter>

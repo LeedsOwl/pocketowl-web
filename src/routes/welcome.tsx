@@ -84,7 +84,7 @@ function Welcome({onClose}: {onClose: () => void}) {
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: 1, y: 0, transition: { duration: 0.8 } }}
             >
-              Welcome! Enter Your Financial Data
+              Welcome! Set Your Financial Baseline
             </motion.h2>
 
             <div>
@@ -95,14 +95,14 @@ function Welcome({onClose}: {onClose: () => void}) {
                 variants={formVariant} // Form animation variant
                 onSubmit={handleSubmitNew}
               >
-                {/* Account Balance Input */}
+                {/* Current balance input */}
                 <div className="relative">
                   <motion.input
                     type="number"
                     className="peer block w-full rounded border border-background bg-transparent py-2 px-3 leading-tight outline-none transition-all duration-200 ease-linear focus:border-white focus:text-white dark:text-neutral-200 placeholder-transparent"
                     value={accountBalance ?? ""}
                     onChange={(e) => setAccountBalance(parseFloat(e.target.value))}
-                    placeholder="Enter your account balance"
+                    placeholder="Enter your current account balance"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, transition: { delay: 0.2 } }}
                   />
@@ -113,18 +113,18 @@ function Welcome({onClose}: {onClose: () => void}) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, transition: { delay: 0.4 } }}
                   >
-                    Account Balance
+                    Current Account Balance
                   </motion.label>
                 </div>
 
-                {/* Income Input */}
+                {/* Income amount input */}
                 <div className="relative">
                   <motion.input
                     type="number"
                     className="peer block w-full rounded border border-background bg-transparent py-2 px-3 leading-tight outline-none transition-all duration-200 ease-linear focus:border-white focus:text-white dark:text-neutral-200 placeholder-transparent"
                     value={income ?? ""}
                     onChange={(e) => setIncome(parseFloat(e.target.value))}
-                    placeholder="Enter your income"
+                    placeholder="Enter your income amount"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, transition: { delay: 0.6 } }}
                   />
@@ -135,12 +135,15 @@ function Welcome({onClose}: {onClose: () => void}) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, transition: { delay: 0.8 } }}
                   >
-                    Income
+                    Income Amount
                   </motion.label>
                 </div>
 
-                {/* Income Type Select */}
+                {/* Income type select */}
                 <div className="relative">
+                  <label className="mb-2 block text-sm font-medium text-background">
+                    Income Type
+                  </label>
                   <motion.select
                     className="peer block w-full rounded border border-background bg-transparent py-2 px-3 leading-tight outline-none transition-all duration-200 ease-linear focus:border-white focus:text-black dark:text-black"
                     value={incomeType}
@@ -148,9 +151,9 @@ function Welcome({onClose}: {onClose: () => void}) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, transition: { delay: 1 } }}
                   >
-                    <option value="gross">Gross Income</option>
-                    <option value="after_tax">After Tax Income</option>
-                    <option value="disposable">Disposable Income</option>
+                    <option value="gross">Gross (before tax)</option>
+                    <option value="after_tax">After tax (net)</option>
+                    <option value="disposable">Disposable (after essentials)</option>
                   </motion.select>
                 </div>
 

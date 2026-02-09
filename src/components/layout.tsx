@@ -11,15 +11,14 @@ function Layout({ children }: { children: any }) {
       const currentRoute = ROUTES.find(
         (route) => route.path === location.pathname
       );
-      console.log(currentRoute);
-      document.title = `${currentRoute?.title} - PocketOwl`|| "PocketOwl";
+      document.title = `${currentRoute?.title} - PocketOwl` || "PocketOwl";
     }, [location]);
 
-    return null; // This component doesn't render anything
+    return null;
   };
 
   return (
-    <div>
+    <div className="app-shell">
       <RouteTitleUpdater />
       {children}
       <BottomNav />

@@ -94,3 +94,22 @@ export const updatePasswordInDb = mutation({
         return { success: true };
     },
 });
+
+// One-time migration: removes legacy `password` fields from auth-managed `users` docs.
+export const removeLegacyPasswordsFromUsers = mutation({
+    args: {},
+    handler: async (ctx) => {
+        const users = await ctx.db.query("users").collect();
+        let updated = 0;
+
+        for (const user of users) {
+            if ("password" in user) {
+                const { password: _password, ...rest } = user as Record<string, unknown>;
+                await ctx.db.replace(user._id, rest);
+                updated += 1;
+            }
+        }
+
+        return { scanned: users.length, updated };
+    },
+});
