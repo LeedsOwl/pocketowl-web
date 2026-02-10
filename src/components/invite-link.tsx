@@ -25,7 +25,7 @@ function InviteLink({ open, setOpen, invite }: AddExpenseProps) {
               readOnly
             />
             <button
-              className="bg-blue-500 text-white text-sm px-4 py-2 rounded-lg"
+              className="bg-[#6f866f] text-white text-sm px-4 py-2 rounded-lg"
               onClick={() => navigator.clipboard.writeText(invite)}
             >
               Copy

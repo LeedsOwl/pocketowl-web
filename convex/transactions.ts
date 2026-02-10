@@ -21,11 +21,23 @@ export const getUserTransactions = query({
     if (userId === null) {
       throw new Error("Not authenticated");
     }
-    return await ctx.db
+    const transactions = await ctx.db
       .query("transactions")
       .filter((q) => q.eq(q.field("user_id"), userId))
       .order("desc")
       .collect();
+
+    const categories = await ctx.db.query("categories").collect();
+    const categoryById = new Map(categories.map((category) => [category._id, category]));
+
+    return transactions.map((transaction) => {
+      const categoryDoc = categoryById.get(transaction.category);
+      return {
+        ...transaction,
+        category: categoryDoc?.value ?? "others",
+        categoryFriendlyName: categoryDoc?.friendly_name ?? "Others",
+      };
+    });
   },
 });
 

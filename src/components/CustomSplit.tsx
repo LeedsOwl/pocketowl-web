@@ -4,7 +4,7 @@ import { Card } from "./ui/card";
 
 interface CustomSplitProps {
   totalAmount: number;
-  groupMembers: Array<{ _id: string; user?: { name: string } }>;
+  groupMembers: Array<{ _id: string; user?: { name?: string } }>;
   customSplitData?: Record<string, number>;
 }
 

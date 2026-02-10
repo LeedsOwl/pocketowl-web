@@ -71,7 +71,7 @@ function Register() {
   }
 
   return (
-    <div className="flex w-screen flex-wrap text-foreground">
+    <div className="flex min-h-screen w-screen flex-wrap text-foreground">
       <div
         className="relative hidden h-screen select-none flex-col justify-center text-center md:flex md:w-1/2"
         style={{
@@ -81,7 +81,7 @@ function Register() {
         }}
       >
         <div className="mx-auto py-16 px-8 xl:w-[40rem]">
-          <span className="bg-white text-black rounded-full px-3 py-1 font-medium text-primary">
+          <span className="bg-white text-black rounded-full px-3 py-1 font-medium">
             Welcome to PocketOwl
           </span>
           <p className="my-6 text-3xl font-semibold leading-10">
@@ -103,14 +103,18 @@ function Register() {
           </a>
         </div>
       </div>
-      <div className="flex w-full flex-col md:w-1/2">
-        <div className="flex justify-center pt-12 md:justify-start md:pl-12">
+      <div className="flex min-h-screen w-full flex-col md:min-h-0 md:w-1/2">
+        <div className="flex items-center justify-center gap-3 pt-7 md:justify-start md:pl-12 md:pt-10">
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-full border border-[#2a332d] bg-[#0b1211]">
+            <span className="absolute inset-0 rounded-full border border-transparent border-t-[#6f866f] animate-spin" />
+            <img src="/logo.png" alt="PocketOwl" className="h-7 w-7 rounded-sm object-contain" />
+          </div>
           <a href="#" className="text-2xl font-bold text-primary">
             {" "}
             PocketOwl .{" "}
           </a>
         </div>
-        <div className="my-auto mx-auto flex flex-col justify-center px-6 pt-8 md:justify-start lg:w-[28rem]">
+        <div className="mx-auto flex flex-1 flex-col justify-center px-6 py-8 md:my-auto md:flex-initial md:justify-start lg:w-[28rem]">
           <p className="text-center text-3xl font-bold md:text-left md:leading-tight dark:">
             Create your free account
           </p>
@@ -215,7 +219,7 @@ function Register() {
               />
               <Button
                 type="submit"
-                className="mt-6 rounded-lg bg-primary px-4 py-2 text-center text-base font-semibold dark:text-white shadow-md outline-none ring-blue-500 ring-offset-2 transition hover:bg-blue-700 focus:ring-2 md:w-32"
+                className="mt-6 rounded-lg bg-primary px-4 py-2 text-center text-base font-semibold dark:text-white shadow-md outline-none ring-[#6f866f] ring-offset-2 transition hover:bg-[#5f735f] focus:ring-2 md:w-32"
               >
                 Sign Up
               </Button>

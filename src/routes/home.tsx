@@ -3,9 +3,7 @@
 import Balance from "@/components/balance";
 import Transaction from "@/components/transaction";
 import Chart from "@/components/bar-chart";
-import ScrollButton from "@/components/ui/scroll-button";
 import { useState } from "react";
-import AddExpense from "@/components/add-expense";
 import { Toaster } from "@/components/ui/toaster";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -23,12 +21,18 @@ import {
 import { motion } from "framer-motion";
 import { TimeframeTabs } from "@/components/ui/timeframe-tabs";
 import { PageTransition } from "@/components/PageTransition";
+import { LuReceipt } from "react-icons/lu";
+import { Donut } from "@/components/pie-chart";
+import { AnalyticsView } from "@/components/analytics-view";
+import AddExpense from "@/components/add-expense";
+import { Link } from "react-router-dom";
 
 interface Transaction {
   _creationTime: number;
   _id: Id<"transactions">;
   amount: number;
   category: string;
+  categoryFriendlyName?: string;
   dateTime: string;
   description: string;
   user_id: Id<"users">;
@@ -53,9 +57,10 @@ const getLast5Years = () => {
 };
 
 function Home() {
-  const [showAddExpense, setShowAddExpense] = useState(false);
+  const [showDesktopAddExpense, setShowDesktopAddExpense] = useState(false);
   const userTransactions = useQuery(api.transactions.getUserTransactions, {}) || [];
   const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
+  const userInfo = useQuery(api.users.getUserInfo, {});
   const GBP = "\u00A3";
 
   const demoTransactions: Transaction[] = [
@@ -261,107 +266,226 @@ function Home() {
   const isFirstPeriod = totalPrevious === 0;
   const isSpendingUp = totalCurrent > totalPrevious;
 
-  const handleAddExpenseButtonClick = () => {
-    setShowAddExpense(!showAddExpense);
-  };
-
   // Fetch financial data for Balance component
   const accountBalance = userFinancialData?.account_balance || 0;
   const income = userFinancialData?.income || 0;
 
   // Calculate total expenses
   const totalExpenses = chartTransactions
-    .filter((transaction) => transaction.category !== "Income")
+    .filter((transaction) => transaction.category.toLowerCase() !== "income")
     .reduce((sum, transaction) => sum + transaction.amount, 0);
 
   const displayExpenses = Math.abs(totalExpenses);
 
+  const desktopCategoryTotals = chartTransactions
+    .filter((transaction) => transaction.category !== "Income")
+    .reduce<Record<string, number>>((acc, transaction) => {
+      const key = transaction.category.toLowerCase();
+      acc[key] = (acc[key] || 0) + transaction.amount;
+      return acc;
+    }, {});
+  const desktopTotalAmount = Object.values(desktopCategoryTotals).reduce(
+    (sum, value) => sum + value,
+    0
+  );
+  const desktopChartData = Object.entries(desktopCategoryTotals).map(
+    ([category, value]) => ({
+      category,
+      value,
+    })
+  );
+
   return (
     <PageTransition>
-      <div className="tab-page">
-      <div className="tab-stack">
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="z-40"
-      >
-        <Balance
-          accountBalance={accountBalance}
-          income={income}
-          expenses={displayExpenses}
-          currency={"\u00A3"}
-        />
-      </motion.div>
+      <>
+        <div className="tab-page xl:hidden">
+          <div className="tab-stack">
+            <motion.div
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="z-40 scroll-mt-24"
+              id="balance"
+            >
+              <Balance
+                accountBalance={accountBalance}
+                income={income}
+                expenses={displayExpenses}
+                currency={"\u00A3"}
+              />
+            </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        <Chart
-          timeframeData={timeframeData}
-          totalCurrent={totalCurrent}
-          totalPrevious={totalPrevious}
-          isFirstPeriod={isFirstPeriod}
-          isSpendingUp={isSpendingUp}
-          activeTimeframe={activeTimeframe}
-        />
-        <TimeframeTabs
-          activeTimeframe={activeTimeframe}
-          onTimeframeChange={setActiveTimeframe}
-        />
-      </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              id="spending-chart"
+              className="scroll-mt-24"
+            >
+              <Chart
+                timeframeData={timeframeData}
+                totalCurrent={totalCurrent}
+                totalPrevious={totalPrevious}
+                isFirstPeriod={isFirstPeriod}
+                isSpendingUp={isSpendingUp}
+                activeTimeframe={activeTimeframe}
+                timeframeTabs={
+                  <TimeframeTabs
+                    activeTimeframe={activeTimeframe}
+                    onTimeframeChange={setActiveTimeframe}
+                  />
+                }
+              />
+            </motion.div>
 
-      <motion.h2
-        initial={{ x: -100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="mt-2 px-0 text-lg font-bold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300"
-      >
-        Recent Transactions
-      </motion.h2>
-      {usingDemoData && (
-        <p className="px-0 text-xs text-slate-600 dark:text-slate-300">
-          Demo data
-        </p>
-      )}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-      >
-        {chartTransactions.map((transaction: Transaction, index) => (
-          <motion.div
-            key={transaction._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <Transaction
-              id={transaction._id}
-              date={new Date(transaction._creationTime)}
-              description={transaction.description}
-              amount={transaction.amount}
-              status={"completed"}
-              onEdit={usingDemoData ? () => {} : handleEditTransaction}
-              onDelete={usingDemoData ? () => {} : handleDeleteTransaction}
-            />
-          </motion.div>
-        ))}
-      </motion.div>
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.4, delay: 0.5 }}
-        className="fixed bottom-24 right-4 z-100"
-      >
-        <ScrollButton onClick={handleAddExpenseButtonClick} />
-      </motion.div>
-      <AddExpense open={showAddExpense} setOpen={setShowAddExpense} />
-      <Toaster className="bottom-20" />
-      </div>
-      </div>
+            <motion.h2
+              initial={{ x: -100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              className="mt-6 flex scroll-mt-24 items-center gap-2 px-0 text-3xl font-semibold text-white/95"
+              id="transactions"
+            >
+              <LuReceipt className="h-6 w-6 text-[#6f866f]" />
+              Recent Transactions
+            </motion.h2>
+            {usingDemoData && (
+              <p className="px-0 text-xs text-white/55">
+                Demo data
+              </p>
+            )}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="home-panel home-divide overflow-hidden"
+            >
+              {chartTransactions.map((transaction: Transaction, index) => (
+                <motion.div
+                  key={transaction._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <Transaction
+                    id={transaction._id}
+                    date={new Date(transaction._creationTime)}
+                    description={transaction.description}
+                    amount={transaction.amount}
+                    category={transaction.category}
+                    status={"completed"}
+                    onEdit={usingDemoData ? () => {} : handleEditTransaction}
+                    onDelete={usingDemoData ? () => {} : handleDeleteTransaction}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+            <Toaster className="bottom-20" />
+          </div>
+        </div>
+
+        <div className="hidden xl:block px-5 pb-8 pt-4">
+          <div className="mx-auto max-w-[1520px] space-y-4">
+            <div className="surface-card rounded-3xl px-6 py-4">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="inline-flex items-center gap-3 text-white/95">
+                  <img src="/logo.png" alt="PocketOwl" className="h-7 w-7 rounded-md object-contain" />
+                  <p className="text-3xl font-semibold leading-none">PocketOwl</p>
+                </div>
+                <div className="inline-flex items-center gap-7 text-base text-white/75">
+                  <span className="text-white">Home</span>
+                  <Link to="/groups" className="transition hover:text-white">Groups</Link>
+                  <Link to="/insights" className="transition hover:text-white">Analytics</Link>
+                  <Link to="/profile" className="transition hover:text-white">Profile</Link>
+                </div>
+                <div className="inline-flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white">
+                    {userInfo?.name?.charAt(0)?.toUpperCase() || "I"}
+                  </div>
+                  <p className="text-lg font-semibold text-white/95">{userInfo?.name || "User"}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-12 gap-4">
+              <div className="col-span-3 space-y-4">
+                <Balance
+                  accountBalance={accountBalance}
+                  income={income}
+                  expenses={displayExpenses}
+                  currency={"\u00A3"}
+                />
+              </div>
+
+              <div className="col-span-6">
+                <Chart
+                  timeframeData={timeframeData}
+                  totalCurrent={totalCurrent}
+                  totalPrevious={totalPrevious}
+                  isFirstPeriod={isFirstPeriod}
+                  isSpendingUp={isSpendingUp}
+                  activeTimeframe={activeTimeframe}
+                  timeframeTabs={
+                    <TimeframeTabs
+                      activeTimeframe={activeTimeframe}
+                      onTimeframeChange={setActiveTimeframe}
+                    />
+                  }
+                />
+              </div>
+
+              <div className="col-span-3 space-y-4">
+                <Donut
+                  chartData={desktopChartData}
+                  totalAmount={desktopTotalAmount}
+                  categoryTotals={desktopCategoryTotals}
+                  compact
+                />
+              </div>
+
+              <div className="col-span-7 surface-card rounded-3xl p-4">
+                <div className="mb-3 flex items-center gap-2 text-3xl font-semibold text-white/95">
+                  <LuReceipt className="h-6 w-6 text-[#6f866f]" />
+                  Shared Spending
+                </div>
+                <div className="home-divide overflow-hidden rounded-2xl border border-white/10">
+                  {chartTransactions.slice(0, 6).map((transaction: Transaction) => (
+                    <Transaction
+                      key={transaction._id}
+                      id={transaction._id}
+                      date={new Date(transaction._creationTime)}
+                      description={transaction.description}
+                      amount={transaction.amount}
+                      category={transaction.category}
+                      status={"completed"}
+                      onEdit={usingDemoData ? () => {} : handleEditTransaction}
+                      onDelete={usingDemoData ? () => {} : handleDeleteTransaction}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="col-span-5">
+                <div className="space-y-4">
+                  <AnalyticsView
+                    categoryTotals={desktopCategoryTotals}
+                    totalAmount={desktopTotalAmount}
+                    currency={GBP}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowDesktopAddExpense(true)}
+                    className="w-full rounded-2xl border border-white/15 bg-[#0f1520] px-4 py-3 text-lg font-semibold text-white transition hover:border-[#6f866f]"
+                  >
+                    Add Transaction
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <AddExpense open={showDesktopAddExpense} setOpen={setShowDesktopAddExpense} />
+          <Toaster />
+        </div>
+      </>
     </PageTransition>
   );
 }

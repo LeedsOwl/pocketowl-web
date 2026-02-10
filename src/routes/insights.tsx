@@ -1,31 +1,12 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { AnalyticsView } from "@/components/analytics-view";
 import { Donut } from "@/components/pie-chart";
-import {
-  FaUtensils,
-  FaMoneyBill,
-  FaPlane,
-  FaShoppingCart,
-  FaEllipsisH,
-} from "react-icons/fa";
+import { PageTransition } from "@/components/PageTransition";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { LuPieChart, LuLineChart } from "react-icons/lu";
 
-const categoryColors = {
-  Food: "#6366F1",
-  Bills: "#8B5CF6",
-  Travel: "#3B82F6",
-  Others: "#A78BFA",
-  Shopping: "#0EA5E9",
-};
-
-const categoryIcons = {
-  Food: <FaUtensils className="text-white"/>,
-  Bills: <FaMoneyBill className="text-white"/>,
-  Travel: <FaPlane className="text-white"/>,
-  Others: <FaEllipsisH className="text-white"/>,
-  Shopping: <FaShoppingCart className="text-white"/>,
-};
 const GBP = "\u00A3";
 
 interface Categories {
@@ -34,33 +15,20 @@ interface Categories {
 }
 
 const demoCategoryTotals: { [key: string]: number } = {
+  groceries: 280,
+  subscriptions: 152,
+  transportation: 126,
   food: 86.4,
   bills: 132.75,
-  travel: 54.2,
-  others: 31.5,
-  shopping: 97.35,
-};
-
-const containerVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.2,
-      type: "spring",
-      stiffness: 100,
-    },
-  }),
 };
 
 const Insights = () => {
-  const categories = useQuery(api.categories.getCategories, {}) || [];
+  const [chartType, setChartType] = useState<"pie" | "analytics">("pie");
+
   const transactions: Categories = useQuery(api.insights.getInsights, {
     period: "month",
   }) || { totalAmount: 0, categoryTotals: {} };
 
-  const [startAnimation, setStartAnimation] = useState(false);
   const hasRealInsightsData =
     transactions.totalAmount > 0 ||
     Object.values(transactions.categoryTotals || {}).some((value) => value > 0);
@@ -72,95 +40,68 @@ const Insights = () => {
     ? transactions.totalAmount
     : Object.values(demoCategoryTotals).reduce((sum, value) => sum + value, 0);
 
-  const chartData = Object.keys(categoryTotals).map((category) => ({
+  const chartData = Object.entries(categoryTotals).map(([category, value]) => ({
     category,
-    value: categoryTotals[category],
-    color: categoryColors[category as keyof typeof categoryColors],
+    value,
   }));
 
-  // Sort the categories based on total amount in descending order
-  const sortedCategories = [...categories].sort((a, b) => {
-    const totalA = categoryTotals[a.value] || 0;
-    const totalB = categoryTotals[b.value] || 0;
-    return totalB - totalA;
-  });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStartAnimation(true);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div className="tab-page">
-      <div className="tab-stack">
-      <div className="surface-card relative overflow-hidden rounded-2xl p-10 shadow-2xl">
-        <div className="pointer-events-none absolute -top-20 left-[-10%] h-52 w-52 rounded-full bg-[#6366f1]/35 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 right-[-12%] h-56 w-56 rounded-full bg-[#8b5cf6]/30 blur-3xl" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#6366f1]/10 via-transparent to-[#8b5cf6]/15 dark:from-[#6366f1]/15 dark:to-[#000000]/25" />
-        <div className="relative z-10 items-center text-center">
-          <p className="text-2xl font-semibold tracking-wide text-slate-900 dark:text-slate-100">Insights</p>
-          <p className="text-sm font-medium tracking-[0.12em] uppercase text-slate-600 dark:text-slate-300">
-            Category spending breakdown
-          </p>
+    <PageTransition>
+      <div className="tab-page">
+        <div className="tab-stack">
+          {/* Chart Type Toggle */}
+          <div className="flex gap-2 justify-center mb-4">
+            <button
+              onClick={() => setChartType("pie")}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center gap-2 ${
+                chartType === "pie"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <LuPieChart className="h-4 w-4" />
+              Pie Chart
+            </button>
+            <button
+              onClick={() => setChartType("analytics")}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center gap-2 ${
+                chartType === "analytics"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <LuLineChart className="h-4 w-4" />
+              Analytics
+            </button>
+          </div>
+
+          {/* Chart Display */}
+          <motion.div
+            key={chartType}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            id="insights-chart"
+            className="scroll-mt-24"
+          >
+            {chartType === "pie" ? (
+              <Donut
+                chartData={chartData}
+                totalAmount={totalAmount}
+                categoryTotals={categoryTotals}
+              />
+            ) : (
+              <AnalyticsView
+                categoryTotals={categoryTotals}
+                totalAmount={totalAmount}
+                currency={GBP}
+              />
+            )}
+          </motion.div>
         </div>
       </div>
-
-      <div className="space-y-3 pb-24">
-        <Donut
-          chartData={chartData}
-          totalAmount={totalAmount}
-          categoryTotals={categoryTotals}
-        />
-
-        {startAnimation &&
-          sortedCategories.map((category, index) => {
-            const categoryTotal =
-              transactions.categoryTotals[category.value] || 0;
-
-            return (
-              <motion.div
-                key={index}
-                className="mt-4 flex items-center rounded-xl p-4 text-white shadow-xl"
-                style={{
-                  background: `linear-gradient(140deg, ${
-                    categoryColors[
-                      category.friendly_name as keyof typeof categoryColors
-                    ] || "#333"
-                  } 0%, ${
-                    categoryColors[
-                      category.friendly_name as keyof typeof categoryColors
-                    ] || "#333"
-                  }DD 100%)`,
-                  border: "1px solid rgba(255, 255, 255, 0.24)",
-                }}
-                initial="hidden"
-                animate="visible"
-                custom={index}
-                variants={containerVariants}
-              >
-                <div className="mr-4 text-2xl">
-                  {categoryIcons[
-                    category.friendly_name as keyof typeof categoryIcons
-                  ] || <FaEllipsisH />}
-                </div>
-                <div className="flex justify-between w-full text-white">
-                  <div>
-                    <p className="text-sm font-bold">
-                      {category.friendly_name}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-md font-bold">{GBP}{categoryTotal}</p>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-      </div>
-      </div>
-    </div>
+    </PageTransition>
   );
 };
 

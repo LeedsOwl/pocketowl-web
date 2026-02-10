@@ -16,12 +16,17 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
+const GBP = "\u00A3";
 const categoryColors: Record<string, string> = {
-  food: "#6366F1",
-  bills: "#8B5CF6",
-  travel: "#3B82F6",
-  others: "#A78BFA",
-  shopping: "#0EA5E9",
+  food: "#8faf94",
+  bills: "#5f8b68",
+  travel: "#3f7155",
+  others: "#2d5b44",
+  shopping: "#1f4533",
+  groceries: "#8faf94",
+  transportation: "#5f8b68",
+  "eating out": "#3f7155",
+  subscriptions: "#2d5b44",
 };
 
 const friendlyNameMap: Record<string, string> = {
@@ -32,7 +37,7 @@ const friendlyNameMap: Record<string, string> = {
   shopping: "Shopping",
 };
 
-const defaultColor = "#333";
+const defaultColor = "#3b4448";
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -72,9 +77,10 @@ interface DonutProps {
   chartData: Array<{ category: string; value: number }>;
   totalAmount: number;
   categoryTotals: { [key: string]: number };
+  compact?: boolean;
 }
 
-export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
+export function Donut({ chartData, totalAmount, categoryTotals, compact = false }: DonutProps) {
   if (totalAmount === 0) {
     return <div>No transactions available for this period.</div>;
   }
@@ -83,19 +89,25 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
     ? { expenses: { label: "Expenses" } } 
     : { expenses: { label: "No Data" } };
 
+  const categoryEntries = Object.entries(categoryTotals || {})
+    .filter(([, value]) => value > 0)
+    .sort(([, a], [, b]) => b - a);
+
   return (
     <div>
-      <Card className="text-white border bg-background rounded-lg shadow-md">
+      <Card className="surface-card relative overflow-hidden rounded-3xl text-white">
+        <div className="pointer-events-none absolute -top-16 left-[-8%] h-44 w-44 rounded-full bg-[#9fb0a7]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 right-[-8%] h-48 w-48 rounded-full bg-[#445056]/16 blur-3xl" />
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <CardHeader className="pb-1">
-            <CardTitle className="text-xl text-black dark:text-white font-bold tracking-wide">
+          <CardHeader className="relative z-10 pb-1">
+            <CardTitle className="text-xl text-white/95 font-semibold tracking-wide">
               Personal Expense Breakdown
             </CardTitle>
-            <CardDescription className="text-sm text-gray-600 dark:text-gray-400">
+            <CardDescription className="text-sm text-white/55">
               This month
             </CardDescription>
           </CardHeader>
@@ -106,7 +118,7 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <CardContent className="p-0 flex-1">
+          <CardContent className="relative z-10 p-0 flex-1">
             {chartData && (
               <ChartContainer
                 config={chartConfig}
@@ -125,9 +137,10 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
                     nameKey="category"
                     labelLine={false}
                     label={renderCustomizedLabel}
-                    innerRadius={80}
-                    outerRadius={140}
-                    strokeWidth={2}
+                    innerRadius={84}
+                    outerRadius={136}
+                    strokeWidth={3}
+                    stroke="rgba(5, 8, 12, 0.85)"
                     isAnimationActive={true}
                     animationBegin={400}
                     animationDuration={1200}
@@ -154,14 +167,14 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
                               <tspan
                                 x={viewBox.cx}
                                 y={viewBox.cy}
-                                className="text-black dark:fill-white text-2xl text-center font-bold"
+                                className="fill-white text-2xl text-center font-bold"
                               >
-                                £{totalAmount}
+                                {GBP}{totalAmount.toFixed(2)}
                               </tspan>
                               <tspan
                                 x={viewBox.cx}
                                 y={(viewBox.cy || 0) + 20}
-                                className="dark:fill-gray-400 text-md"
+                                className="fill-white/55 text-md"
                               >
                                 Total Expenses
                               </tspan>
@@ -183,29 +196,61 @@ export function Donut({ chartData, totalAmount, categoryTotals }: DonutProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <CardFooter className="flex-col gap-2 text-sm">
-            <div className="grid grid-cols-2 gap-2 font-medium text-gray-800 dark:text-gray-200 ">
-              {Object.keys(categoryTotals || {}).map((category, index) => (
+          <CardFooter className="relative z-10 flex-col gap-2 text-sm">
+            <div className="grid grid-cols-2 gap-2 font-medium text-white/80">
+              {categoryEntries.map(([category, value], index) => (
                 <motion.div
-                  key={index}
+                  key={category}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5"
                 >
                   <FaCircle
                     className="h-3 w-3"
                     style={{
                       color: categoryColors[category.toLowerCase()] || defaultColor,
                     }}
-                  />{" "}
-                  {friendlyNameMap[category.toLowerCase() as keyof typeof friendlyNameMap] || category}
+                  />
+                  <span>
+                    {friendlyNameMap[category.toLowerCase() as keyof typeof friendlyNameMap] || category} {((value / totalAmount) * 100).toFixed(0)}%
+                  </span>
                 </motion.div>
               ))}
             </div>
           </CardFooter>
         </motion.div>
       </Card>
+
+      {!compact && (
+        <div className="mt-3 space-y-2">
+          {categoryEntries.map(([category, value], index) => (
+            <motion.div
+              key={`amount-${category}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: index * 0.08 }}
+              className="surface-card flex items-center justify-between rounded-xl border-white/15 px-3 py-2 transition-transform duration-200 hover:-translate-y-0.5"
+            >
+              <div className="flex items-center gap-2">
+                <FaCircle
+                  className="h-3 w-3"
+                  style={{
+                    color: categoryColors[category.toLowerCase()] || defaultColor,
+                  }}
+                />
+                <span className="font-medium text-slate-100">
+                  {friendlyNameMap[category.toLowerCase() as keyof typeof friendlyNameMap] || category}
+                </span>
+              </div>
+              <span className="font-semibold text-slate-100">
+                {GBP}{value.toFixed(2)}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+

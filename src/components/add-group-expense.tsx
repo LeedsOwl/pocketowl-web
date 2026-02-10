@@ -7,13 +7,13 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import CurrencyInput from "@/components/ui/currency-input";
 
 interface AddGroupExpenseProps {
   open: boolean;
@@ -67,34 +67,63 @@ export default function AddGroupExpense({
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent>
+      <DrawerContent className="h-[90vh] max-h-[90vh] rounded-t-2xl border-[#2b352f] bg-[#0b0f16] text-white">
         <DrawerHeader className="sm:text-center">
-          <DrawerTitle className="text-2xl">Add Group Expense</DrawerTitle>
+          <DrawerTitle className="text-2xl text-white">Add Group Expense</DrawerTitle>
+          <DrawerDescription className="text-white/65">
+            Log what you spent so it updates group totals instantly.
+          </DrawerDescription>
         </DrawerHeader>
-        <div className="p-4 pb-0">
+        <div className="flex-1 overflow-y-auto p-4 pb-2">
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <CurrencyInput
-                id="amount"
-                value={amount}
-                onChange={(value) => setAmount(value)}
-              />
+              <Label htmlFor="amount" className="text-white/90">
+                Amount
+              </Label>
+              <div className="relative">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/60">
+                  £
+                </span>
+                <Input
+                  id="amount"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={amount === 0 ? "" : amount}
+                  onChange={(e) => setAmount(Number.parseFloat(e.target.value) || 0)}
+                  className="h-11 border-[#2b352f] bg-[#06080d] pl-7 text-white placeholder:text-white/45 focus-visible:ring-[#6f866f]"
+                />
+              </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description" className="text-white/90">
+                Description
+              </Label>
               <Input
                 id="description"
                 placeholder="Enter expense description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                className="h-11 border-[#2b352f] bg-[#06080d] text-white placeholder:text-white/45 focus-visible:ring-[#6f866f]"
               />
             </div>
           </div>
         </div>
         <DrawerFooter>
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button
+            onClick={handleSubmit}
+            className="bg-[#101610] text-white hover:bg-[#182118]"
+          >
+            Submit
+          </Button>
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button
+              variant="outline"
+              className="border-[#2b352f] bg-[#06080d] text-white hover:bg-[#101826]"
+            >
+              Cancel
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

@@ -4,7 +4,7 @@ import { Card } from "./ui/card";
 
 interface EqualSplitProps {
   totalAmount: number;
-  groupMembers: Array<{ _id: string; user?: { name: string } }>;
+  groupMembers: Array<{ _id: string; user?: { name?: string } }>;
 }
 
 const EqualSplit: React.FC<EqualSplitProps> = ({ totalAmount, groupMembers }) => {

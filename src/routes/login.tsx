@@ -55,14 +55,18 @@ function Login() {
   }
 
   return (
-    <div className="flex w-screen flex-wrap">
-      <div className="flex w-full flex-col md:w-1/2">
-        <div className="flex justify-center pt-12 md:justify-start md:pl-12">
+    <div className="flex min-h-screen w-screen flex-wrap">
+      <div className="flex min-h-screen w-full flex-col md:min-h-0 md:w-1/2">
+        <div className="flex items-center justify-center gap-3 pt-7 md:justify-start md:pl-12 md:pt-10">
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-full border border-[#2a332d] bg-[#0b1211]">
+            <span className="absolute inset-0 rounded-full border border-transparent border-t-[#6f866f] animate-spin" />
+            <img src="/logo.png" alt="PocketOwl" className="h-7 w-7 rounded-sm object-contain" />
+          </div>
           <a href="#" className="text-2xl font-bold text-primary">
             PocketOwl .
           </a>
         </div>
-        <div className="my-auto mx-auto flex flex-col justify-center px-6 pt-8 md:justify-start lg:w-[28rem]">
+        <div className="mx-auto flex flex-1 flex-col justify-center px-6 py-8 md:my-auto md:flex-initial md:justify-start lg:w-[28rem]">
           <p className=" dark:text-white text-center text-3xl font-bold md:leading-tight md:text-left md:text-5xl">
             Welcome to <br />
             <span className="text-primary">PocketOwl</span>
@@ -125,13 +129,13 @@ function Login() {
               </a>
               <Button
                 type="submit"
-                className="rounded-lg bg-primary px-4 py-2 text-center text-base font-semibold text-white shadow-md outline-none ring-blue-500 ring-offset-2 transition hover:bg-blue-700 focus:ring-2 md:w-32"
+                className="rounded-lg bg-primary px-4 py-2 text-center text-base font-semibold text-white shadow-md outline-none ring-[#6f866f] ring-offset-2 transition hover:bg-[#5f735f] focus:ring-2 md:w-32"
               >
                 Sign in
               </Button>
             </form>
           </Form>
-          <div className="py-12 text-center">
+          <div className="py-8 text-center md:py-12">
             <p className="text-gray-600 dark:text-white">
               Don't have an account?{" "}
               <a
@@ -153,12 +157,12 @@ function Login() {
         }}
       >
         <div className="py-16 px-8 text-white xl:w-[40rem]">
-          <span className="bg-white rounded-full px-3 py-1 font-medium text-primary">
+          <span className="bg-white rounded-full px-3 py-1 font-medium text-black">
             Welcome to PocketOwl
           </span>
           <p className="my-6 text-3xl font-semibold leading-10">
             Manage your finances with{" "}
-            <span className="whitespace-nowrap py-2 text-cyan-300">
+            <span className="whitespace-nowrap py-2 text-[#9eb89f]">
               ease and confidence
             </span>
             .

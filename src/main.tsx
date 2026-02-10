@@ -12,11 +12,20 @@ import { LoadingSpinner } from "./components/ui/loading-animations";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
+// Force dark theme by clearing light theme from storage
+if (localStorage.getItem("vite-ui-theme") === "light") {
+  localStorage.setItem("vite-ui-theme", "dark");
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ConvexAuthProvider client={convex}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <AuthLoading><LoadingSpinner/></AuthLoading>
+        <AuthLoading>
+          <div className="grid min-h-screen place-items-center">
+            <LoadingSpinner />
+          </div>
+        </AuthLoading>
         <App />
       </ThemeProvider>
     </ConvexAuthProvider>

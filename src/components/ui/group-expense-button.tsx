@@ -30,8 +30,8 @@ const GroupExpenseButton = ({ onClick }: GroupButtonProps) => {
   return (
     <Button
       size="lg"
-      // Translucent button - bg-[#7eafce21]
-      className="p-3 h-full rounded-full shadow-lg border border-primary bg-[rgba(255,255,255,0.87)] dark:bg-[#1b1f23b2] hover:bg-blue-800 backdrop-blur-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300"
+      // Translucent button
+      className="p-3 h-full rounded-full shadow-lg border border-primary bg-[rgba(255,255,255,0.87)] dark:bg-[#1b1f23b2] hover:bg-[#5f735f] backdrop-blur-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#8db995]/40"
       onClick={onClick}
     >
       <div className="flex items-center">

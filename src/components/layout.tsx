@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import BottomNav from "./bottom-nav";
 import { useLocation } from "react-router-dom";
 import { ROUTES } from "@/routes";
+import TopNav from "./top-nav";
 
 function Layout({ children }: { children: any }) {
   const location = useLocation();
@@ -20,8 +21,13 @@ function Layout({ children }: { children: any }) {
   return (
     <div className="app-shell">
       <RouteTitleUpdater />
+      <div className={location.pathname === "/" ? "xl:hidden" : ""}>
+        <TopNav />
+      </div>
       {children}
-      <BottomNav />
+      <div className={location.pathname === "/" ? "xl:hidden" : ""}>
+        <BottomNav />
+      </div>
     </div>
   );
 }

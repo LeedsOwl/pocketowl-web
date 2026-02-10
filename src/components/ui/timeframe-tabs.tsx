@@ -8,11 +8,11 @@ type TimeframeTabsProps = {
 
 export function TimeframeTabs({ activeTimeframe, onTimeframeChange }: TimeframeTabsProps) {
   return (
-    <Tabs value={activeTimeframe} onValueChange={onTimeframeChange} className="mb-4 w-full px-0">
-      <TabsList className="grid w-full grid-cols-3 rounded-xl surface-card border-white/25 bg-transparent p-1">
-        <TabsTrigger value="week" className="rounded-lg text-xs tracking-[0.15em] uppercase text-slate-700 dark:text-slate-200 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-50">Week</TabsTrigger>
-        <TabsTrigger value="month" className="rounded-lg text-xs tracking-[0.15em] uppercase text-slate-700 dark:text-slate-200 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-50">Month</TabsTrigger>
-        <TabsTrigger value="year" className="rounded-lg text-xs tracking-[0.15em] uppercase text-slate-700 dark:text-slate-200 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-50">Year</TabsTrigger>
+    <Tabs value={activeTimeframe} onValueChange={onTimeframeChange} className="home-tabs w-full px-0">
+      <TabsList className="grid w-full grid-cols-3 border-0 bg-transparent p-0 shadow-none backdrop-blur-none">
+        <TabsTrigger value="week" className="rounded-none border-0 bg-transparent px-0 py-2 text-sm data-[state=active]:bg-transparent data-[state=active]:shadow-none">Week</TabsTrigger>
+        <TabsTrigger value="month" className="rounded-none border-0 bg-transparent px-0 py-2 text-sm data-[state=active]:bg-transparent data-[state=active]:shadow-none">Month</TabsTrigger>
+        <TabsTrigger value="year" className="rounded-none border-0 bg-transparent px-0 py-2 text-sm data-[state=active]:bg-transparent data-[state=active]:shadow-none">Year</TabsTrigger>
       </TabsList>
     </Tabs>
   )

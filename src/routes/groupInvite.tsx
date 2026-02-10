@@ -46,7 +46,7 @@ const GroupInvite = () => {
       {/* Button to generate the invite */}
       <motion.button
         onClick={handleGenerateInvite}
-        className="bg-blue-500 text-white py-2 px-4 rounded"
+        className="bg-[#6f866f] text-white py-2 px-4 rounded"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         disabled={loading}
@@ -62,7 +62,7 @@ const GroupInvite = () => {
             <span className="text-sm">{inviteLink}</span>
             <motion.button
               onClick={copyToClipboard}
-              className="ml-2 bg-blue-500 text-white py-1 px-3 rounded"
+              className="ml-2 bg-[#6f866f] text-white py-1 px-3 rounded"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

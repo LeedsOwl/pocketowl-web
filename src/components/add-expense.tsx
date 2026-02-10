@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
@@ -41,18 +41,24 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
 
   const categories: Category[] =
     useQuery(api.categories.getCategories, {}) || [];
+  const ensureDefaultCategories = useMutation(api.categories.ensureDefaultCategories);
   const userInfo = useQuery(api.users.getUserInfo, {});
   const mutateTransaction = useMutation(api.transactions.setTransaction);
-
-  console.log(categories);
 
   const [amount, setAmount] = useState(0.0);
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [didAttemptSeed, setDidAttemptSeed] = useState(false);
+
+  useEffect(() => {
+    if (didAttemptSeed) return;
+    if (categories.length > 0) return;
+
+    setDidAttemptSeed(true);
+    void ensureDefaultCategories();
+  }, [categories.length, didAttemptSeed, ensureDefaultCategories]);
 
   const handleSubmit = async () => {
-    console.log({ amount, description, category });
-
     if (!userInfo) {
       console.error("User info not available");
       return;
@@ -79,14 +85,14 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
   return (
     <div>
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent>
+        <DrawerContent className="h-[94vh] max-h-[94vh] rounded-t-2xl border-[#2b352f] bg-[#0b0f16] text-white">
           <DrawerHeader className="sm:text-center">
-            <DrawerTitle className="text-2xl">Add Expense</DrawerTitle>
-            <DrawerDescription>
-              Enter the details of your new expense.
+            <DrawerTitle className="text-2xl text-white">Add Expense</DrawerTitle>
+            <DrawerDescription className="text-white/65">
+              What did you spend on? Fill in the details below.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="p-4 pb-0">
+          <div className="flex-1 overflow-y-auto p-4 pb-2">
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <CurrencyInput onChange={(value) => setAmount(value)} />
