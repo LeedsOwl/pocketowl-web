@@ -12,6 +12,10 @@ import { LoadingSpinner } from "./components/ui/loading-animations";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+}
+
 // Force dark theme by clearing light theme from storage
 if (localStorage.getItem("vite-ui-theme") === "light") {
   localStorage.setItem("vite-ui-theme", "dark");
