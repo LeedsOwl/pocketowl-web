@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Line, LineChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { ChartContainer, ChartConfig } from "@/components/ui/chart";
 import { LuMoreVertical } from "react-icons/lu";
+import { getCategoryColor, getCategoryLabel } from "@/lib/category-meta";
 
 const chartConfig = {
   spending: {
@@ -20,14 +21,7 @@ interface AnalyticsViewProps {
 export function AnalyticsView({ categoryTotals, totalAmount, currency }: AnalyticsViewProps) {
   const [activeMonth, setActiveMonth] = useState<"this" | "last">("this");
 
-  // Sample data for line chart - in real app, this would come from props
-  const lineChartData = [
-    { date: "1 Mar", amount: 850 },
-    { date: "7 Mar", amount: 920 },
-    { date: "14 Mar", amount: 880 },
-    { date: "21 Mar", amount: 950 },
-    { date: "28 Mar", amount: 1020 },
-  ];
+  const lineChartData: Array<{ date: string; amount: number }> = [];
 
   // Get top 3 categories
   const topCategories = Object.entries(categoryTotals)
@@ -77,35 +71,41 @@ export function AnalyticsView({ categoryTotals, totalAmount, currency }: Analyti
         transition={{ duration: 0.5 }}
         className="mb-6"
       >
-        <ChartContainer config={chartConfig} className="h-[200px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={lineChartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis
-                dataKey="date"
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={12}
-                tickLine={false}
-              />
-              <YAxis
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="amount"
-                stroke="hsl(var(--accent))"
-                strokeWidth={2}
-                dot={{ fill: "hsl(var(--accent))", r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+        {lineChartData.length > 0 ? (
+          <ChartContainer config={chartConfig} className="h-[200px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={lineChartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis
+                  dataKey="date"
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="amount"
+                  stroke="hsl(var(--accent))"
+                  strokeWidth={2}
+                  dot={{ fill: "hsl(var(--accent))", r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        ) : (
+          <div className="grid h-[200px] place-items-center rounded-xl border border-white/10 bg-black/10 text-sm text-muted-foreground">
+            No trend data available yet.
+          </div>
+        )}
 
         <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-muted-foreground">Projected 1 May</p>
+          <p className="text-sm text-muted-foreground">Total this month</p>
           <p className="text-lg font-bold text-foreground">
             {currency}{totalAmount.toFixed(0)}
           </p>
@@ -128,8 +128,11 @@ export function AnalyticsView({ categoryTotals, totalAmount, currency }: Analyti
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-accent" />
-                <span className="text-sm text-foreground capitalize">{category}</span>
+                <div
+                  className="h-2 w-2 rounded-full"
+                  style={{ backgroundColor: getCategoryColor(category) }}
+                />
+                <span className="text-sm text-foreground">{getCategoryLabel(category)}</span>
               </div>
               <span className="text-sm font-semibold text-foreground">
                 {currency}{value.toFixed(0)}
@@ -140,7 +143,8 @@ export function AnalyticsView({ categoryTotals, totalAmount, currency }: Analyti
                 initial={{ width: 0 }}
                 animate={{ width: `${(value / maxCategoryValue) * 100}%` }}
                 transition={{ duration: 0.8, delay: 0.3 + 0.1 * index }}
-                className="h-full bg-accent rounded-full"
+                className="h-full rounded-full"
+                style={{ backgroundColor: getCategoryColor(category) }}
               />
             </div>
           </motion.div>
@@ -149,7 +153,7 @@ export function AnalyticsView({ categoryTotals, totalAmount, currency }: Analyti
 
       {/* Bottom Note */}
       <p className="text-xs text-muted-foreground mt-6 text-center">
-        Take pancake sur good lot of strp it cost get our an inedible balanced by zippy Noopts.
+        Track your top spending categories this month and adjust early to stay on budget.
       </p>
     </div>
   );

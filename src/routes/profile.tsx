@@ -9,12 +9,7 @@ import { PageTransition } from "@/components/PageTransition";
 function Profile() {
   const navigate = useNavigate();
   const { signOut } = useAuthActions();
-  const { theme, setTheme } = useTheme();
-
-  const handleThemeToggle = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-  };
+  const { theme } = useTheme();
 
   const handleSignOut = () => {
     signOut().then(() => {
@@ -24,6 +19,12 @@ function Profile() {
 
   // Query to fetch user info
   const userInfo = useQuery(api.users.getUserInfo, {});
+  const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
+
+  const walletSubtitle =
+    userFinancialData?.account_balance !== undefined
+      ? `Personal: \u00A3${Number(userFinancialData.account_balance || 0).toFixed(2)}`
+      : "Personal wallet";
 
   return (
     <PageTransition>
@@ -31,12 +32,10 @@ function Profile() {
         <div className="tab-stack">
           <div id="profile-view" className="scroll-mt-24">
             <ProfileView
-              userId={userInfo?._id}
               userName={userInfo?.name || "User"}
-              userEmail={userInfo?.email || "user@example.com"}
               theme={theme}
-              onThemeToggle={handleThemeToggle}
               onSignOut={handleSignOut}
+              walletSubtitle={walletSubtitle}
             />
           </div>
         </div>

@@ -100,40 +100,42 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
   return (
     <div>
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent>
+        <DrawerContent className="h-[92vh] max-h-[92vh] rounded-t-2xl border-[#2b352f] bg-[#0b0f16] text-white">
           <DrawerHeader className="sm:text-center">
-            <DrawerTitle className="text-2xl">Create Group</DrawerTitle>
-            <DrawerDescription>
-              Enter the details of your new Group.
+            <DrawerTitle className="text-2xl text-white">Create Group</DrawerTitle>
+            <DrawerDescription className="text-white/65">
+              Start a shared space for trip, home, or project expenses.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="p-4 pb-0">
+          <div className="flex-1 overflow-y-auto p-4 pb-2">
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="groupName">Group Name</Label>
+                <Label htmlFor="groupName" className="text-white/90">Group Name</Label>
                 <Input
                   id="groupName"
-                  placeholder="Enter Group name"
+                  placeholder="e.g. London Trip"
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
+                  className="h-11 border-[#2b352f] bg-[#06080d] text-white placeholder:text-white/45 focus-visible:ring-[#6f866f]"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description" className="text-white/90">Description</Label>
                 <Input
                   id="description"
-                  placeholder="Enter Group description"
+                  placeholder="What is this group for?"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  className="h-11 border-[#2b352f] bg-[#06080d] text-white placeholder:text-white/45 focus-visible:ring-[#6f866f]"
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Split Type</Label>
+                <Label className="text-white/90">Split Type</Label>
                 <Select onValueChange={setSplitType} value={splitType}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-11 border-[#2b352f] bg-[#06080d] text-white focus:ring-[#6f866f]">
                     <SelectValue placeholder="Select split type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="border-[#2b352f] bg-[#0b0f16] text-white">
                     <SelectItem value="equal">Equal</SelectItem>
                     <SelectItem value="percentage">Percentage</SelectItem>
                     <SelectItem value="shares">Shares / Units</SelectItem>
@@ -145,9 +147,16 @@ export default function AddGroup({ open, setOpen }: AddGroupProps) {
             </div>
           </div>
           <DrawerFooter>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button onClick={handleSubmit} className="bg-[#101610] text-white hover:bg-[#182118]">
+              Create Group
+            </Button>
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button
+                variant="outline"
+                className="border-[#2b352f] bg-[#06080d] text-white hover:bg-[#101826]"
+              >
+                Cancel
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>

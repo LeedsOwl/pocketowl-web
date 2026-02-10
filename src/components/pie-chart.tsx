@@ -2,6 +2,7 @@ import * as React from "react";
 import { Pie, PieChart, PieLabelRenderProps, Label, Cell } from "recharts"; 
 import { FaCircle } from "react-icons/fa";
 import { motion } from "framer-motion"; 
+import { LuSparkles } from "react-icons/lu";
 import {
   Card,
   CardContent,
@@ -15,29 +16,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { getCategoryColor, getCategoryLabel } from "@/lib/category-meta";
 
 const GBP = "\u00A3";
-const categoryColors: Record<string, string> = {
-  food: "#8faf94",
-  bills: "#5f8b68",
-  travel: "#3f7155",
-  others: "#2d5b44",
-  shopping: "#1f4533",
-  groceries: "#8faf94",
-  transportation: "#5f8b68",
-  "eating out": "#3f7155",
-  subscriptions: "#2d5b44",
-};
-
-const friendlyNameMap: Record<string, string> = {
-  food: "Food",
-  bills: "Bills",
-  travel: "Travel",
-  others: "Others",
-  shopping: "Shopping",
-};
-
-const defaultColor = "#3b4448";
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -82,7 +63,35 @@ interface DonutProps {
 
 export function Donut({ chartData, totalAmount, categoryTotals, compact = false }: DonutProps) {
   if (totalAmount === 0) {
-    return <div>No transactions available for this period.</div>;
+    return (
+      <Card className="surface-card relative overflow-hidden rounded-3xl text-white">
+        <div className="pointer-events-none absolute -top-16 left-[-8%] h-44 w-44 rounded-full bg-[#9fb0a7]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 right-[-8%] h-48 w-48 rounded-full bg-[#445056]/16 blur-3xl" />
+        <CardHeader className="relative z-10 pb-2">
+          <CardTitle className="text-xl text-white/95 font-semibold tracking-wide">
+            Personal Expense Breakdown
+          </CardTitle>
+          <CardDescription className="text-sm text-white/55">
+            This month
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="relative z-10 pb-6">
+          <div className="relative grid min-h-[240px] place-items-center overflow-hidden rounded-2xl border border-white/12 bg-black/20 text-center">
+            <div className="pointer-events-none absolute -top-8 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full bg-[#9eb89f]/20 blur-2xl" />
+            <div className="relative z-10 space-y-3 px-6">
+              <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white/75">
+                <LuSparkles className="h-3.5 w-3.5 text-[#9eb89f]" />
+                Waiting for Data
+              </div>
+              <p className="text-xl font-semibold text-white/92">Nothing to chart yet</p>
+              <p className="mx-auto max-w-xs text-sm text-white/62">
+                Once you add expenses, your category mix and percentages will appear here automatically.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   const chartConfig = chartData.length > 0 
@@ -148,7 +157,7 @@ export function Donut({ chartData, totalAmount, categoryTotals, compact = false 
                     {chartData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={categoryColors[entry.category.toLowerCase()] || defaultColor}
+                        fill={getCategoryColor(entry.category)}
                       />
                     ))}
                     <Label className="text-center"
@@ -209,11 +218,11 @@ export function Donut({ chartData, totalAmount, categoryTotals, compact = false 
                   <FaCircle
                     className="h-3 w-3"
                     style={{
-                      color: categoryColors[category.toLowerCase()] || defaultColor,
+                      color: getCategoryColor(category),
                     }}
                   />
                   <span>
-                    {friendlyNameMap[category.toLowerCase() as keyof typeof friendlyNameMap] || category} {((value / totalAmount) * 100).toFixed(0)}%
+                    {getCategoryLabel(category)} {((value / totalAmount) * 100).toFixed(0)}%
                   </span>
                 </motion.div>
               ))}
@@ -236,11 +245,11 @@ export function Donut({ chartData, totalAmount, categoryTotals, compact = false 
                 <FaCircle
                   className="h-3 w-3"
                   style={{
-                    color: categoryColors[category.toLowerCase()] || defaultColor,
+                    color: getCategoryColor(category),
                   }}
                 />
                 <span className="font-medium text-slate-100">
-                  {friendlyNameMap[category.toLowerCase() as keyof typeof friendlyNameMap] || category}
+                  {getCategoryLabel(category)}
                 </span>
               </div>
               <span className="font-semibold text-slate-100">

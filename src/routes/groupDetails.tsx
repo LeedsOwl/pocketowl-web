@@ -69,6 +69,7 @@ function GroupDetails() {
   const createInvite = useMutation(api.group_invites.createInvite);
   const updateGroupSplitConfig = useMutation(api.groups.updateGroupSplitConfig);
   const setGroupBudget = useMutation(api.budget.setGroupBudget);
+  const deleteGroupTransaction = useMutation(api.group_transactions.deleteGroupTransaction);
 
   const [showSetBudget, setShowSetBudget] = useState(false);
   const [showAddGroupExpense, setShowAddGroupExpense] = useState(false);
@@ -469,6 +470,19 @@ function GroupDetails() {
     // Query already keeps this list in sync, no local cache patching required.
   };
 
+  const handleDeleteTransaction = async (transactionId: string) => {
+    const confirmed = window.confirm("Delete this group expense?");
+    if (!confirmed) return;
+
+    try {
+      await deleteGroupTransaction({
+        transactionId: transactionId as Id<"group_transactions">,
+      });
+    } catch (error) {
+      console.error("Error deleting group transaction:", error);
+    }
+  };
+
   const splitTypeTitle =
     groupDetails?.default_split_type === "shares"
       ? "Shares Split"
@@ -558,16 +572,7 @@ function GroupDetails() {
                   </p>
                 </div>
               </div>
-              <div className="mt-5 flex flex-wrap items-center gap-2">
-                <Link to="/groups">
-                  <Button
-                    variant="outline"
-                    className="border-white/20 bg-[#0b1018] text-white hover:border-[#9eb89f] hover:bg-[#101826]"
-                  >
-                    <LuArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Groups
-                  </Button>
-                </Link>
+              <div className="mt-5 flex flex-wrap items-start gap-2">
                 <Button
                   onClick={handleAddGroupExpenseButtonClick}
                   className="bg-primary text-white hover:bg-[#5f735f]"
@@ -575,6 +580,17 @@ function GroupDetails() {
                   <FaPlus className="mr-2 h-4 w-4" />
                   Add Group Expense
                 </Button>
+                <div className="w-full">
+                  <Link to="/groups">
+                    <button
+                      type="button"
+                      className="inline-flex h-10 items-center justify-center rounded-md bg-[#9eb89f] px-4 text-sm font-medium text-black transition hover:bg-[#b6cab7]"
+                    >
+                      <LuArrowLeft className="mr-2 h-4 w-4" />
+                      Back to Groups
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
           </motion.section>
@@ -730,10 +746,13 @@ function GroupDetails() {
                         <GroupTransaction
                           key={transaction._id}
                           groupId={transaction.group_id}
+                          transactionId={transaction._id}
                           description={transaction.description}
                           amount={transaction.amount}
                           date={new Date(transaction.dateTime)}
                           initiatedBy={transaction.user_name}
+                          canDelete={isCreator}
+                          onDelete={handleDeleteTransaction}
                         />
                       ))}
                     </div>
@@ -759,22 +778,22 @@ function GroupDetails() {
           />
 
           <Drawer open={showSplitSettings} onOpenChange={setShowSplitSettings}>
-            <DrawerContent>
+            <DrawerContent className="h-[92vh] max-h-[92vh] rounded-t-2xl border-[#2b352f] bg-[#0b0f16] text-white">
               <DrawerHeader className="sm:text-center">
-                <DrawerTitle className="text-2xl">Split Settings</DrawerTitle>
-                <DrawerDescription>
+                <DrawerTitle className="text-2xl text-white">Split Settings</DrawerTitle>
+                <DrawerDescription className="text-white/65">
                   Choose a split method and adjust values with a live preview.
                 </DrawerDescription>
               </DrawerHeader>
 
-              <div className="p-4 pb-0 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 pb-0 space-y-4">
                 <div className="grid gap-2">
-                  <Label>Split Method</Label>
+                  <Label className="text-white/90">Split Method</Label>
                   <Select value={splitMode} onValueChange={(value) => setSplitMode(value as SplitMode)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11 border-[#2b352f] bg-[#06080d] text-white focus:ring-[#6f866f]">
                       <SelectValue placeholder="Select split method" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="border-[#2b352f] bg-[#0b0f16] text-white">
                       <SelectItem value="equal">Equal Split</SelectItem>
                       <SelectItem value="percentage">Percentage Split</SelectItem>
                       <SelectItem value="shares">Shares / Units Split</SelectItem>
@@ -785,23 +804,23 @@ function GroupDetails() {
                 </div>
 
                 {splitMode === "percentage" && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/65">
                     Editing one percentage auto-adjusts the others to keep total at 100.
                   </p>
                 )}
                 {splitMode === "shares" && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/65">
                     Enter relative shares (e.g. 1, 2, 3). We convert shares into percentages.
                   </p>
                 )}
                 {splitMode === "fixed" && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/65">
                     Enter target amounts by member. If totals differ from the split base, we scale
                     them proportionally.
                   </p>
                 )}
                 {splitMode === "custom" && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/65">
                     Activity-based split uses member contribution history from group transactions.
                   </p>
                 )}
@@ -809,7 +828,7 @@ function GroupDetails() {
                 {(splitMode === "percentage" || splitMode === "shares" || splitMode === "fixed") &&
                   groupMembers.map((member) => (
                     <div key={member._id} className="grid gap-2">
-                      <Label htmlFor={`${splitMode}-${member._id}`}>
+                      <Label htmlFor={`${splitMode}-${member._id}`} className="text-white/90">
                         {member.user?.name || "Unknown User"}
                       </Label>
                       <Input
@@ -841,12 +860,13 @@ function GroupDetails() {
                             setSplitSaveError("");
                           }
                         }}
+                        className="h-11 border-[#2b352f] bg-[#06080d] text-white placeholder:text-white/45 focus-visible:ring-[#6f866f]"
                       />
                     </div>
                   ))}
 
-                <div className="rounded-md border p-3">
-                  <p className="text-sm font-medium mb-2">
+                <div className="rounded-xl border border-white/12 bg-black/25 p-3">
+                  <p className="mb-2 text-sm font-medium text-white/90">
                     Live Preview (Base: {GBP}{splitBaseAmount.toFixed(2)})
                   </p>
                   <div className="space-y-1">
@@ -855,7 +875,7 @@ function GroupDetails() {
                       return (
                         <div
                           key={`preview-${member._id}`}
-                          className="flex items-center justify-between text-sm"
+                          className="flex items-center justify-between text-sm text-white/85"
                         >
                           <span>{member.user?.name || "Unknown User"}</span>
                           <span>
@@ -872,9 +892,30 @@ function GroupDetails() {
               </div>
 
               <DrawerFooter>
-                <Button onClick={handleSaveSplitSettings}>Save Split Settings</Button>
+                <Button
+                  onClick={handleSaveSplitSettings}
+                  className="bg-[#101610] text-white hover:bg-[#182118]"
+                >
+                  Save Split Settings
+                </Button>
+                <button
+                  type="button"
+                  className="inline-flex h-10 items-center justify-center rounded-md bg-[#9eb89f] px-4 text-sm font-medium text-black transition hover:bg-[#b6cab7]"
+                  onClick={() => {
+                    setShowSplitSettings(false);
+                    navigate("/groups");
+                  }}
+                >
+                  <LuArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Groups
+                </button>
                 <DrawerClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button
+                    variant="outline"
+                    className="border-[#2b352f] bg-[#06080d] text-white hover:bg-[#101826]"
+                  >
+                    Cancel
+                  </Button>
                 </DrawerClose>
               </DrawerFooter>
             </DrawerContent>

@@ -33,3 +33,13 @@ export const getGroupTransactions = query(async ({ db }, { groupId }) => {
 
   return transactions;
 });
+
+export const deleteGroupTransaction = mutation({
+  args: {
+    transactionId: v.id("group_transactions"),
+  },
+  handler: async (ctx, { transactionId }) => {
+    await ctx.db.delete(transactionId);
+    return { deleted: true };
+  },
+});

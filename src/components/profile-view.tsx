@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { useAction } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { useNavigate } from "react-router-dom";
 import {
   LuBell,
   LuChevronRight,
@@ -12,119 +10,54 @@ import {
   LuUserPlus,
   LuWallet,
 } from "react-icons/lu";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Id } from "convex/_generated/dataModel";
 
 interface ProfileViewProps {
-  userId?: Id<"users">;
   userName: string;
-  userEmail: string;
   theme: string;
-  onThemeToggle: () => void;
   onSignOut: () => void;
+  walletSubtitle?: string;
 }
 
 export function ProfileView({
-  userId,
   userName,
-  userEmail,
   theme,
-  onThemeToggle,
   onSignOut,
+  walletSubtitle,
 }: ProfileViewProps) {
-  const updateUserPassword = useAction(api.users.updateUserPassword);
-  const [showSecurityPanel, setShowSecurityPanel] = useState(false);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordStatus, setPasswordStatus] = useState<{
-    loading: boolean;
-    error: string;
-    success: boolean;
-  }>({ loading: false, error: "", success: false });
-
-  const handlePasswordSubmit = async () => {
-    if (!userId) {
-      setPasswordStatus({
-        loading: false,
-        error: "User not loaded yet.",
-        success: false,
-      });
-      return;
-    }
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      setPasswordStatus({
-        loading: false,
-        error: "Please fill in all password fields.",
-        success: false,
-      });
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setPasswordStatus({
-        loading: false,
-        error: "New passwords do not match.",
-        success: false,
-      });
-      return;
-    }
-
-    setPasswordStatus({ loading: true, error: "", success: false });
-    try {
-      await updateUserPassword({
-        userId,
-        oldPassword,
-        newPassword,
-      });
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setPasswordStatus({ loading: false, error: "", success: true });
-    } catch (error) {
-      setPasswordStatus({
-        loading: false,
-        error: "Failed to update password. Check your current password.",
-        success: false,
-      });
-    }
-  };
+  const navigate = useNavigate();
 
   const menuItems = [
     {
       label: "Wallets",
-      subtitle: "Personal: \u00A32,315.49",
+      subtitle: walletSubtitle || "Personal wallet",
       hasArrow: true,
       icon: <LuWallet className="h-4 w-4 text-[#6f866f]" />,
-      onClick: () => {},
+      onClick: () => navigate("/profile/wallets"),
     },
     {
       label: "Payments",
       hasArrow: true,
       icon: <LuCreditCard className="h-4 w-4 text-[#6f866f]" />,
-      onClick: () => {},
+      onClick: () => navigate("/profile/payments"),
     },
     {
       label: "Notifications",
       hasArrow: true,
       icon: <LuBell className="h-4 w-4 text-[#6f866f]" />,
-      onClick: () => {},
+      onClick: () => navigate("/profile/notifications"),
     },
     {
       label: "Appearance",
       subtitle: theme === "dark" ? "Dark" : "Light",
       hasArrow: true,
       icon: <LuPalette className="h-4 w-4 text-[#6f866f]" />,
-      onClick: onThemeToggle,
+      onClick: () => navigate("/profile/appearance"),
     },
     {
       label: "Security",
       hasArrow: true,
       icon: <LuShield className="h-4 w-4 text-[#6f866f]" />,
-      onClick: () => {
-        setShowSecurityPanel((prev) => !prev);
-        setPasswordStatus({ loading: false, error: "", success: false });
-      },
+      onClick: () => navigate("/profile/security"),
     },
   ];
 
@@ -133,13 +66,13 @@ export function ProfileView({
       label: "Help Center",
       hasArrow: true,
       icon: <LuLifeBuoy className="h-4 w-4 text-[#6f866f]" />,
-      onClick: () => {},
+      onClick: () => navigate("/profile/help-center"),
     },
     {
       label: "Refer a friend",
       hasArrow: true,
       icon: <LuUserPlus className="h-4 w-4 text-[#6f866f]" />,
-      onClick: () => {},
+      onClick: () => navigate("/profile/refer"),
     },
   ];
 
@@ -211,51 +144,6 @@ export function ProfileView({
           </motion.button>
         ))}
       </motion.div>
-
-      {showSecurityPanel && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="mb-6 rounded-2xl border border-white/10 bg-[#0b0f16] p-4"
-        >
-          <h3 className="mb-3 text-sm font-semibold text-foreground">Security</h3>
-          <div className="space-y-3">
-            <Input
-              type="password"
-              placeholder="Current password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-            />
-            <Input
-              type="password"
-              placeholder="New password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <Input
-              type="password"
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            {passwordStatus.error && (
-              <p className="text-xs text-red-400">{passwordStatus.error}</p>
-            )}
-            {passwordStatus.success && (
-              <p className="text-xs text-[#8db995]">Password updated successfully.</p>
-            )}
-            <Button
-              type="button"
-              onClick={handlePasswordSubmit}
-              disabled={passwordStatus.loading}
-              className="w-full"
-            >
-              {passwordStatus.loading ? "Updating..." : "Update Password"}
-            </Button>
-          </div>
-        </motion.div>
-      )}
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}

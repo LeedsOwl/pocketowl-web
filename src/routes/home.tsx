@@ -62,119 +62,7 @@ function Home() {
   const userFinancialData = useQuery(api.finance.getUserFinancialData, {});
   const userInfo = useQuery(api.users.getUserInfo, {});
   const GBP = "\u00A3";
-
-  const demoTransactions: Transaction[] = [
-    {
-      _creationTime: subDays(new Date(), 6).getTime(),
-      _id: "demo-1" as Id<"transactions">,
-      amount: 24.5,
-      category: "Food",
-      dateTime: subDays(new Date(), 6).toISOString(),
-      description: "Coffee and breakfast",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subDays(new Date(), 5).getTime(),
-      _id: "demo-2" as Id<"transactions">,
-      amount: 58.2,
-      category: "Bills",
-      dateTime: subDays(new Date(), 5).toISOString(),
-      description: "Phone bill",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subDays(new Date(), 4).getTime(),
-      _id: "demo-3" as Id<"transactions">,
-      amount: 16.75,
-      category: "Food",
-      dateTime: subDays(new Date(), 4).toISOString(),
-      description: "Lunch",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subDays(new Date(), 3).getTime(),
-      _id: "demo-4" as Id<"transactions">,
-      amount: 34.1,
-      category: "Travel",
-      dateTime: subDays(new Date(), 3).toISOString(),
-      description: "Train tickets",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subDays(new Date(), 2).getTime(),
-      _id: "demo-5" as Id<"transactions">,
-      amount: 42.3,
-      category: "Shopping",
-      dateTime: subDays(new Date(), 2).toISOString(),
-      description: "Groceries",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subDays(new Date(), 1).getTime(),
-      _id: "demo-6" as Id<"transactions">,
-      amount: 19.99,
-      category: "Others",
-      dateTime: subDays(new Date(), 1).toISOString(),
-      description: "Streaming subscription",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subDays(new Date(), 14).getTime(),
-      _id: "demo-7" as Id<"transactions">,
-      amount: 73.4,
-      category: "Bills",
-      dateTime: subDays(new Date(), 14).toISOString(),
-      description: "Utilities",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subMonths(new Date(), 1).getTime(),
-      _id: "demo-8" as Id<"transactions">,
-      amount: 128.99,
-      category: "Shopping",
-      dateTime: subMonths(new Date(), 1).toISOString(),
-      description: "House supplies",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subMonths(new Date(), 2).getTime(),
-      _id: "demo-9" as Id<"transactions">,
-      amount: 46.25,
-      category: "Food",
-      dateTime: subMonths(new Date(), 2).toISOString(),
-      description: "Dinner out",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subMonths(new Date(), 3).getTime(),
-      _id: "demo-10" as Id<"transactions">,
-      amount: 92.7,
-      category: "Travel",
-      dateTime: subMonths(new Date(), 3).toISOString(),
-      description: "Weekend transport",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subMonths(new Date(), 4).getTime(),
-      _id: "demo-11" as Id<"transactions">,
-      amount: 35.5,
-      category: "Others",
-      dateTime: subMonths(new Date(), 4).toISOString(),
-      description: "Pharmacy",
-      user_id: "demo-user" as Id<"users">,
-    },
-    {
-      _creationTime: subYears(new Date(), 1).getTime(),
-      _id: "demo-12" as Id<"transactions">,
-      amount: 210,
-      category: "Bills",
-      dateTime: subYears(new Date(), 1).toISOString(),
-      description: "Annual insurance",
-      user_id: "demo-user" as Id<"users">,
-    },
-  ];
-  const usingDemoData = userTransactions.length === 0;
-  const chartTransactions = usingDemoData ? demoTransactions : userTransactions;
+  const chartTransactions = userTransactions;
 
   const deleteTransaction = useMutation(api.transactions.deleteTransaction);
   const updateTransaction = useMutation(api.transactions.updateTransaction);
@@ -348,17 +236,17 @@ function Home() {
               <LuReceipt className="h-6 w-6 text-[#6f866f]" />
               Recent Transactions
             </motion.h2>
-            {usingDemoData && (
-              <p className="px-0 text-xs text-white/55">
-                Demo data
-              </p>
-            )}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="home-panel home-divide overflow-hidden"
             >
+              {chartTransactions.length === 0 && (
+                <p className="px-3 py-6 text-sm text-white/60">
+                  No transactions yet.
+                </p>
+              )}
               {chartTransactions.map((transaction: Transaction, index) => (
                 <motion.div
                   key={transaction._id}
@@ -373,8 +261,8 @@ function Home() {
                     amount={transaction.amount}
                     category={transaction.category}
                     status={"completed"}
-                    onEdit={usingDemoData ? () => {} : handleEditTransaction}
-                    onDelete={usingDemoData ? () => {} : handleDeleteTransaction}
+                    onEdit={handleEditTransaction}
+                    onDelete={handleDeleteTransaction}
                   />
                 </motion.div>
               ))}
@@ -457,8 +345,8 @@ function Home() {
                       amount={transaction.amount}
                       category={transaction.category}
                       status={"completed"}
-                      onEdit={usingDemoData ? () => {} : handleEditTransaction}
-                      onDelete={usingDemoData ? () => {} : handleDeleteTransaction}
+                      onEdit={handleEditTransaction}
+                      onDelete={handleDeleteTransaction}
                     />
                   ))}
                 </div>

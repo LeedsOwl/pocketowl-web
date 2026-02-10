@@ -140,23 +140,23 @@ function TopNav() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 px-3 pt-2">
-        <div className="mx-auto flex w-full max-w-xl items-center gap-3 rounded-[1.75rem] bg-transparent p-2">
+        <div className="mx-auto flex w-full max-w-xl items-center gap-2.5 rounded-[1.5rem] bg-transparent p-1.5">
           <button
             type="button"
             aria-label="Open profile"
             onClick={() => navigate("/profile")}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#2b352f] bg-[#6f866f] text-lg font-semibold text-white"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#2b352f] bg-[#6f866f] text-base font-semibold text-white"
           >
-            {avatarInitial ? avatarInitial : <LuUser className="h-5 w-5" />}
+            {avatarInitial ? avatarInitial : <LuUser className="h-4 w-4" />}
           </button>
 
           <form onSubmit={handleSearch} className="relative min-w-0 flex-1">
-            <LuSearch className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/65" />
+            <LuSearch className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/65" />
             <input
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
               placeholder="Search"
-              className="h-14 w-full rounded-full border border-[#2b352f] bg-[#06080d] pl-12 pr-4 text-base text-white outline-none placeholder:text-white/55 focus:border-[#6f866f]"
+              className="h-12 w-full rounded-full border border-[#2b352f] bg-[#06080d] pl-10 pr-4 text-sm text-white outline-none placeholder:text-white/55 focus:border-[#6f866f]"
             />
           </form>
 
@@ -164,13 +164,13 @@ function TopNav() {
             type="button"
             aria-label="Add expense"
             onClick={() => setShowAddOptions(true)}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[#2b352f] bg-[#06080d] text-white transition hover:border-[#6f866f]"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#2b352f] bg-[#06080d] text-white transition hover:border-[#6f866f]"
           >
-            <LuPlus className="h-6 w-6" />
+            <LuPlus className="h-5 w-5" />
           </button>
         </div>
       </header>
-      <div aria-hidden className="h-20" />
+      <div aria-hidden className="h-16" />
 
       <Drawer open={showAddOptions} onOpenChange={setShowAddOptions}>
         <DrawerContent className="border-[#2b352f] bg-[#0b0f16] text-white">

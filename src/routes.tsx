@@ -6,6 +6,13 @@ import { Toaster } from "./components/ui/toaster";
 import Welcome from "./routes/welcome";
 import Layout from "./components/layout";
 import Profile from "./routes/profile";
+import ProfileWallets from "./routes/profile-wallets";
+import ProfilePayments from "./routes/profile-payments";
+import ProfileNotifications from "./routes/profile-notifications";
+import ProfileAppearance from "./routes/profile-appearance";
+import ProfileSecurity from "./routes/profile-security";
+import ProfileHelpCenter from "./routes/profile-help-center";
+import ProfileRefer from "./routes/profile-refer";
 import Groups from "./routes/groups";
 import Insights from "./routes/insights";
 import GroupDetails from "./routes/groupDetails";
@@ -132,6 +139,83 @@ export const ROUTES = [
       <Authenticated>
         <Layout>
           <Profile />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/profile/wallets",
+    title: "Wallets",
+    element: (
+      <Authenticated>
+        <Layout>
+          <ProfileWallets />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/profile/payments",
+    title: "Payments",
+    element: (
+      <Authenticated>
+        <Layout>
+          <ProfilePayments />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/profile/notifications",
+    title: "Notifications",
+    element: (
+      <Authenticated>
+        <Layout>
+          <ProfileNotifications />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/profile/appearance",
+    title: "Appearance",
+    element: (
+      <Authenticated>
+        <Layout>
+          <ProfileAppearance />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/profile/security",
+    title: "Security",
+    element: (
+      <Authenticated>
+        <Layout>
+          <ProfileSecurity />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/profile/help-center",
+    title: "Help Center",
+    element: (
+      <Authenticated>
+        <Layout>
+          <ProfileHelpCenter />
+        </Layout>
+      </Authenticated>
+    ),
+  },
+  {
+    path: "/profile/refer",
+    title: "Refer a Friend",
+    element: (
+      <Authenticated>
+        <Layout>
+          <ProfileRefer />
         </Layout>
       </Authenticated>
     ),

@@ -14,31 +14,14 @@ interface Categories {
   categoryTotals: { [key: string]: number };
 }
 
-const demoCategoryTotals: { [key: string]: number } = {
-  groceries: 280,
-  subscriptions: 152,
-  transportation: 126,
-  food: 86.4,
-  bills: 132.75,
-};
-
 const Insights = () => {
   const [chartType, setChartType] = useState<"pie" | "analytics">("pie");
 
   const transactions: Categories = useQuery(api.insights.getInsights, {
     period: "month",
   }) || { totalAmount: 0, categoryTotals: {} };
-
-  const hasRealInsightsData =
-    transactions.totalAmount > 0 ||
-    Object.values(transactions.categoryTotals || {}).some((value) => value > 0);
-
-  const categoryTotals = hasRealInsightsData
-    ? transactions.categoryTotals
-    : demoCategoryTotals;
-  const totalAmount = hasRealInsightsData
-    ? transactions.totalAmount
-    : Object.values(demoCategoryTotals).reduce((sum, value) => sum + value, 0);
+  const categoryTotals = transactions.categoryTotals;
+  const totalAmount = transactions.totalAmount;
 
   const chartData = Object.entries(categoryTotals).map(([category, value]) => ({
     category,
