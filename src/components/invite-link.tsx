@@ -10,10 +10,10 @@ interface AddExpenseProps {
 function InviteLink({ open, setOpen, invite }: AddExpenseProps) {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent>
+      <DrawerContent className="h-[70vh] max-h-[70vh] rounded-t-2xl border-[#2b352f] bg-[#0b0f16] text-white">
         <div className="p-4">
           <h2 className="text-lg font-semibold">Invite Link</h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-white/65">
             Share this link with your friends to invite them to your
             workspace.
           </p>
@@ -21,7 +21,7 @@ function InviteLink({ open, setOpen, invite }: AddExpenseProps) {
             <input
               type="text"
               value={"test"}
-              className="flex-1 bg-gray-100 text-sm p-2 rounded-lg"
+              className="flex-1 rounded-lg border border-[#2b352f] bg-[#06080d] p-2 text-sm text-white"
               readOnly
             />
             <button

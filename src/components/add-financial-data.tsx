@@ -94,7 +94,7 @@ export default function AddFinancialData({
                 <SelectTrigger className="border-[#2b352f] bg-[#06080d] text-white">
                   <SelectValue placeholder="Select income type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="border-[#2b352f] bg-[#0b0f16] text-white">
                   <SelectItem value="gross">Gross (before tax)</SelectItem>
                   <SelectItem value="after_tax">After tax (net)</SelectItem>
                   <SelectItem value="disposable">Disposable</SelectItem>

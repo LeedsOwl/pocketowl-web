@@ -109,10 +109,10 @@ export default function AddExpense({ open, setOpen }: AddExpenseProps) {
               <div className="grid gap-2">
                 <Label>Category</Label>
                 <Select onValueChange={setCategory} value={category}>
-                  <SelectTrigger>
+                  <SelectTrigger className="border-[#2b352f] bg-[#06080d] text-white">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="border-[#2b352f] bg-[#0b0f16] text-white">
                     {categories &&
                       categories.map((cat: Category) => (
                         <SelectItem key={cat.value} value={cat._id}>

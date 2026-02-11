@@ -68,14 +68,14 @@ export default function SetGroupBudget({
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent>
+      <DrawerContent className="h-[88vh] max-h-[88vh] rounded-t-2xl border-[#2b352f] bg-[#0b0f16] text-white">
         <DrawerHeader className="sm:text-center">
-          <DrawerTitle className="text-2xl">Set Group Budget</DrawerTitle>
+          <DrawerTitle className="text-2xl text-white">Set Group Budget</DrawerTitle>
         </DrawerHeader>
-        <div className="p-4 pb-0">
+        <div className="flex-1 overflow-y-auto p-4 pb-0">
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="budget">Budget Amount</Label>
+              <Label htmlFor="budget" className="text-white/90">Budget Amount</Label>
               <CurrencyInput
                 id="budget"
                 value={budget}

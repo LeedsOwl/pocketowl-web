@@ -227,6 +227,52 @@ export const getUserGroups = query({
   },
 });
 
+export const deleteGroup = mutation({
+  args: {
+    groupId: v.id("groups"),
+  },
+  handler: async (ctx, { groupId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Not authenticated");
+    }
+
+    const group = await ctx.db.get(groupId);
+    if (!group) {
+      throw new Error("Group not found");
+    }
+
+    if (group.created_by !== userId) {
+      throw new Error("Only the group creator can delete this group.");
+    }
+
+    const [members, invites, transactions] = await Promise.all([
+      ctx.db
+        .query("group_members")
+        .withIndex("by_group_id", (q) => q.eq("group_id", groupId))
+        .collect(),
+      ctx.db
+        .query("group_invites")
+        .filter((q) => q.eq(q.field("group_id"), groupId))
+        .collect(),
+      ctx.db
+        .query("group_transactions")
+        .withIndex("by_group_id", (q) => q.eq("group_id", groupId))
+        .collect(),
+    ]);
+
+    await Promise.all([
+      ...members.map((member) => ctx.db.delete(member._id)),
+      ...invites.map((invite) => ctx.db.delete(invite._id)),
+      ...transactions.map((transaction) => ctx.db.delete(transaction._id)),
+    ]);
+
+    await ctx.db.delete(groupId);
+
+    return { success: true };
+  },
+});
+
 export const getGroupMembers = query({
   args: {
     groupId: v.optional(v.id("groups")),

@@ -1,20 +1,33 @@
 import { useState } from "react";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Link } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
 import { Toaster } from "@/components/ui/toaster";
 import { motion } from "framer-motion";
 import { MdChevronRight } from "react-icons/md";
-import { LuFolderKanban, LuPlus, LuSparkles, LuUsers } from "react-icons/lu";
+import { LuFolderKanban, LuPlus, LuSparkles, LuTrash2, LuUsers } from "react-icons/lu";
 import AddGroup from "@/components/add-group";
 import { PageTransition } from "@/components/PageTransition";
+import { Id } from "convex/_generated/dataModel";
 
 function Groups() {
   const [showAddGroup, setShowAddGroup] = useState(false);
   const userGroups = useQuery(api.groups.getUserGroups, {}) || [];
+  const deleteGroup = useMutation(api.groups.deleteGroup);
 
   const handleAddGroupButtonClick = () => {
     setShowAddGroup(!showAddGroup);
+  };
+
+  const handleDeleteGroup = async (groupId: Id<"groups">, groupName: string) => {
+    const confirmed = window.confirm(`Delete "${groupName}" and all its data?`);
+    if (!confirmed) return;
+
+    try {
+      await deleteGroup({ groupId });
+    } catch (error) {
+      console.error("Failed to delete group:", error);
+    }
   };
 
   const containerVariants = {
@@ -164,24 +177,36 @@ function Groups() {
                 animate="visible"
               >
                 {userGroups.map((group: any) => (
-                  <Link to={`/groups/${group._id}`} key={group._id}>
-                    <motion.article
-                      variants={itemVariants}
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.985 }}
-                      className="group rounded-2xl border border-white/10 bg-[#0d131b] p-4 transition-colors duration-200 hover:border-white/20"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between gap-3">
-                          <p className="truncate text-base font-semibold text-white/95">{group.name}</p>
-                          <MdChevronRight className="text-xl text-white/50 transition-colors group-hover:text-white/85" />
-                        </div>
-                        <p className="mt-1 line-clamp-2 text-sm text-white/60">
-                          {group.description || "No description yet."}
-                        </p>
+                  <motion.article
+                    key={group._id}
+                    variants={itemVariants}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.985 }}
+                    className="group rounded-2xl border border-white/10 bg-[#0d131b] p-4 transition-colors duration-200 hover:border-white/20"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-3">
+                        <Link to={`/groups/${group._id}`} className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="truncate text-base font-semibold text-white/95">{group.name}</p>
+                            <MdChevronRight className="text-xl text-white/50 transition-colors group-hover:text-white/85" />
+                          </div>
+                        </Link>
+                        <button
+                          type="button"
+                          aria-label={`Delete ${group.name}`}
+                          onClick={() => handleDeleteGroup(group._id, group.name)}
+                          className="inline-flex h-8 shrink-0 items-center justify-center gap-1 rounded-lg border border-red-400/35 bg-red-500/10 px-2 text-xs font-medium text-red-200 transition hover:bg-red-500/20"
+                        >
+                          <LuTrash2 className="h-4 w-4" />
+                          Delete
+                        </button>
                       </div>
-                    </motion.article>
-                  </Link>
+                      <p className="mt-1 line-clamp-2 text-sm text-white/60">
+                        {group.description || "No description yet."}
+                      </p>
+                    </div>
+                  </motion.article>
                 ))}
               </motion.div>
             )}
